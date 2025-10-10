@@ -13,7 +13,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Google Search Query Builder",
+  title: "Google Scholar Query Builder",
   description: "Build complex Google Scholar search queries with ease.",
 };
 
