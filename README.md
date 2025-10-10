@@ -1,36 +1,113 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Google Scholar Query Translator (GS-Search-Kit)
+
+A Next.js application that translates structured search inputs (similar to Scopus/advanced search interfaces) into valid Google Scholar URLs. This tool allows users to create complex, multi-field searches and automatically redirects to Google Scholar with the properly formatted query.
+
+## Features
+
+- **Multi-Field Search Blocks**: Support for 10+ search fields including Article Title, Author, Source Title, Abstract, Keywords, ISSN, DOI, etc.
+- **Advanced Query Logic**: Implicit AND logic between blocks, with support for exclusion (NOT) operations
+- **Field-Specific Handling**: Automatic quoting and operator application based on Google Scholar syntax
+- **Real-Time Preview**: See how your search blocks will be translated before submitting
+- **Responsive UI**: Clean, modern interface built with Tailwind CSS
+- **Production Ready**: Input validation, URL encoding, and error handling
+
+## Architecture
+
+The application follows the Query Translation Module (QTM) architecture:
+
+- **Data Layer** (`/data/SearchWithin.ts`): Field definitions and Google Scholar operator mappings
+- **Configuration** (`/config/GSConfig.ts`): Base URLs and mandatory parameters
+- **QTM Core** (`/lib/qtm.ts`): Query synthesis and URL generation logic
+- **UI Components** (`/components/`): React components for search interface
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- [Bun](https://bun.sh/) runtime
+- Node.js 18+ (for compatibility)
+
+### Installation
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+# Clone the repository
+git clone <repository-url>
+cd gs-search-kit
+
+# Install dependencies
+bun install
+
+# Start development server
+bun run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to access the application.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Usage
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1. **Choose a Search Field**: Select from dropdown (e.g., "Article Title", "Author", "All Fields")
+2. **Enter Search Term**: Type your search query
+3. **Set Exclusion** (Optional): Check "Exclude" for NOT logic
+4. **Add More Blocks**: Click "Add Search Block" for complex queries
+5. **Search**: Click "Search Google Scholar" to open results in new tab
 
-## Learn More
+### Example Queries
 
-To learn more about Next.js, take a look at the following resources:
+- **Title + Author**: `intitle:"machine learning" author:"John Smith"`
+- **ISSN Lookup**: `"1234-5678"` (exact phrase matching)
+- **Exclusion**: `"artificial intelligence" -source:"IEEE"`
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Field Mappings
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+| Field | Google Scholar Operator | Notes |
+|-------|------------------------|-------|
+| All Fields | (none) | General full-text search |
+| Article Title | `intitle:` | Title-specific search |
+| Author | `author:` | Author name search |
+| Source Title | `source:` | Journal/conference search |
+| Abstract | (none) | Exact phrase in full-text* |
+| Keywords | (none) | Exact phrase in full-text* |
+| ISSN/DOI | (none) | Exact phrase matching* |
 
-## Deploy on Vercel
+*Fields marked with asterisk use approximation methods since Google Scholar doesn't have dedicated indexed fields.
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Development
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+### Project Structure
+
+```
+gs-search-kit/
+├── app/                 # Next.js app router
+├── components/          # React UI components
+├── config/             # Configuration files
+├── data/               # Field definitions
+├── docs/               # Documentation
+└── lib/                # Core QTM logic
+```
+
+### Scripts
+
+```bash
+bun run dev         # Start development server
+bun run build       # Build for production
+bun run start       # Start production server
+bun run lint        # Run ESLint
+```
+
+### Contributing
+
+1. Follow the TypeScript interfaces defined in the data layer
+2. Update `CHANGELOG.md` for any changes to QTM logic or field mappings
+3. Maintain defensive programming practices with input validation
+4. Test URL generation with various field combinations
+
+## Technical Notes
+
+- **URL Encoding**: Uses `encodeURIComponent()` for proper special character handling
+- **Query Logic**: Space-separated blocks create implicit AND operations
+- **Validation**: Maximum URL length validation (2048 characters)
+- **Type Safety**: Full TypeScript coverage with strict type checking
+
+## License
+
+MIT License - see LICENSE file for details.
