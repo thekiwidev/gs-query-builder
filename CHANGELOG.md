@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.2.0] - 2025-10-10
 
 ### Added
+
 - **shadcn/ui components** with professional design system
   - Custom Button, Input, Select, Checkbox, and Label components
   - Consistent styling with CSS variables for theming
@@ -38,6 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Professional gradient background
 
 ### Changed
+
 - **Updated QTM logic** to support OR operations and global filters
   - Modified `buildScholarUrl()` to handle OR concatenation
   - Added GlobalFilters interface with year range and citation options
@@ -55,6 +57,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Updated Tailwind configuration** to support shadcn color system
 
 ### Technical Improvements
+
 - **CSS Variables** implementation for consistent theming
 - **Transition animations** with 200ms duration throughout interface
 - **Type safety** with updated SearchBlock and GlobalFilters interfaces
@@ -62,6 +65,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Performance** optimizations with efficient re-renders and state management
 
 ### Fixed
+
 - **Dropdown transparency** issues resolved with solid backgrounds
 - **Button cursor states** now properly indicate interactivity
 - **Input hover effects** provide visual feedback before focus

@@ -59,17 +59,17 @@ Open [http://localhost:3000](http://localhost:3000) to access the application.
 
 ## Field Mappings
 
-| Field | Google Scholar Operator | Notes |
-|-------|------------------------|-------|
-| All Fields | (none) | General full-text search |
-| Article Title | `intitle:` | Title-specific search |
-| Author | `author:` | Author name search |
-| Source Title | `source:` | Journal/conference search |
-| Abstract | (none) | Exact phrase in full-text* |
-| Keywords | (none) | Exact phrase in full-text* |
-| ISSN/DOI | (none) | Exact phrase matching* |
+| Field         | Google Scholar Operator | Notes                       |
+| ------------- | ----------------------- | --------------------------- |
+| All Fields    | (none)                  | General full-text search    |
+| Article Title | `intitle:`              | Title-specific search       |
+| Author        | `author:`               | Author name search          |
+| Source Title  | `source:`               | Journal/conference search   |
+| Abstract      | (none)                  | Exact phrase in full-text\* |
+| Keywords      | (none)                  | Exact phrase in full-text\* |
+| ISSN/DOI      | (none)                  | Exact phrase matching\*     |
 
-*Fields marked with asterisk use approximation methods since Google Scholar doesn't have dedicated indexed fields.
+\*Fields marked with asterisk use approximation methods since Google Scholar doesn't have dedicated indexed fields.
 
 ## Development
 

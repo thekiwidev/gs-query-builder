@@ -1,6 +1,6 @@
 /**
  * Google Scholar Configuration
- * 
+ *
  * Defines mandatory parameters and base configuration for all Google Scholar queries.
  * These parameters must be included in every generated search URL.
  */
@@ -16,7 +16,7 @@ export interface MandatoryParameters {
 
 export const GS_MANDATORY_PARAMS: MandatoryParameters = {
   baseURL: "https://scholar.google.com/scholar?",
-  hl: "en", 
+  hl: "en",
   as_sdt: "0%2C5", // Default: Standard academic/patents search
 };
 
@@ -33,16 +33,16 @@ export const GS_GLOBAL_FILTERS = {
   /** Date Range (Year Low / Year High) */
   yearLow: (year: number) => `as_ylo=${year}`, // e.g., 2020
   yearHigh: (year: number) => `as_yhi=${year}`, // e.g., 2024
-  
+
   /** Quick Date Range (e.g., d10 for last 10 days) */
   quickDateRange: (range: string) => `as_qdr=${range}`,
-  
+
   /** Exclude Citations (0 = include, 1 = exclude) */
   excludeCitations: (exclude: boolean) => `as_vis=${exclude ? 1 : 0}`,
-  
+
   /** Enable/Disable Clustering Filters (1 = enabled, 0 = disabled) */
   filterClustering: (enable: boolean) => `filter=${enable ? 1 : 0}`,
-  
+
   /** Search Type Filter (Case Law Courts) */
   caseLawCourts: (courts: string) => `as_sdt=4,${courts}`, // Requires '4' as the first value
 };
