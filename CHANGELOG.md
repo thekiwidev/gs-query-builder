@@ -7,6 +7,127 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.3.0] - 2025-10-12
+
+### Added
+
+- **Advanced Journal Filtering System**
+
+  - Complete journal database integration with 2000+ journals from CSV data
+  - Field-of-study categorization with 17+ research areas (Commerce, Management, Economics, etc.)
+  - Journal rating system (A\*, A, B, C) with validation and filtering
+  - ISSN-based precise journal filtering for higher accuracy than Google Scholar's basic source operator
+  - SimplifiedJournalSelector component with dropdown-based selection interface
+
+- **Enhanced Boolean Operator Logic**
+
+  - Contextual boolean operators based on block position (first block vs. subsequent blocks)
+  - "AND/OR with previous block" and "AND/OR with next block" directional relationships
+  - NOT (exclusion) operator available for all blocks independent of position
+  - Smart operator display - no operators shown for single blocks
+  - Real-time preview showing proper operator relationships
+
+- **Comprehensive Data Architecture**
+
+  - Journal data types and interfaces (`types/journal.ts`) with full TypeScript support
+  - CSV ingestion system (`lib/journalLoader.ts`) with validation and error handling
+  - Field of study mappings for research classification codes
+  - ISSN validation with flexible format support
+  - Journal rating validation and sorting
+
+- **Advanced Query Validation System**
+
+  - Real-time query validation with error detection and suggestions
+  - Syntax validation for Boolean operators, parentheses, and malformed queries
+  - Query explanation generation for human-readable descriptions
+  - Validation severity levels (errors, warnings, info)
+  - Corrected query suggestions for common issues
+
+- **Enhanced UI/UX Components**
+  - Continuous scrollable journal lists with inline segment headers (no fixed sections)
+  - Rating-based journal organization with visual indicators
+  - Multi-select functionality with "Select All" options per rating
+  - Clean button interactions without distracting hover scale effects
+  - Responsive design with proper mobile support
+
+### Changed
+
+- **Redesigned Boolean Operator Interface**
+
+  - Operators only appear when multiple blocks exist
+  - First block shows "with next block" options, subsequent blocks show "with previous block"
+  - Separate exclusion (NOT) toggle independent of block relationships
+  - Clear visual indicators for operator relationships in preview
+
+- **Improved Journal Selection UX**
+
+  - Replaced fixed-height segmented sections with continuous scrollable list
+  - Journal rating headers appear inline during scroll (A\* → A transition)
+  - Better visual hierarchy with rating badges and journal information
+  - Removed hover scale effects for cleaner interactions
+
+- **Enhanced Query Translation Module (QTM)**
+
+  - Updated SearchBlock interface to use `booleanOperator` instead of deprecated `exclude` property
+  - Simplified QTM logic with better error handling and validation
+  - Support for journal ISSN filtering through GlobalFilters interface
+  - Improved URL encoding and parameter handling
+
+- **Updated Component Architecture**
+  - SearchBlockComponent updated with new boolean operator logic
+  - QueryPreview component enhanced with journal filtering support
+  - QueryBuilder integration with SimplifiedJournalSelector in global filters
+  - Consistent TypeScript interfaces across all components
+
+### Fixed
+
+- **Interface Compatibility Issues**
+
+  - Resolved all TypeScript compilation errors from interface changes
+  - Fixed duplicate import statements and unused component references
+  - Updated all component prop types to match new SearchBlock interface
+  - Corrected query validation logic to use new boolean operator system
+
+- **Journal List Scrolling**
+
+  - Fixed segmented journal display to create seamless scrolling experience
+  - Removed fixed-height containers that broke natural scroll flow
+  - Implemented inline rating headers that appear naturally during scroll
+
+- **Boolean Operator Logic**
+  - Fixed operator display logic to only show relevant options based on block position
+  - Corrected preview text to show proper "with previous/next" relationships
+  - Resolved logic conflicts between exclusion and relationship operators
+
+### Technical Improvements
+
+- **Type Safety Enhancements**
+
+  - Complete TypeScript interface overhaul with proper type definitions
+  - Journal data validation with comprehensive error handling
+  - Strict type checking for all boolean operator combinations
+  - Interface consistency across all components and modules
+
+- **Performance Optimizations**
+
+  - Efficient CSV parsing and journal data loading
+  - Optimized component re-rendering with proper state management
+  - Reduced bundle size through proper tree-shaking of unused components
+  - Improved memory usage with better data structure design
+
+- **Code Architecture**
+  - Separation of concerns between UI components and data processing
+  - Modular design for easy extension and maintenance
+  - Comprehensive documentation and inline code comments
+  - Follow-up validation and correction documentation (`docs/corrections-applied.md`)
+
+### Notes
+
+- Journal filtering provides significantly higher precision than Google Scholar's basic interface
+- Boolean operator logic now properly handles complex query relationships
+- All major UI/UX issues from user feedback have been resolved
+- System successfully compiles and builds without errors using bun
+
 ## [0.2.0] - 2025-10-10
 
 ### Added

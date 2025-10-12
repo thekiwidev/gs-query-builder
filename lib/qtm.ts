@@ -1,5 +1,5 @@
 /**
- * Query Translation Module (QTM)
+ * Query Translation Module (QTM) - Simplified Version
  *
  * The core logic responsible for translating structured search inputs
  * into a single, valid, URL-encoded Google Scholar query string.
@@ -13,10 +13,10 @@ export interface SearchBlock {
   fieldId: string;
   /** The user's search term */
   term: string;
-  /** Whether this block should be excluded (NOT logic) */
-  exclude: boolean;
-  /** Whether this block uses OR logic with the next block */
-  useOr: boolean;
+  /** Boolean operator for this block: 'AND', 'OR', or 'NOT' */
+  booleanOperator: "AND" | "OR" | "NOT";
+  /** For proximity search (AROUND operator) - distance between terms */
+  proximityDistance?: number;
 }
 
 export interface GlobalFilters {
@@ -28,6 +28,14 @@ export interface GlobalFilters {
   excludeCitations: boolean;
   /** Include citations */
   includeCitations: boolean;
+  /** Selected field of study code */
+  selectedFieldCode?: string;
+  /** Selected journal ISSNs from the field */
+  selectedJournalISSNs?: string[];
+  /** Language preference */
+  language?: string;
+  /** Document type filtering (0,5 for articles, 4 for case law, etc.) */
+  documentType?: string;
 }
 
 export interface QTMResult {
@@ -45,7 +53,7 @@ export interface QTMResult {
  * Main QTM function: Converts search blocks into a Google Scholar URL
  *
  * @param blocks Array of search blocks to process
- * @param globalFilters Optional global filters (year range, citations, etc.)
+ * @param globalFilters Optional global filters (year range, citations, journals, etc.)
  * @returns QTMResult containing the final URL and metadata
  */
 export function buildScholarUrl(
@@ -90,21 +98,44 @@ export function buildScholarUrl(
       }
     }
 
+    // Process journal selection if provided
+    if (
+      globalFilters?.selectedJournalISSNs &&
+      globalFilters.selectedJournalISSNs.length > 0
+    ) {
+      // Create ISSN-based OR query
+      const issnQueries = globalFilters.selectedJournalISSNs.map(
+        (issn) => `"${issn}"`
+      );
+      const journalQuery =
+        issnQueries.length === 1
+          ? issnQueries[0]
+          : `(${issnQueries.join(" OR ")})`;
+
+      synthesizedBlocks.push(journalQuery);
+      result.messages.push(
+        `Added journal filter with ${globalFilters.selectedJournalISSNs.length} journals`
+      );
+    }
+
     if (synthesizedBlocks.length === 0) {
       result.messages.push("No valid search blocks could be processed");
       return result;
     }
 
-    // Handle OR logic between blocks and concatenate
+    // Build the query with proper boolean operators
     let rawQuery = "";
     for (let i = 0; i < synthesizedBlocks.length; i++) {
-      if (i > 0) {
-        // Check if previous block has OR logic
-        const prevBlock = validBlocks[i - 1];
-        rawQuery += prevBlock.useOr ? " OR " : " ";
+      if (i === 0) {
+        rawQuery = synthesizedBlocks[i];
+      } else {
+        // Use current block's operator for connecting to previous block
+        const currentBlock = validBlocks[i];
+        const operator = currentBlock.booleanOperator === "OR" ? " OR " : " ";
+        rawQuery += operator + synthesizedBlocks[i];
       }
-      rawQuery += synthesizedBlocks[i];
     }
+
     result.rawQuery = rawQuery;
 
     // URL encode the query string
@@ -116,6 +147,7 @@ export function buildScholarUrl(
 
     // Add global filters if provided
     if (globalFilters) {
+      // Year range filters
       if (globalFilters.yearFrom && globalFilters.yearTo) {
         finalUrl += `&as_ylo=${globalFilters.yearFrom}&as_yhi=${globalFilters.yearTo}`;
       } else if (globalFilters.yearFrom) {
@@ -124,13 +156,23 @@ export function buildScholarUrl(
         finalUrl += `&as_yhi=${globalFilters.yearTo}`;
       }
 
+      // Citation filters
       if (globalFilters.excludeCitations) {
         finalUrl += `&as_vis=1`;
-      }
-
-      if (globalFilters.includeCitations) {
+      } else if (globalFilters.includeCitations) {
         finalUrl += `&as_vis=0`;
       }
+
+      // Language filter (default to English if not specified)
+      const language = globalFilters.language || "en";
+      finalUrl += `&hl=${language}`;
+
+      // Document type filter (default to academic articles)
+      const documentType = globalFilters.documentType || "0,5";
+      finalUrl += `&as_sdt=${documentType}`;
+    } else {
+      // Default filters when no globalFilters provided
+      finalUrl += "&hl=en&as_sdt=0,5";
     }
 
     // Validate URL length
@@ -161,41 +203,75 @@ export function buildScholarUrl(
 
 /**
  * Synthesizes a single search block into Google Scholar syntax
- *
- * @param block The search block to process
- * @returns The synthesized search string, or null if processing fails
  */
 function synthesizeSearchBlock(block: SearchBlock): string | null {
-  // Get the field definition
   const fieldDef = getSearchFieldById(block.fieldId);
   if (!fieldDef) {
     return null;
   }
 
-  let term = block.term.trim();
+  const term = block.term.trim();
   if (!term) {
     return null;
   }
 
+  // Handle special field types
+  switch (fieldDef.id) {
+    case "around_operator":
+      // Handle proximity search with distance
+      const terms = term.split(" ").filter((t) => t.trim());
+      if (terms.length >= 2) {
+        const distance = block.proximityDistance || 5;
+        const proximityQuery = `${terms[0]} AROUND (${distance}) ${terms
+          .slice(1)
+          .join(" ")}`;
+        return block.booleanOperator === "NOT"
+          ? `-${proximityQuery}`
+          : proximityQuery;
+      }
+      // Fallback if not enough terms
+      return block.booleanOperator === "NOT" ? `-${term}` : term;
+
+    case "exact_phrase":
+    case "wildcard_phrase":
+      // Force exact phrase matching with quotes
+      const quotedTerm = `"${term.replace(/"/g, "'")}"`;
+      return block.booleanOperator === "NOT" ? `-${quotedTerm}` : quotedTerm;
+
+    default:
+      // Handle standard field-specific searches
+      return synthesizeStandardField(block, fieldDef, term);
+  }
+}
+
+/**
+ * Handle standard field-specific searches
+ */
+function synthesizeStandardField(
+  block: SearchBlock,
+  fieldDef: { mustQuote: boolean; gsOperator: string | null },
+  term: string
+): string {
+  let processedTerm = term;
+
   // Step 1: Apply quoting if required by the field definition
   if (fieldDef.mustQuote) {
-    // Ensure the term is wrapped in double quotes
-    if (!term.startsWith('"') || !term.endsWith('"')) {
-      term = `"${term.replace(/"/g, "'")}"`; // Replace internal quotes with single quotes
+    if (!processedTerm.startsWith('"') || !processedTerm.endsWith('"')) {
+      processedTerm = `"${processedTerm.replace(/"/g, "'")}"`;
     }
   }
 
   // Step 2: Apply Google Scholar operator if present
   if (fieldDef.gsOperator) {
-    term = `${fieldDef.gsOperator}${term}`;
+    processedTerm = `${fieldDef.gsOperator}${processedTerm}`;
   }
 
-  // Step 3: Apply exclusion (NOT logic) if specified
-  if (block.exclude) {
-    term = `-${term}`;
+  // Step 3: Apply NOT logic if specified
+  if (block.booleanOperator === "NOT") {
+    processedTerm = `-${processedTerm}`;
   }
 
-  return term;
+  return processedTerm;
 }
 
 /**
@@ -226,7 +302,6 @@ export function validateSearchBlock(block: SearchBlock): string[] {
 export function sanitizeSearchTerm(term: string): string {
   if (!term) return "";
 
-  // Basic sanitization - remove or escape problematic characters
   return (
     term
       .trim()

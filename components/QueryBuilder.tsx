@@ -14,6 +14,9 @@ import {
   GlobalFilters,
 } from "../lib/qtm";
 import { SearchBlockComponent } from "./SearchBlockComponent";
+
+import { SimplifiedJournalSelector } from "./SimplifiedJournalSelector";
+import { QueryPreview } from "./QueryPreview";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
@@ -36,8 +39,7 @@ export function QueryBuilder() {
     {
       fieldId: "all_fields",
       term: "",
-      exclude: false,
-      useOr: false,
+      booleanOperator: "AND",
     },
   ]);
 
@@ -45,6 +47,11 @@ export function QueryBuilder() {
     excludeCitations: false,
     includeCitations: true,
   });
+
+  const [selectedFieldCode, setSelectedFieldCode] = useState<string>();
+  const [selectedJournalISSNs, setSelectedJournalISSNs] = useState<string[]>(
+    []
+  );
 
   const [lastResult, setLastResult] = useState<QTMResult | null>(null);
 
@@ -54,8 +61,7 @@ export function QueryBuilder() {
       {
         fieldId: "all_fields",
         term: "",
-        exclude: false,
-        useOr: false,
+        booleanOperator: "AND",
       },
     ]);
   };
@@ -88,8 +94,7 @@ export function QueryBuilder() {
       {
         fieldId: "all_fields",
         term: "",
-        exclude: false,
-        useOr: false,
+        booleanOperator: "AND",
       },
     ]);
     setGlobalFilters({
@@ -255,10 +260,23 @@ export function QueryBuilder() {
               </Label>
             </div>
           </div>
+
+          {/* Journal Selection */}
+          <div className="mt-6">
+            <SimplifiedJournalSelector
+              selectedFieldCode={selectedFieldCode}
+              selectedJournalISSNs={selectedJournalISSNs}
+              onFieldChange={setSelectedFieldCode}
+              onJournalsChange={setSelectedJournalISSNs}
+            />
+          </div>
         </div>
 
         {/* Search Blocks */}
         <div className="space-y-4 mb-8">
+          <h3 className="text-lg font-semibold text-foreground mb-4">
+            Search Terms
+          </h3>
           {searchBlocks.map((block, index) => (
             <SearchBlockComponent
               key={index}
@@ -371,6 +389,23 @@ export function QueryBuilder() {
           </div>
         )}
 
+        {/* Query Preview */}
+        <div className="mb-8">
+          <h3 className="text-lg font-semibold text-foreground mb-4">
+            Query Preview
+          </h3>
+          <QueryPreview
+            searchBlocks={searchBlocks}
+            journalBlocks={[]}
+            globalFilters={{
+              ...globalFilters,
+              selectedFieldCode,
+              selectedJournalISSNs,
+            }}
+            onExecuteSearch={handleSearch}
+          />
+        </div>
+
         {/* Help/Instructions */}
         <div className="bg-card border border-border rounded-lg p-6">
           <div className="flex items-center gap-2 mb-4">
@@ -385,28 +420,30 @@ export function QueryBuilder() {
             </li>
             <li className="flex items-start gap-2">
               <span className="text-primary mt-0.5">•</span>
-              Enter your search term
+              Select journals by field of study and rating (A*, A only for
+              precision)
             </li>
             <li className="flex items-start gap-2">
               <span className="text-primary mt-0.5">•</span>
-              Optionally check &quot;Exclude&quot; to use NOT logic
+              Use Boolean operators: space for AND, OR for alternatives, hyphen
+              (-) to exclude
             </li>
             <li className="flex items-start gap-2">
               <span className="text-primary mt-0.5">•</span>
-              Add multiple blocks for complex queries
+              Preview shows real-time validation and query explanation
             </li>
             <li className="flex items-start gap-2">
               <span className="text-primary mt-0.5">•</span>
-              Click &quot;Search Google Scholar&quot; to open results in a new
-              tab
+              Click &quot;Execute Search&quot; in the preview to search Google
+              Scholar
             </li>
           </ul>
           <div className="p-3 bg-muted rounded border-l-4 border-primary">
             <p className="text-sm text-muted-foreground">
-              <strong className="text-foreground">Note:</strong> Some fields
-              like &quot;Abstract&quot; and &quot;ISSN&quot; use approximation
-              methods since Google Scholar doesn&apos;t have dedicated indexed
-              fields for them.
+              <strong className="text-foreground">Key Improvement:</strong>{" "}
+              Journal filtering by ISSN provides much higher precision than
+              Google Scholar&apos;s basic source: operator, making this tool
+              more powerful than the basic interface.
             </p>
           </div>
         </div>

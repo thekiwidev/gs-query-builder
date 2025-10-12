@@ -13,7 +13,6 @@ import { GS_SEARCH_FIELDS } from "../data/SearchWithin";
 import { Button } from "./ui/button";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
-import { Checkbox } from "./ui/checkbox";
 import {
   Select,
   SelectContent,
@@ -52,12 +51,8 @@ export function SearchBlockComponent({
     onChange({ ...block, term });
   };
 
-  const handleExcludeToggle = (checked: boolean) => {
-    onChange({ ...block, exclude: checked });
-  };
-
-  const handleOrToggle = (checked: boolean) => {
-    onChange({ ...block, useOr: checked });
+  const handleBooleanChange = (operator: "AND" | "OR" | "NOT") => {
+    onChange({ ...block, booleanOperator: operator });
   };
 
   return (
@@ -131,35 +126,35 @@ export function SearchBlockComponent({
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         {/* Logic toggles */}
         <div className="flex flex-col sm:flex-row gap-4">
-          <div className="flex items-center space-x-2">
-            <Checkbox
-              id={`exclude-${index}`}
-              checked={block.exclude}
-              onCheckedChange={handleExcludeToggle}
-            />
-            <Label
-              htmlFor={`exclude-${index}`}
-              className="text-sm cursor-pointer hover:text-foreground/80 transition-colors"
-            >
-              Exclude this term (NOT)
+          <div className="space-y-2">
+            <Label className="text-sm font-medium">
+              {index === 0 ? "Exclusion:" : "Connect to Previous:"}
             </Label>
+            <Select
+              value={block.booleanOperator}
+              onValueChange={(value) =>
+                handleBooleanChange(value as "AND" | "OR" | "NOT")
+              }
+            >
+              <SelectTrigger className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {index === 0 ? (
+                  <>
+                    <SelectItem value="AND">Include this term</SelectItem>
+                    <SelectItem value="NOT">Exclude this term</SelectItem>
+                  </>
+                ) : (
+                  <>
+                    <SelectItem value="AND">AND (must have both)</SelectItem>
+                    <SelectItem value="OR">OR (either term)</SelectItem>
+                    <SelectItem value="NOT">NOT (exclude this)</SelectItem>
+                  </>
+                )}
+              </SelectContent>
+            </Select>
           </div>
-
-          {!isOnlyBlock && (
-            <div className="flex items-center space-x-2">
-              <Checkbox
-                id={`or-${index}`}
-                checked={block.useOr || false}
-                onCheckedChange={handleOrToggle}
-              />
-              <Label
-                htmlFor={`or-${index}`}
-                className="text-sm cursor-pointer hover:text-foreground/80 transition-colors"
-              >
-                OR with next block
-              </Label>
-            </div>
-          )}
         </div>
 
         {/* Preview of what will be generated */}
@@ -170,16 +165,23 @@ export function SearchBlockComponent({
             <code
               className={cn(
                 "px-2 py-1 rounded text-xs font-mono transition-colors",
-                block.exclude
+                block.booleanOperator === "NOT"
                   ? "bg-destructive/10 text-destructive hover:bg-destructive/20"
-                  : block.useOr
+                  : block.booleanOperator === "OR" && index > 0
                   ? "bg-orange-100 text-orange-700 hover:bg-orange-200"
                   : "bg-primary/10 text-primary hover:bg-primary/20"
               )}
             >
               {generatePreview(block)}
-              {block.useOr && !isOnlyBlock && (
-                <span className="text-orange-500 ml-1">+ OR</span>
+              {!isOnlyBlock && block.booleanOperator === "OR" && (
+                <span className="text-orange-500 ml-1">
+                  {index === 0 ? "OR with next" : "OR with previous"}
+                </span>
+              )}
+              {!isOnlyBlock && block.booleanOperator === "AND" && (
+                <span className="text-blue-500 ml-1">
+                  {index === 0 ? "AND with next" : "AND with previous"}
+                </span>
               )}
             </code>
           </div>
@@ -206,7 +208,7 @@ function generatePreview(block: SearchBlock): string {
     term = `${field.gsOperator}${term}`;
   }
 
-  if (block.exclude) {
+  if (block.booleanOperator === "NOT") {
     term = `-${term}`;
   }
 

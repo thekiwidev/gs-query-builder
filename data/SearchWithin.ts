@@ -18,22 +18,35 @@ export interface SearchFieldDefinition {
   mustQuote: boolean;
   /** Explanatory note for developer and/or user guidance */
   notes: string;
+  /** Category for UI organization */
+  category: "field" | "proximity" | "phrase";
+  /** Whether this operator requires special input handling */
+  requiresSpecialInput?: boolean;
+  /** Placeholder text for the input field */
+  placeholder?: string;
 }
 
+// Clean, focused search fields based on meeting feedback
 export const GS_SEARCH_FIELDS: SearchFieldDefinition[] = [
+  // === BASIC FIELD SEARCHES ===
   {
     id: "all_fields",
     label: "All Fields",
     gsOperator: null,
     mustQuote: false,
     notes: "General full-text search across all document content",
+    category: "field",
+    placeholder: "Enter search terms",
   },
   {
     id: "article_title",
     label: "Article Title",
     gsOperator: "intitle:",
     mustQuote: true,
-    notes: "Restricts search to document titles only. High precision.",
+    notes:
+      "Restricts search to document titles only. High precision. Uses Google Scholar's intitle: operator.",
+    category: "field",
+    placeholder: "Title keywords or phrase",
   },
   {
     id: "author",
@@ -42,6 +55,18 @@ export const GS_SEARCH_FIELDS: SearchFieldDefinition[] = [
     mustQuote: true,
     notes:
       "Searches for papers by specific authors. Multi-word names require quotes.",
+    category: "field",
+    placeholder: "First Name Last Name",
+  },
+  {
+    id: "abstract",
+    label: "Abstract",
+    gsOperator: "intext:",
+    mustQuote: true,
+    notes:
+      "Searches within article abstracts and body text. Uses Google Scholar's intext: operator.",
+    category: "field",
+    placeholder: "Abstract keywords",
   },
   {
     id: "source_title",
@@ -49,56 +74,77 @@ export const GS_SEARCH_FIELDS: SearchFieldDefinition[] = [
     gsOperator: "source:",
     mustQuote: true,
     notes: "Restricts to papers published in specific journals or conferences",
-  },
-  {
-    id: "abstract",
-    label: "Abstract",
-    gsOperator: null,
-    mustQuote: true,
-    notes:
-      "Approximation: Uses exact phrase matching in full-text search. No dedicated abstract field in GS.",
-  },
-  {
-    id: "keywords",
-    label: "Keywords",
-    gsOperator: null,
-    mustQuote: true,
-    notes:
-      "Approximation: Uses exact phrase matching in full-text search. No dedicated keywords field in GS.",
+    category: "field",
+    placeholder: "Journal or conference name",
   },
   {
     id: "affiliation",
     label: "Affiliation",
     gsOperator: null,
     mustQuote: true,
-    notes:
-      "Approximation: Searches institution name as exact phrase in full-text",
+    notes: "Searches institution name as exact phrase in full-text",
+    category: "field",
+    placeholder: "University or institution name",
   },
   {
-    id: "issn",
-    label: "ISSN",
+    id: "site_search",
+    label: "Site/Domain",
+    gsOperator: "site:",
+    mustQuote: false,
+    notes:
+      "Restrict search to specific website or domain. Example: site:arxiv.org or site:.edu",
+    category: "field",
+    placeholder: "domain.com or .edu",
+  },
+  {
+    id: "filetype_search",
+    label: "File Type",
+    gsOperator: "filetype:",
+    mustQuote: false,
+    notes: "Filter by document type. Common types: pdf, doc, ppt.",
+    category: "field",
+    placeholder: "pdf",
+  },
+
+  // === PHRASE MATCHING ===
+  {
+    id: "exact_phrase",
+    label: "Exact Phrase",
     gsOperator: null,
     mustQuote: true,
     notes:
-      "Critical: Not an indexed field in GS. Must use exact phrase matching for identifier strings.",
+      "Exact phrase matching using quotation marks. Ensures all words appear in exact order.",
+    category: "phrase",
+    placeholder: "exact phrase to search",
   },
   {
-    id: "doi",
-    label: "DOI",
+    id: "wildcard_phrase",
+    label: "Wildcard Phrase",
     gsOperator: null,
     mustQuote: true,
     notes:
-      "Critical: Not an indexed field in GS. Must use exact phrase matching for identifier strings.",
+      "Use * as wildcard for unknown words in phrases. Example: 'John * Smith'",
+    category: "phrase",
+    placeholder: "word * wildcard phrase",
   },
+
+  // === PROXIMITY SEARCH ===
   {
-    id: "orcid",
-    label: "ORCID",
-    gsOperator: null,
-    mustQuote: true,
+    id: "around_operator",
+    label: "Proximity Search (AROUND)",
+    gsOperator: "AROUND",
+    mustQuote: false,
     notes:
-      "Critical: Not an indexed field in GS. Must use exact phrase matching for identifier strings.",
+      "Words within specified distance. Must be CAPITAL. Example: 'climate AROUND (5) change'",
+    category: "proximity",
+    requiresSpecialInput: true,
+    placeholder: "word1 word2 (with distance setting)",
   },
 ];
+
+/**
+ * Helper function to get a search field definition by ID
+ */
 
 /**
  * Helper function to get a search field definition by ID
@@ -114,4 +160,37 @@ export function getSearchFieldById(
  */
 export function getAllSearchFieldIds(): string[] {
   return GS_SEARCH_FIELDS.map((field) => field.id);
+}
+
+/**
+ * Helper function to get fields by category
+ */
+export function getSearchFieldsByCategory(
+  category: SearchFieldDefinition["category"]
+): SearchFieldDefinition[] {
+  return GS_SEARCH_FIELDS.filter((field) => field.category === category);
+}
+
+/**
+ * Group fields for UI organization
+ */
+export const FIELD_CATEGORIES = {
+  field: "Field-Specific Search",
+  proximity: "Proximity Search",
+  phrase: "Phrase Matching",
+} as const;
+
+/**
+ * Get grouped fields for UI display
+ */
+export function getGroupedFields(): Record<string, SearchFieldDefinition[]> {
+  const grouped: Record<string, SearchFieldDefinition[]> = {};
+
+  Object.keys(FIELD_CATEGORIES).forEach((category) => {
+    grouped[category] = getSearchFieldsByCategory(
+      category as SearchFieldDefinition["category"]
+    );
+  });
+
+  return grouped;
 }
