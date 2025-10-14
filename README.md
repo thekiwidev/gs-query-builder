@@ -108,6 +108,20 @@ bun run lint        # Run ESLint
 - **Validation**: Maximum URL length validation (2048 characters)
 - **Type Safety**: Full TypeScript coverage with strict type checking
 
+## Documentation
+
+For a comprehensive guide on how to build a Google Scholar Query Translator from scratch, see:
+
+- [Building a Google Scholar Query Translator](docs/building-google-scholar-query-translator.md)
+
+For a list of potential future enhancements:
+
+- [Future Enhancements](docs/future-enhancements.md)
+
+For an implementation summary:
+
+- [Implementation Summary](docs/implementation-summary.md)
+
 ## License
 
 MIT License - see LICENSE file for details.

@@ -13,8 +13,22 @@ export interface SearchBlock {
   fieldId: string;
   /** The user's search term */
   term: string;
-  /** Boolean operator for this block: 'AND', 'OR', or 'NOT' */
-  booleanOperator: "AND" | "OR" | "NOT";
+  /** Whether this term should be treated as an exact phrase (wrapped in quotes) */
+  isExact?: boolean;
+  /**
+   * Operator for this block defining its relationship with other blocks
+   * NONE: No special relationship
+   * AND_NEXT: Connect with next block using AND
+   * AND_PREV: Connect with previous block using AND
+   * OR_NEXT: Connect with next block using OR
+   * OR_PREV: Connect with previous block using OR
+   * EXCLUDE: Apply NOT logic to this block
+   */
+  operator?: {
+    type: "AND_NEXT" | "AND_PREV" | "OR_NEXT" | "OR_PREV" | "EXCLUDE" | "NONE";
+  };
+  /** Legacy boolean operator - will be deprecated */
+  booleanOperator?: "AND" | "OR" | "NOT";
   /** For proximity search (AROUND operator) - distance between terms */
   proximityDistance?: number;
 }
@@ -50,12 +64,144 @@ export interface QTMResult {
 }
 
 /**
+ * Groups search blocks based on their operator relationships with enhanced parenthetical grouping
+ *
+ * @param blocks Array of valid search blocks
+ * @param synthesizedBlocks Array of synthesized block strings
+ * @returns Properly formatted query string with parenthetical grouping
+ */
+function groupBlocksByOperator(
+  blocks: SearchBlock[],
+  synthesizedBlocks: string[]
+): string {
+  if (synthesizedBlocks.length === 0) {
+    return "";
+  }
+
+  if (synthesizedBlocks.length === 1) {
+    return synthesizedBlocks[0];
+  }
+
+  // First pass: Identify relationship pairs and mark blocks for processing
+  interface ProcessingBlock {
+    index: number;
+    synthesized: string;
+    processed: boolean;
+    relatedTo?: number; // Index of related block
+    relationType?: string; // Type of relationship
+  }
+
+  const processingBlocks: ProcessingBlock[] = synthesizedBlocks.map(
+    (synthesized, index) => ({
+      index,
+      synthesized,
+      processed: false,
+    })
+  );
+
+  // Mark relationship pairs
+  for (let i = 0; i < blocks.length; i++) {
+    const block = blocks[i];
+    let operatorType = "NONE";
+
+    // Determine operator type from new format or legacy format
+    if (block.operator && block.operator.type) {
+      operatorType = block.operator.type;
+    } else if (block.booleanOperator === "OR") {
+      operatorType = "OR_NEXT";
+    } else if (block.booleanOperator === "AND") {
+      operatorType = "AND_NEXT";
+    }
+
+    // Handle forward relationships
+    if (operatorType === "AND_NEXT" || operatorType === "OR_NEXT") {
+      if (i + 1 < blocks.length) {
+        processingBlocks[i].relatedTo = i + 1;
+        processingBlocks[i].relationType = operatorType;
+      }
+    }
+
+    // Handle backward relationships
+    if (operatorType === "AND_PREV" || operatorType === "OR_PREV") {
+      if (i > 0) {
+        processingBlocks[i].relatedTo = i - 1;
+        processingBlocks[i].relationType = operatorType;
+      }
+    }
+  }
+
+  // Second pass: Process blocks with their relationships
+  let resultQuery = "";
+  let i = 0;
+
+  while (i < processingBlocks.length) {
+    const current = processingBlocks[i];
+
+    // Skip if already processed
+    if (current.processed) {
+      i++;
+      continue;
+    }
+
+    // Handle relationships
+    if (current.relatedTo !== undefined && current.relationType) {
+      const related = processingBlocks[current.relatedTo];
+      const operatorType = current.relationType;
+
+      // Create grouping based on relationship
+      let groupQuery = "";
+
+      if (operatorType === "AND_NEXT" || operatorType === "AND_PREV") {
+        groupQuery = `(${current.synthesized} AND ${related.synthesized})`;
+      } else if (operatorType === "OR_NEXT" || operatorType === "OR_PREV") {
+        groupQuery = `(${current.synthesized} OR ${related.synthesized})`;
+      }
+
+      // Add to result query
+      if (resultQuery) {
+        resultQuery += " " + groupQuery;
+      } else {
+        resultQuery = groupQuery;
+      }
+
+      // Mark both blocks as processed
+      current.processed = true;
+      related.processed = true;
+
+      i++; // Move to next unprocessed block
+    }
+    // Handle blocks without relationships or with processed relationships
+    else {
+      if (resultQuery) {
+        resultQuery += " " + current.synthesized;
+      } else {
+        resultQuery = current.synthesized;
+      }
+
+      current.processed = true;
+      i++;
+    }
+  }
+
+  return resultQuery;
+}
+
+/**
  * Main QTM function: Converts search blocks into a Google Scholar URL
  *
- * @param blocks Array of search blocks to process
+ * The heart of the Query Translation Module (QTM) that transforms structured search inputs
+ * into a valid Google Scholar search URL. This function handles:
+ * - Processing and validation of search blocks
+ * - Parenthetical grouping for proper boolean logic
+ * - Journal selection integration via ISSN
+ * - Global filter application (years, citations, etc.)
+ * - URL encoding and parameter formatting
+ *
+ * @param blocks Array of search blocks to process with field, term, and operator relationships
  * @param globalFilters Optional global filters (year range, citations, journals, etc.)
- * @returns QTMResult containing the final URL and metadata
+ * @returns QTMResult containing the final URL, success status, messages, and raw query
  */
+
 export function buildScholarUrl(
   blocks: SearchBlock[],
   globalFilters?: GlobalFilters
@@ -98,44 +244,34 @@ export function buildScholarUrl(
       }
     }
 
+    // Group blocks by operator relationships with proper parentheses
+    let mainQuery = groupBlocksByOperator(validBlocks, synthesizedBlocks);
+
     // Process journal selection if provided
     if (
       globalFilters?.selectedJournalISSNs &&
       globalFilters.selectedJournalISSNs.length > 0
     ) {
-      // Create ISSN-based OR query
-      const issnQueries = globalFilters.selectedJournalISSNs.map(
-        (issn) => `"${issn}"`
+      // Use dedicated formatter for journal ISSNs
+      const journalQuery = formatJournalSelection(
+        globalFilters.selectedJournalISSNs
       );
-      const journalQuery =
-        issnQueries.length === 1
-          ? issnQueries[0]
-          : `(${issnQueries.join(" OR ")})`;
 
-      synthesizedBlocks.push(journalQuery);
+      // Append journal query with implicit AND (space)
+      mainQuery = mainQuery + " " + journalQuery;
+
       result.messages.push(
         `Added journal filter with ${globalFilters.selectedJournalISSNs.length} journals`
       );
     }
 
-    if (synthesizedBlocks.length === 0) {
+    if (!mainQuery) {
       result.messages.push("No valid search blocks could be processed");
       return result;
     }
 
-    // Build the query with proper boolean operators
-    let rawQuery = "";
-    for (let i = 0; i < synthesizedBlocks.length; i++) {
-      if (i === 0) {
-        rawQuery = synthesizedBlocks[i];
-      } else {
-        // Use current block's operator for connecting to previous block
-        const currentBlock = validBlocks[i];
-        const operator = currentBlock.booleanOperator === "OR" ? " OR " : " ";
-        rawQuery += operator + synthesizedBlocks[i];
-      }
-    }
-
+    // Set raw query
+    const rawQuery = mainQuery;
     result.rawQuery = rawQuery;
 
     // URL encode the query string
@@ -203,6 +339,9 @@ export function buildScholarUrl(
 
 /**
  * Synthesizes a single search block into Google Scholar syntax
+ *
+ * @param block The search block to synthesize
+ * @returns Properly formatted query string for this block
  */
 function synthesizeSearchBlock(block: SearchBlock): string | null {
   const fieldDef = getSearchFieldById(block.fieldId);
@@ -210,10 +349,16 @@ function synthesizeSearchBlock(block: SearchBlock): string | null {
     return null;
   }
 
-  const term = block.term.trim();
+  const term = sanitizeSearchTerm(block.term);
   if (!term) {
     return null;
   }
+
+  // Determine if this is an exclusion (NOT) block
+  // First check for the new operator, fall back to legacy booleanOperator if needed
+  const isExclusion =
+    (block.operator && block.operator.type === "EXCLUDE") ||
+    block.booleanOperator === "NOT"; // For backwards compatibility
 
   // Handle special field types
   switch (fieldDef.id) {
@@ -225,38 +370,64 @@ function synthesizeSearchBlock(block: SearchBlock): string | null {
         const proximityQuery = `${terms[0]} AROUND (${distance}) ${terms
           .slice(1)
           .join(" ")}`;
-        return block.booleanOperator === "NOT"
-          ? `-${proximityQuery}`
-          : proximityQuery;
+        return isExclusion ? `-${proximityQuery}` : proximityQuery;
       }
       // Fallback if not enough terms
-      return block.booleanOperator === "NOT" ? `-${term}` : term;
+      return isExclusion ? `-${term}` : term;
 
     case "exact_phrase":
     case "wildcard_phrase":
-      // Force exact phrase matching with quotes
+      // These field types always force exact phrase matching
       const quotedTerm = `"${term.replace(/"/g, "'")}"`;
-      return block.booleanOperator === "NOT" ? `-${quotedTerm}` : quotedTerm;
+      return isExclusion ? `-${quotedTerm}` : quotedTerm;
+
+    case "doi":
+      // Special handling for DOIs - respect isExact property
+      const formattedDoi = term.replace(/^(doi:)?\s*/i, "").trim();
+      const doiQuery = block.isExact ? `"${formattedDoi}"` : formattedDoi;
+      return isExclusion ? `-${doiQuery}` : doiQuery;
+
+    case "issn":
+      // Special handling for ISSNs - never quote them per new requirements
+      const formattedISSN = term.replace(/[^\dXx-]/g, "").trim();
+      return isExclusion ? `-${formattedISSN}` : formattedISSN;
 
     default:
       // Handle standard field-specific searches
-      return synthesizeStandardField(block, fieldDef, term);
+      return synthesizeStandardField(block, fieldDef, term, isExclusion);
   }
 }
 
 /**
- * Handle standard field-specific searches
+ * Handle standard field-specific searches with enhanced processing
+ *
+ * This function applies the specific formatting rules for each search field:
+ * 1. Determines if quotes are needed based on field settings and term content
+ * 2. Applies Google Scholar field-specific operators like intitle:, author:, source:
+ * 3. Handles exclusion logic with the NOT operator (-)
+ *
+ * @param block The search block being processed
+ * @param fieldDef Field definition with settings like mustQuote and gsOperator
+ * @param term The search term after basic sanitization
+ * @param isExclusion Whether this block should use exclusion (NOT) logic
+ * @param containsMultipleWords Whether the term contains multiple words
+ * @returns Properly formatted query fragment for Google Scholar
  */
+
 function synthesizeStandardField(
   block: SearchBlock,
   fieldDef: { mustQuote: boolean; gsOperator: string | null },
-  term: string
+  term: string,
+  isExclusion: boolean = false
 ): string {
   let processedTerm = term;
 
-  // Step 1: Apply quoting if required by the field definition
-  if (fieldDef.mustQuote) {
+  // Step 1: Apply quoting based on the isExact property
+  // Only apply quotes if the user has explicitly requested an exact match
+  if (block.isExact) {
+    // Don't add quotes if they're already present
     if (!processedTerm.startsWith('"') || !processedTerm.endsWith('"')) {
+      // Replace existing quotes with single quotes to avoid syntax errors
       processedTerm = `"${processedTerm.replace(/"/g, "'")}"`;
     }
   }
@@ -267,7 +438,7 @@ function synthesizeStandardField(
   }
 
   // Step 3: Apply NOT logic if specified
-  if (block.booleanOperator === "NOT") {
+  if (isExclusion) {
     processedTerm = `-${processedTerm}`;
   }
 
@@ -293,7 +464,48 @@ export function validateSearchBlock(block: SearchBlock): string[] {
     errors.push("Search term is required");
   }
 
+  // Check if operator type is valid
+  if (
+    block.operator &&
+    !["AND_NEXT", "AND_PREV", "OR_NEXT", "OR_PREV", "EXCLUDE", "NONE"].includes(
+      block.operator.type
+    )
+  ) {
+    errors.push(`Invalid operator type: ${block.operator.type}`);
+  }
+
   return errors;
+}
+
+/**
+ * Formats journal selection by ISSN for use in Google Scholar queries
+ *
+ * This specialized formatter creates a properly structured journal filter
+ * using ISSNs instead of journal names. This provides much higher precision
+ * than Google Scholar's native source: operator because:
+ * 1. ISSNs are globally unique identifiers for journals
+ * 2. Using exact match syntax with quotes prevents partial matches
+ * 3. Proper OR logic grouping allows for multiple journal filtering
+ *
+ * @param issns Array of ISSNs to include in the query
+ * @returns Properly formatted query string with OR logic and parenthetical grouping
+ */
+
+export function formatJournalSelection(issns: string[]): string {
+  if (!issns || issns.length === 0) {
+    return "";
+  }
+
+  // No quotation marks around ISSNs per new requirements
+  const issnQueries = issns.map((issn) => issn.trim());
+
+  // Single ISSN doesn't need parentheses
+  if (issnQueries.length === 1) {
+    return issnQueries[0];
+  }
+
+  // Multiple ISSNs need to be grouped with OR operators inside parentheses
+  return `(${issnQueries.join(" OR ")})`;
 }
 
 /**

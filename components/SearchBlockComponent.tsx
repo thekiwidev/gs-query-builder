@@ -51,8 +51,30 @@ export function SearchBlockComponent({
     onChange({ ...block, term });
   };
 
-  const handleBooleanChange = (operator: "AND" | "OR" | "NOT") => {
-    onChange({ ...block, booleanOperator: operator });
+  // New handler for the enhanced operator options
+  const handleOperatorChange = (
+    operatorType:
+      | "AND_NEXT"
+      | "AND_PREV"
+      | "OR_NEXT"
+      | "OR_PREV"
+      | "EXCLUDE"
+      | "NONE"
+  ) => {
+    // For backward compatibility, map to legacy booleanOperator as well
+    let legacyOperator: "AND" | "OR" | "NOT" = "AND";
+
+    if (operatorType === "EXCLUDE") {
+      legacyOperator = "NOT";
+    } else if (operatorType === "OR_NEXT" || operatorType === "OR_PREV") {
+      legacyOperator = "OR";
+    }
+
+    onChange({
+      ...block,
+      operator: { type: operatorType },
+      booleanOperator: legacyOperator,
+    });
   };
 
   return (
@@ -111,49 +133,114 @@ export function SearchBlockComponent({
             <Search className="h-4 w-4" />
             Search Term:
           </Label>
-          <Input
-            id={`term-${index}`}
-            type="text"
-            value={block.term}
-            onChange={(e) => handleTermChange(e.target.value)}
-            placeholder="Enter your search term..."
-            className="w-full"
-          />
+          <div className="flex gap-2">
+            <Input
+              id={`term-${index}`}
+              type="text"
+              value={block.term}
+              onChange={(e) => handleTermChange(e.target.value)}
+              placeholder="Enter your search term..."
+              className="w-full"
+            />
+            <div className="flex items-center border border-input rounded-md px-3 whitespace-nowrap">
+              <input
+                type="checkbox"
+                id={`exact-${index}`}
+                checked={block.isExact || false}
+                onChange={(e) =>
+                  onChange({ ...block, isExact: e.target.checked })
+                }
+                className="mr-2"
+              />
+              <label
+                htmlFor={`exact-${index}`}
+                className="text-sm cursor-pointer"
+              >
+                Is Exact
+              </label>
+            </div>
+          </div>
         </div>
       </div>
 
       {/* Logic toggles and Preview */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        {/* Logic toggles */}
+        {/* Enhanced Operators with clear descriptions */}
         <div className="flex flex-col sm:flex-row gap-4">
           <div className="space-y-2">
-            <Label className="text-sm font-medium">
-              {index === 0 ? "Exclusion:" : "Connect to Previous:"}
+            <Label className="text-sm font-medium flex items-center gap-1">
+              <Code className="h-4 w-4" />
+              Logical Operator:
+              <span className="ml-1 text-xs text-muted-foreground">
+                (Defines relationship with other blocks)
+              </span>
             </Label>
             <Select
-              value={block.booleanOperator}
+              value={block.operator?.type || "NONE"}
               onValueChange={(value) =>
-                handleBooleanChange(value as "AND" | "OR" | "NOT")
+                handleOperatorChange(
+                  value as
+                    | "AND_NEXT"
+                    | "AND_PREV"
+                    | "OR_NEXT"
+                    | "OR_PREV"
+                    | "EXCLUDE"
+                    | "NONE"
+                )
               }
             >
               <SelectTrigger className="w-full">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {index === 0 ? (
-                  <>
-                    <SelectItem value="AND">Include this term</SelectItem>
-                    <SelectItem value="NOT">Exclude this term</SelectItem>
-                  </>
-                ) : (
-                  <>
-                    <SelectItem value="AND">AND (must have both)</SelectItem>
-                    <SelectItem value="OR">OR (either term)</SelectItem>
-                    <SelectItem value="NOT">NOT (exclude this)</SelectItem>
-                  </>
+                <SelectItem value="NONE">No special operator</SelectItem>
+
+                {/* AND operators - adds parenthetical grouping */}
+                {!isOnlyBlock && (
+                  <SelectItem value="AND_NEXT">
+                    AND with next block - (this AND next)
+                  </SelectItem>
                 )}
+                {index > 0 && (
+                  <SelectItem value="AND_PREV">
+                    AND with previous block - (prev AND this)
+                  </SelectItem>
+                )}
+
+                {/* OR operators - adds parenthetical grouping */}
+                {!isOnlyBlock && (
+                  <SelectItem value="OR_NEXT">
+                    OR with next block - (this OR next)
+                  </SelectItem>
+                )}
+                {index > 0 && (
+                  <SelectItem value="OR_PREV">
+                    OR with previous block - (prev OR this)
+                  </SelectItem>
+                )}
+
+                {/* Exclude operator - adds NOT logic */}
+                <SelectItem value="EXCLUDE">
+                  Exclude this block (NOT)
+                </SelectItem>
               </SelectContent>
             </Select>
+
+            {/* Operator explanation tooltip */}
+            {block.operator?.type !== "NONE" && (
+              <p className="text-xs text-muted-foreground mt-1">
+                {block.operator?.type === "AND_NEXT" &&
+                  "Groups this term with the next term using AND logic"}
+                {block.operator?.type === "AND_PREV" &&
+                  "Groups this term with the previous term using AND logic"}
+                {block.operator?.type === "OR_NEXT" &&
+                  "Groups this term with the next term using OR logic"}
+                {block.operator?.type === "OR_PREV" &&
+                  "Groups this term with the previous term using OR logic"}
+                {block.operator?.type === "EXCLUDE" &&
+                  "Excludes results containing this term"}
+              </p>
+            )}
           </div>
         </div>
 
@@ -165,23 +252,32 @@ export function SearchBlockComponent({
             <code
               className={cn(
                 "px-2 py-1 rounded text-xs font-mono transition-colors",
-                block.booleanOperator === "NOT"
+                block.operator?.type === "EXCLUDE" ||
+                  block.booleanOperator === "NOT"
                   ? "bg-destructive/10 text-destructive hover:bg-destructive/20"
-                  : block.booleanOperator === "OR" && index > 0
+                  : block.operator?.type === "OR_NEXT" ||
+                    block.operator?.type === "OR_PREV" ||
+                    block.booleanOperator === "OR"
                   ? "bg-orange-100 text-orange-700 hover:bg-orange-200"
                   : "bg-primary/10 text-primary hover:bg-primary/20"
               )}
             >
               {generatePreview(block)}
-              {!isOnlyBlock && block.booleanOperator === "OR" && (
-                <span className="text-orange-500 ml-1">
-                  {index === 0 ? "OR with next" : "OR with previous"}
-                </span>
+              {/* Show relationship based on new operator property */}
+              {block.operator?.type === "AND_NEXT" && (
+                <span className="text-blue-500 ml-1">AND with next</span>
               )}
-              {!isOnlyBlock && block.booleanOperator === "AND" && (
-                <span className="text-blue-500 ml-1">
-                  {index === 0 ? "AND with next" : "AND with previous"}
-                </span>
+              {block.operator?.type === "AND_PREV" && (
+                <span className="text-blue-500 ml-1">AND with previous</span>
+              )}
+              {block.operator?.type === "OR_NEXT" && (
+                <span className="text-orange-500 ml-1">OR with next</span>
+              )}
+              {block.operator?.type === "OR_PREV" && (
+                <span className="text-orange-500 ml-1">OR with previous</span>
+              )}
+              {block.operator?.type === "EXCLUDE" && (
+                <span className="text-destructive ml-1">excluded</span>
               )}
             </code>
           </div>
@@ -200,7 +296,8 @@ function generatePreview(block: SearchBlock): string {
 
   let term = block.term.trim();
 
-  if (field.mustQuote && !term.startsWith('"')) {
+  // Only add quotes if "Is Exact" is checked
+  if (block.isExact && !term.startsWith('"')) {
     term = `"${term}"`;
   }
 
@@ -208,7 +305,11 @@ function generatePreview(block: SearchBlock): string {
     term = `${field.gsOperator}${term}`;
   }
 
-  if (block.booleanOperator === "NOT") {
+  // Check for exclusion (NOT) using either the new operator or legacy booleanOperator
+  const isExclusion =
+    block.operator?.type === "EXCLUDE" || block.booleanOperator === "NOT";
+
+  if (isExclusion) {
     term = `-${term}`;
   }
 

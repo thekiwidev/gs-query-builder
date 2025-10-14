@@ -520,10 +520,27 @@ function generateQueryExplanation(blocks: SearchBlock[]): string {
 
     let part = "";
 
-    if (block.booleanOperator === "NOT") {
+    // Determine the operator type using both new operator field and legacy booleanOperator
+    const isExclusion =
+      block.operator?.type === "EXCLUDE" || block.booleanOperator === "NOT";
+    const isOr =
+      block.operator?.type?.includes("OR_") || block.booleanOperator === "OR";
+    const isNextConnection =
+      block.operator?.type === "AND_NEXT" || block.operator?.type === "OR_NEXT";
+    const isPrevConnection =
+      block.operator?.type === "AND_PREV" || block.operator?.type === "OR_PREV";
+
+    if (isExclusion) {
       part += "Exclude ";
-    } else if (index > 0) {
-      part += block.booleanOperator === "OR" ? "OR find " : "AND find ";
+    } else if (index > 0 && !isNextConnection && !isPrevConnection) {
+      // Legacy behavior
+      part += isOr ? "OR find " : "AND find ";
+    } else if (isNextConnection) {
+      part += isOr ? "OR find " : "AND find ";
+    } else if (isPrevConnection) {
+      part += isOr
+        ? "OR find (connected to previous) "
+        : "AND find (connected to previous) ";
     } else {
       part += "Find ";
     }

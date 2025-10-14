@@ -99,17 +99,37 @@ export function QueryPreview({
       description: string;
     }> = [];
 
-    // Add search block parts
+    // Add search block parts with operator relationship descriptions
     searchBlocks.forEach((block, index) => {
       const fieldDef = getSearchFieldById(block.fieldId);
       if (fieldDef && block.term?.trim()) {
+        // Determine the operator description
+        let operatorDescription = "";
+
+        if (block.operator) {
+          if (block.operator.type === "EXCLUDE") {
+            operatorDescription = " (excluded)";
+          } else if (block.operator.type === "AND_NEXT") {
+            operatorDescription = " AND connected with next block";
+          } else if (block.operator.type === "AND_PREV") {
+            operatorDescription = " AND connected with previous block";
+          } else if (block.operator.type === "OR_NEXT") {
+            operatorDescription = " OR connected with next block";
+          } else if (block.operator.type === "OR_PREV") {
+            operatorDescription = " OR connected with previous block";
+          }
+        } else if (block.booleanOperator === "NOT") {
+          // Legacy support
+          operatorDescription = " (excluded)";
+        }
+
         parts.push({
           type: "search",
           label: `${fieldDef.label} ${index + 1}`,
           query: block.term,
           description: `Search ${fieldDef.label.toLowerCase()} for "${
             block.term
-          }"${block.booleanOperator === "NOT" ? " (excluded)" : ""}`,
+          }"${operatorDescription}`,
         });
       }
     });
@@ -334,11 +354,44 @@ export function QueryPreview({
           <Code className="h-4 w-4" />
           Generated Query String
         </h4>
-        <div className="bg-muted rounded p-3 font-mono text-sm break-all">
-          {queryResult.success
-            ? queryResult.rawQuery
-            : "Query generation failed"}
-        </div>
+
+        {/* Syntax Highlighted Query Display */}
+        {queryResult.success && (
+          <div className="bg-muted rounded p-3 font-mono text-sm break-all">
+            {/* Highlight parentheses and operators for better visibility */}
+            {queryResult.rawQuery
+              .replace(/\(/g, "<span class='text-blue-600 font-bold'>(</span>")
+              .replace(/\)/g, "<span class='text-blue-600 font-bold'>)</span>")
+              .replace(
+                / AND /g,
+                "<span class='text-green-600 font-semibold'> AND </span>"
+              )
+              .replace(
+                / OR /g,
+                "<span class='text-orange-600 font-semibold'> OR </span>"
+              )
+              .replace(
+                /-([^ ]+)/g,
+                "<span class='text-red-600 font-semibold'>-$1</span>"
+              )
+              .split('"')
+              .map((part, i) =>
+                i % 2 === 0 ? (
+                  <span key={i} dangerouslySetInnerHTML={{ __html: part }} />
+                ) : (
+                  <span key={i} className="text-purple-600">
+                    &quot;{part}&quot;
+                  </span>
+                )
+              )}
+          </div>
+        )}
+
+        {!queryResult.success && (
+          <div className="bg-muted rounded p-3 font-mono text-sm break-all text-red-500">
+            Query generation failed
+          </div>
+        )}
 
         {validation.correctedQuery && (
           <div className="mt-3">

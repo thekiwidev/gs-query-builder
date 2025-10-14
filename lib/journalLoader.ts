@@ -347,6 +347,70 @@ export function searchJournals(
 }
 
 /**
+ * Get journals by their ISSNs
+ *
+ * @param journals Full collection of journal records
+ * @param issns Array of ISSNs to search for
+ * @returns Array of journal records matching the provided ISSNs
+ */
+export function getJournalsByISSNs(
+  journals: JournalRecord[],
+  issns: string[]
+): JournalRecord[] {
+  if (!issns || issns.length === 0) {
+    return [];
+  }
+
+  // Normalize ISSNs for comparison
+  const normalizedIssns = issns.map((issn) => issn.trim().toUpperCase());
+
+  return journals.filter((journal) => {
+    // Check primary ISSN
+    if (normalizedIssns.includes(journal.issn.trim().toUpperCase())) {
+      return true;
+    }
+
+    // Check online ISSN if available
+    if (
+      journal.issnOnline &&
+      normalizedIssns.includes(journal.issnOnline.trim().toUpperCase())
+    ) {
+      return true;
+    }
+
+    return false;
+  });
+}
+
+/**
+ * Extract all ISSNs from journals
+ *
+ * @param journals Array of journal records
+ * @returns Array of unique ISSNs
+ */
+export function extractISSNsFromJournals(journals: JournalRecord[]): string[] {
+  if (!journals || journals.length === 0) {
+    return [];
+  }
+
+  const issns = new Set<string>();
+
+  journals.forEach((journal) => {
+    // Add primary ISSN
+    if (journal.issn) {
+      issns.add(journal.issn.trim());
+    }
+
+    // Add online ISSN if available and different
+    if (journal.issnOnline && journal.issnOnline !== journal.issn) {
+      issns.add(journal.issnOnline.trim());
+    }
+  });
+
+  return Array.from(issns);
+}
+
+/**
  * Get validation summary in human-readable format
  */
 export function getValidationSummary(result: JournalValidationResult): string {
