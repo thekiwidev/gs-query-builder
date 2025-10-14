@@ -7,6 +7,82 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **"Is Exact" Search Control**
+
+  - Added new `isExact` property to SearchBlock interface
+  - Implemented checkbox UI control for toggling exact phrase matching
+  - Quotes are now only applied to terms when isExact is true
+  - Changed ISSN formatting to never use quotes for better compatibility with Google Scholar
+
+- **Enhanced Boolean Operator System**
+
+  - New dropdown-based operator selection with clear relationship descriptions
+  - Added explicit directional boolean operators: AND_NEXT, AND_PREV, OR_NEXT, OR_PREV, EXCLUDE
+  - Smart operator display - conditional options based on block position
+  - Proper parenthetical grouping in query construction for precise boolean logic
+  - Improved operator explanations in UI with tooltips and context
+  - Syntax highlighting for parentheses, boolean operators, and quoted phrases in query preview
+
+- **Advanced Query Synthesis**
+  - Enhanced block synthesis with specialized handling for different field types
+  - Improved DOI and ISSN handling with dedicated formatting rules
+  - Added formatJournalSelection function for proper ISSN-based OR query construction
+  - Automatic detection and handling of multi-word terms requiring quotation
+  - Smart relationship management between blocks with consistent operator handling
+- **Comprehensive Documentation**
+  - Added "Building a Google Scholar Query Translator" comprehensive guide
+  - Created detailed future enhancement proposals document
+  - Added implementation summary with technical details
+- Added example test guide with test scenarios
+- Enhanced README with detailed architecture overview
+
+### Fixed
+
+- Journal selection bug where selected journals were not included in the main query
+- Improved display of generated query with proper pre formatting to prevent HTML rendering issues
+- Changed quoting behavior: terms are only quoted when "Is Exact" checkbox is checked
+- Removed quotation marks from journal ISSNs in query construction
+
+### Changed
+
+- **Redesigned SearchBlockComponent**
+
+  - Replaced simple boolean toggles with enhanced operator dropdown
+  - Added visual indicators for operator relationships between blocks
+  - Improved preview display to show relationships with adjacent blocks
+  - Added detailed operator explanations in the UI
+
+- **Updated QueryBuilder Component**
+
+  - Enhanced block management with operator relationship awareness
+  - Improved addSearchBlock logic to maintain proper relationships
+  - Updated removeSearchBlock to handle operator relationship cleanup
+  - Better documentation of operator functionality
+
+- **Enhanced Query Translation Module (QTM)**
+  - Added proper groupBlocksByOperator function for parenthetical grouping
+  - Updated SearchBlock interface with new operator property structure and isExact flag
+  - Updated synthesizeStandardField function to respect isExact property for quote handling
+  - Maintained backward compatibility with legacy booleanOperator property
+  - Improved query validation for complex operator relationships
+
+### Technical Improvements
+
+- **Type Safety Enhancements**
+
+  - Enhanced SearchBlock interface with optional operator property and isExact flag
+  - Added operator type union with all possible relationship types
+  - Improved compatibility between new and legacy operator systems
+  - Better TypeScript validation across component boundaries
+
+- **Code Quality Improvements**
+  - Added comprehensive JSDoc documentation for all new functions
+  - Enhanced query synthesis modularity with dedicated formatting functions
+  - Implemented special case handling for different field types (DOI, ISSN, etc.)
+  - Improved error handling and reporting throughout the query building process
+
 ## [0.3.0] - 2025-10-12
 
 ### Added
