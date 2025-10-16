@@ -9,6 +9,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Journal Rating Filter Integration** - Dynamic filtering of journals by rating (A\*, A, B, C)
+
+  - Connected `JournalRatingsSidebar` to parent state for active filtering
+  - Added "Show All" and "Show None" buttons for rating selection
+  - Real-time journal list updates when rating selection changes
+  - Journals filter by BOTH field codes AND selected ratings
+
+- **RFC 4180 Compliant CSV Parser** - Fixed journal loading to handle all 2,510 journals
+
+  - Replaced simple line-based CSV parser with proper RFC 4180 compliant parser
+  - Now correctly handles multi-line quoted fields (e.g., journal names with newlines)
+  - Properly parses escaped quotes within quoted fields
+  - Handles mixed line endings (CRLF and LF)
+  - Supports all 2,510 journals across all rating types:
+    - 193 A\* journals
+    - 623 A journals
+    - 800 B journals
+    - 894 C journals
+
 - **Advanced Operator Validation System** - Smart real-time operator validation with visual feedback
 
   - `lib/operatorValidationEngine.ts` - Core validation logic (~250 lines):
@@ -44,13 +63,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - `useOperatorSelector()` - Manages individual operator selection state
     - Per-block validation queries for targeted error display
     - Smart operator option filtering based on context
-
-- **Operator Validation Rules:**
-
-  1. Cannot use AND/OR with excluded (NOT) blocks
-  2. First block cannot use "with previous" operator
-  3. Last block cannot use "with next" operator
-  4. Double EXCLUDE operators trigger warning (double negation)
 
 - **Real-Time Query Generation** - Query updates instantly with all user interactions
 
@@ -112,6 +124,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Default Journal Rating Selection** - Changed from all ratings to A\* only
+
+  - `QueryBuilder.tsx`: `selectedJournalRatings` now initializes with `["A*"]` instead of `["A*", "A", "B", "C"]`
+  - Users can easily expand to other ratings via "Show All" button in sidebar
+
 - **QueryBuilder Component** - Simplified for real-time updates
   - Removed `lastResult` state tracking
   - Implemented `generateCurrentQuery()` for continuous query generation
@@ -120,6 +137,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Query displays instantly on any user interaction
 
 ### Fixed
+
+- **Critical:** Journal rating validation was hardcoded to only accept A\* and A ratings, rejecting B and C journals during CSV parsing
+
+  - Updated `validateRating()` in `types/journal.ts` to accept all four rating types
+  - Now all 2,510 journals load correctly including B and C rated journals
+
+- Journal loading now correctly parses all 2,510 journals from CSV (previously failed on entries with multi-line quoted fields)
+- Journal filtering by rating now works correctly across all four rating categories
+- CSV parser no longer rejects valid journals due to embedded newlines in quoted fields
 
 - **Operator Validation** - Prevents invalid operator combinations before query generation
   - AND/OR operators no longer allowed after EXCLUDE blocks
@@ -143,8 +169,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Immediate visual feedback to user actions
   - Efficient computation for large block sequences
 
+- **CSV Parsing Robustness**
+
+  - RFC 4180 compliant parser handles all edge cases
+  - Proper state tracking for quoted fields and line endings
+  - Character-by-character processing for accuracy
+  - Full journal dataset now accessible
+
 - **Code Quality**
-  - Added ~700 lines of validation system code
+  - Added ~2,000+ lines of production code
   - Zero TypeScript errors (strict mode)
   - Zero ESLint warnings
   - Complete documentation with examples
@@ -160,10 +193,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Valid state confirmation (green checkmarks)
 
 - **Query Preview**
+
   - Instant updates as user types
   - No delay between input and output
   - Clean, focused display
   - Distraction-free interface
+
+- **Journal Selection**
+  - Dynamic filtering by field AND rating
+  - Real-time list updates
+  - Quick "Show All" / "Show None" actions
+  - Clear visual indication of selected journals
 
 ### Notes
 
@@ -171,6 +211,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Real-time query generation improves user experience significantly
 - All validation rules documented and tested
 - System prevents invalid queries at the source
+- Journal database now includes all 2,510 journals (previously only ~400)
 
 ---
 

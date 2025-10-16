@@ -39,6 +39,9 @@ export function QueryBuilder() {
   const [selectedJournalISSNs, setSelectedJournalISSNs] = useState<string[]>(
     []
   );
+  const [selectedJournalRatings, setSelectedJournalRatings] = useState<
+    string[]
+  >(["A*"]);
 
   // Generate query in real-time
   const generateCurrentQuery = () => {
@@ -264,6 +267,8 @@ export function QueryBuilder() {
         onFieldCodesChange: setSelectedFieldCodes,
         selectedJournalISSNs,
         onJournalsChange: setSelectedJournalISSNs,
+        selectedJournalRatings,
+        onJournalRatingsChange: setSelectedJournalRatings,
         yearLow: globalFilters.yearFrom,
         yearHigh: globalFilters.yearTo,
         onYearChange: (yearLow, yearHigh) => {

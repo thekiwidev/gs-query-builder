@@ -11,12 +11,14 @@ interface SelectedJournalsSidebarProps {
   selectedJournalISSNs: string[];
   onJournalsChange: (issns: string[]) => void;
   selectedFieldCodes: string[];
+  selectedRatings: string[];
 }
 
 export function SelectedJournalsSidebar({
   selectedJournalISSNs,
   onJournalsChange,
   selectedFieldCodes,
+  selectedRatings,
 }: SelectedJournalsSidebarProps) {
   const [journals, setJournals] = useState<JournalRecord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -45,8 +47,10 @@ export function SelectedJournalsSidebar({
       return [];
     }
 
-    const filtered = journals.filter((j) =>
-      selectedFieldCodes.includes(j.fieldCode)
+    const filtered = journals.filter(
+      (j) =>
+        selectedFieldCodes.includes(j.fieldCode) &&
+        selectedRatings.includes(j.rating)
     );
 
     // Sort by rating: A* -> A -> B -> C
@@ -56,7 +60,7 @@ export function SelectedJournalsSidebar({
         (ratingOrder[a.rating as keyof typeof ratingOrder] ?? 4) -
         (ratingOrder[b.rating as keyof typeof ratingOrder] ?? 4)
     );
-  }, [journals, selectedFieldCodes]);
+  }, [journals, selectedFieldCodes, selectedRatings]);
 
   const RATING_BADGE_COLORS: Record<string, string> = {
     "A*": "bg-red-500 text-white",

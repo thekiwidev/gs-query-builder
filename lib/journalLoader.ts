@@ -65,15 +65,16 @@ export function parseJournalCSV(csvText: string): JournalValidationResult {
     },
   };
 
-  // Simple CSV parsing (consider using a proper CSV library for production)
-  const lines = csvText.trim().split("\n");
-  if (lines.length < 2) {
+  // Parse CSV properly handling quoted fields that may contain newlines
+  const rows = parseCSVText(csvText);
+  if (rows.length < 2) {
     throw new Error(
       "CSV file must contain at least a header row and one data row"
     );
   }
 
-  const headers = lines[0].split(",").map((h) => h.trim().replace(/"/g, ""));
+  const headerRow = rows[0];
+  const headers = headerRow.map((h) => h.trim().replace(/"/g, ""));
 
   // Validate required headers
   const requiredHeaders = [
@@ -89,16 +90,16 @@ export function parseJournalCSV(csvText: string): JournalValidationResult {
   }
 
   // Process each data row
-  for (let i = 1; i < lines.length; i++) {
+  for (let i = 1; i < rows.length; i++) {
     const rowNumber = i + 1;
     result.summary.totalRows++;
 
     try {
-      const values = parseCSVRow(lines[i]);
+      const values = rows[i];
       if (values.length !== headers.length) {
         result.invalidJournals.push({
           rowNumber,
-          data: { raw: lines[i] },
+          data: { raw: values.join(",") },
           errors: [
             `Column count mismatch. Expected ${headers.length}, got ${values.length}`,
           ],
@@ -136,7 +137,7 @@ export function parseJournalCSV(csvText: string): JournalValidationResult {
     } catch (error) {
       result.invalidJournals.push({
         rowNumber,
-        data: { raw: lines[i] },
+        data: { raw: rows[i].join(",") },
         errors: [
           `Parse error: ${
             error instanceof Error ? error.message : "Unknown error"
@@ -151,28 +152,66 @@ export function parseJournalCSV(csvText: string): JournalValidationResult {
 }
 
 /**
- * Parse a single CSV row, handling quoted values
+ * Parse CSV text handling quoted fields that may contain newlines, commas, etc.
+ * This is a proper CSV parser that respects RFC 4180
  */
-function parseCSVRow(row: string): string[] {
-  const result: string[] = [];
-  let current = "";
+function parseCSVText(csvText: string): string[][] {
+  const rows: string[][] = [];
+  let currentRow: string[] = [];
+  let currentField = "";
   let inQuotes = false;
+  let i = 0;
 
-  for (let i = 0; i < row.length; i++) {
-    const char = row[i];
+  while (i < csvText.length) {
+    const char = csvText[i];
+    const nextChar = csvText[i + 1];
 
     if (char === '"') {
-      inQuotes = !inQuotes;
+      if (inQuotes && nextChar === '"') {
+        // Escaped quote
+        currentField += '"';
+        i += 2;
+      } else {
+        // Toggle quote state
+        inQuotes = !inQuotes;
+        i++;
+      }
     } else if (char === "," && !inQuotes) {
-      result.push(current.trim());
-      current = "";
+      // Field separator
+      currentRow.push(currentField.trim());
+      currentField = "";
+      i++;
+    } else if ((char === "\n" || char === "\r") && !inQuotes) {
+      // Row separator
+      if (currentField || currentRow.length > 0) {
+        currentRow.push(currentField.trim());
+        if (currentRow.length > 0 && currentRow.some((f) => f.length > 0)) {
+          rows.push(currentRow);
+        }
+        currentRow = [];
+        currentField = "";
+      }
+      // Skip \r\n
+      if (char === "\r" && nextChar === "\n") {
+        i += 2;
+      } else {
+        i++;
+      }
     } else {
-      current += char;
+      currentField += char;
+      i++;
     }
   }
 
-  result.push(current.trim());
-  return result;
+  // Add last field and row
+  if (currentField || currentRow.length > 0) {
+    currentRow.push(currentField.trim());
+    if (currentRow.length > 0 && currentRow.some((f) => f.length > 0)) {
+      rows.push(currentRow);
+    }
+  }
+
+  return rows;
 }
 
 /**

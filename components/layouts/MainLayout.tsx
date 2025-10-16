@@ -11,6 +11,8 @@ interface MainLayoutProps {
     onFieldCodesChange: (fieldCodes: string[]) => void;
     selectedJournalISSNs: string[];
     onJournalsChange: (issnList: string[]) => void;
+    selectedJournalRatings: string[];
+    onJournalRatingsChange: (ratings: string[]) => void;
     yearLow?: number;
     yearHigh?: number;
     onYearChange?: (yearLow?: number, yearHigh?: number) => void;

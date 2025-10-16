@@ -11,6 +11,8 @@ interface SidebarContainerProps {
   onFieldCodesChange: (fieldCodes: string[]) => void;
   selectedJournalISSNs: string[];
   onJournalsChange: (issnList: string[]) => void;
+  selectedJournalRatings: string[];
+  onJournalRatingsChange: (ratings: string[]) => void;
   yearLow?: number;
   yearHigh?: number;
   onYearChange?: (yearLow?: number, yearHigh?: number) => void;
@@ -21,6 +23,8 @@ export function SidebarContainer({
   onFieldCodesChange,
   selectedJournalISSNs,
   onJournalsChange,
+  selectedJournalRatings,
+  onJournalRatingsChange,
   yearLow,
   yearHigh,
   onYearChange,
@@ -40,14 +44,18 @@ export function SidebarContainer({
         onFieldCodesChange={onFieldCodesChange}
       />
 
-      {/* Journal Ratings - Placeholder for future */}
-      <JournalRatingsSidebar />
+      {/* Journal Ratings */}
+      <JournalRatingsSidebar
+        selectedRatings={selectedJournalRatings}
+        onRatingsChange={onJournalRatingsChange}
+      />
 
       {/* Available Journals */}
       <SelectedJournalsSidebar
         selectedJournalISSNs={selectedJournalISSNs}
         onJournalsChange={onJournalsChange}
         selectedFieldCodes={selectedFieldCodes}
+        selectedRatings={selectedJournalRatings}
       />
     </div>
   );

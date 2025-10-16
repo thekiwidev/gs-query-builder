@@ -3,6 +3,7 @@
 import React from "react";
 import { Checkbox } from "../../ui/checkbox";
 import { Star, GraduationCap, BookOpen } from "lucide-react";
+import { Button } from "../../ui/button";
 
 const RATING_ICONS: Record<string, React.ReactNode> = {
   "A*": <Star className="h-4 w-4 fill-current" />,
@@ -11,28 +12,29 @@ const RATING_ICONS: Record<string, React.ReactNode> = {
   C: <BookOpen className="h-4 w-4" />,
 };
 
-export function JournalRatingsSidebar() {
-  const [selectedRatings, setSelectedRatings] = React.useState<string[]>([
-    "A*",
-    "A",
-    "B",
-    "C",
-  ]);
+interface JournalRatingsSidebarProps {
+  selectedRatings: string[];
+  onRatingsChange: (ratings: string[]) => void;
+}
 
+export function JournalRatingsSidebar({
+  selectedRatings,
+  onRatingsChange,
+}: JournalRatingsSidebarProps) {
   const handleRatingToggle = (rating: string, checked: boolean) => {
     if (checked) {
-      setSelectedRatings([...selectedRatings, rating]);
+      onRatingsChange([...selectedRatings, rating]);
     } else {
-      setSelectedRatings(selectedRatings.filter((r) => r !== rating));
+      onRatingsChange(selectedRatings.filter((r) => r !== rating));
     }
   };
 
   const handleShowAll = () => {
-    setSelectedRatings(["A*", "A", "B", "C"]);
+    onRatingsChange(["A*", "A", "B", "C"]);
   };
 
   const handleShowNone = () => {
-    setSelectedRatings([]);
+    onRatingsChange([]);
   };
 
   return (
@@ -41,9 +43,9 @@ export function JournalRatingsSidebar() {
         <Star className="h-4 w-4" />
         Journal Ratings
       </h3>
-      <div className="space-y-2 flex items-center justify-evenly">
+      <div className="flex items-center justify-between">
         {["A*", "A", "B", "C"].map((rating) => (
-          <div key={rating} className="flex items-center space-x-2">
+          <div key={rating} className="flex items-center gap-x-2">
             <Checkbox
               id={`rating-${rating}`}
               checked={selectedRatings.includes(rating)}
@@ -62,18 +64,22 @@ export function JournalRatingsSidebar() {
         ))}
       </div>
       <div className="flex gap-1">
-        <button
+        <Button
           onClick={handleShowAll}
-          className="flex-1 px-2 py-1 text-xs border border-gray-300 rounded hover:bg-gray-50 transition-colors"
+          variant="outline"
+          size="sm"
+          className="flex-1 text-xs"
         >
           Show All
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={handleShowNone}
-          className="flex-1 px-2 py-1 text-xs border border-gray-300 rounded hover:bg-gray-50 transition-colors"
+          variant="outline"
+          size="sm"
+          className="flex-1 text-xs"
         >
           Show None
-        </button>
+        </Button>
       </div>
     </div>
   );
