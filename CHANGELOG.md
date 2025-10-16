@@ -5,9 +5,50 @@ All notable changes to the Google Scholar Query Translator (QTM) project will be
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased] - 2025-10-16
+## [Unreleased] - 2025-10-17
 
 ### Added
+
+- **In-App Help System with Page-Based Navigation** - Comprehensive user documentation accessible via routing
+
+  - `components/help/HowToUsePage.tsx` - Full-page help component (765 lines)
+
+    - 9 major sections: Getting Started, Search Blocks, Operators, Is Exact, Journals, Filters, Examples, Tips & Tricks, Common Issues
+    - Collapsible sections with expand/collapse toggle UI
+    - Sticky table of contents with smooth scroll navigation
+    - Color-coded tips, warnings, and examples
+    - 3 real-world scenario examples with step-by-step instructions
+    - Responsive grid layout (1 col mobile, 4 cols desktop)
+    - Close button with `router.back()` navigation
+    - Production-ready component with TypeScript strict mode compliance
+
+  - `app/how-to-use/page.tsx` - Next.js route for help page
+
+    - SEO metadata (title and description)
+    - Renders HowToUsePage component with showCloseButton prop
+    - Enables `/how-to-use` URL routing for bookmarkable help
+
+  - `components/help/index.ts` - Barrel export for help components
+
+    - Exports HowToUsePage for clean imports
+
+  - **Help Button Integration in QueryBuilder** (`components/QueryBuilder.tsx`)
+
+    - Added help button in top-right header
+    - Navigates to `/how-to-use` via `router.push()`
+    - Uses `useRouter` from `next/navigation` for client-side navigation
+    - Clean integration with existing UI
+
+  - **9 Comprehensive Documentation Files** (~2,750 lines total)
+    - `docs/HELP_PAGE_QUICK_REFERENCE.md` - Quick reference guide (200 lines)
+    - `docs/HELP_PAGE_LINK_INTEGRATION.md` - Integration guide (300 lines)
+    - `docs/HELP_PAGE_VISUAL_GUIDE.md` - Visual states and UX flows (500 lines)
+    - `docs/HELP_PAGE_ARCHITECTURE.md` - Technical architecture (400 lines)
+    - `docs/HELP_PAGE_CODE_REFERENCE.md` - Code implementation details (600 lines)
+    - `docs/HELP_PAGE_IMPLEMENTATION_SUMMARY.md` - Implementation overview (200 lines)
+    - `docs/HELP_PAGE_DOCUMENTATION_INDEX.md` - Documentation index (300 lines)
+    - `HELP_PAGE_COMPLETION_REPORT.md` - Completion report (250 lines)
+    - `HELP_PAGE_FINAL_SUMMARY.md` - Final summary (300 lines)
 
 - **Journal Rating Filter Integration** - Dynamic filtering of journals by rating (A\*, A, B, C)
 
