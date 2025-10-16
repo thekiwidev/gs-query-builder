@@ -68,24 +68,24 @@ export const GS_SEARCH_FIELDS: SearchFieldDefinition[] = [
     category: "field",
     placeholder: "Abstract keywords",
   },
-  {
-    id: "source_title",
-    label: "Source Title (Journal/Conference)",
-    gsOperator: "source:",
-    mustQuote: true,
-    notes: "Restricts to papers published in specific journals or conferences",
-    category: "field",
-    placeholder: "Journal or conference name",
-  },
-  {
-    id: "affiliation",
-    label: "Affiliation",
-    gsOperator: null,
-    mustQuote: true,
-    notes: "Searches institution name as exact phrase in full-text",
-    category: "field",
-    placeholder: "University or institution name",
-  },
+  // {
+  //   id: "source_title",
+  //   label: "Source Title (Journal/Conference)",
+  //   gsOperator: "source:",
+  //   mustQuote: true,
+  //   notes: "Restricts to papers published in specific journals or conferences",
+  //   category: "field",
+  //   placeholder: "Journal or conference name",
+  // },
+  // {
+  //   id: "affiliation",
+  //   label: "Affiliation",
+  //   gsOperator: null,
+  //   mustQuote: true,
+  //   notes: "Searches institution name as exact phrase in full-text",
+  //   category: "field",
+  //   placeholder: "University or institution name",
+  // },
   {
     id: "site_search",
     label: "Site/Domain",
@@ -107,39 +107,39 @@ export const GS_SEARCH_FIELDS: SearchFieldDefinition[] = [
   },
 
   // === PHRASE MATCHING ===
-  {
-    id: "exact_phrase",
-    label: "Exact Phrase",
-    gsOperator: null,
-    mustQuote: true,
-    notes:
-      "Exact phrase matching using quotation marks. Ensures all words appear in exact order.",
-    category: "phrase",
-    placeholder: "exact phrase to search",
-  },
-  {
-    id: "wildcard_phrase",
-    label: "Wildcard Phrase",
-    gsOperator: null,
-    mustQuote: true,
-    notes:
-      "Use * as wildcard for unknown words in phrases. Example: 'John * Smith'",
-    category: "phrase",
-    placeholder: "word * wildcard phrase",
-  },
+  // {
+  //   id: "exact_phrase",
+  //   label: "Exact Phrase",
+  //   gsOperator: null,
+  //   mustQuote: true,
+  //   notes:
+  //     "Exact phrase matching using quotation marks. Ensures all words appear in exact order.",
+  //   category: "phrase",
+  //   placeholder: "exact phrase to search",
+  // },
+  // {
+  //   id: "wildcard_phrase",
+  //   label: "Wildcard Phrase",
+  //   gsOperator: null,
+  //   mustQuote: true,
+  //   notes:
+  //     "Use * as wildcard for unknown words in phrases. Example: 'John * Smith'",
+  //   category: "phrase",
+  //   placeholder: "word * wildcard phrase",
+  // },
 
   // === PROXIMITY SEARCH ===
-  {
-    id: "around_operator",
-    label: "Proximity Search (AROUND)",
-    gsOperator: "AROUND",
-    mustQuote: false,
-    notes:
-      "Words within specified distance. Must be CAPITAL. Example: 'climate AROUND (5) change'",
-    category: "proximity",
-    requiresSpecialInput: true,
-    placeholder: "word1 word2 (with distance setting)",
-  },
+  // {
+  //   id: "around_operator",
+  //   label: "Proximity Search (AROUND)",
+  //   gsOperator: "AROUND",
+  //   mustQuote: false,
+  //   notes:
+  //     "Words within specified distance. Must be CAPITAL. Example: 'climate AROUND (5) change'",
+  //   category: "proximity",
+  //   requiresSpecialInput: true,
+  //   placeholder: "word1 word2 (with distance setting)",
+  // },
 ];
 
 /**

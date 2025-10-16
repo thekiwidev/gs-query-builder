@@ -248,8 +248,8 @@ export function validateRating(rating: string): {
 
   const normalizedRating = rating.trim().toUpperCase() as JournalRating;
 
-  // Only accept A* and A rated journals as per meeting requirements
-  if (["A*", "A"].includes(normalizedRating)) {
+  // Accept all valid ratings: A*, A, B, C
+  if (["A*", "A", "B", "C"].includes(normalizedRating)) {
     return { isValid: true, rating: normalizedRating };
   }
 

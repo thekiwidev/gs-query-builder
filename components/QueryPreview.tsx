@@ -357,34 +357,36 @@ export function QueryPreview({
 
         {/* Syntax Highlighted Query Display */}
         {queryResult.success && (
-          <div className="bg-muted rounded p-3 font-mono text-sm break-all">
-            {/* Highlight parentheses and operators for better visibility */}
-            {queryResult.rawQuery
-              .replace(/\(/g, "<span class='text-blue-600 font-bold'>(</span>")
-              .replace(/\)/g, "<span class='text-blue-600 font-bold'>)</span>")
-              .replace(
-                / AND /g,
-                "<span class='text-green-600 font-semibold'> AND </span>"
-              )
-              .replace(
-                / OR /g,
-                "<span class='text-orange-600 font-semibold'> OR </span>"
-              )
-              .replace(
-                /-([^ ]+)/g,
-                "<span class='text-red-600 font-semibold'>-$1</span>"
-              )
-              .split('"')
-              .map((part, i) =>
-                i % 2 === 0 ? (
-                  <span key={i} dangerouslySetInnerHTML={{ __html: part }} />
-                ) : (
-                  <span key={i} className="text-purple-600">
-                    &quot;{part}&quot;
-                  </span>
+          <div
+            className="bg-muted rounded p-3 font-mono text-sm break-all"
+            dangerouslySetInnerHTML={{
+              __html: queryResult.rawQuery
+                .replace(
+                  /\(/g,
+                  "<span class='text-blue-600 font-bold'>(</span>"
                 )
-              )}
-          </div>
+                .replace(
+                  /\)/g,
+                  "<span class='text-blue-600 font-bold'>)</span>"
+                )
+                .replace(
+                  / AND /g,
+                  "<span class='text-green-600 font-semibold'> AND </span>"
+                )
+                .replace(
+                  / OR /g,
+                  "<span class='text-orange-600 font-semibold'> OR </span>"
+                )
+                .replace(
+                  /-([^ ]+)/g,
+                  "<span class='text-red-600 font-semibold'>-$1</span>"
+                )
+                .replace(
+                  /"([^"]*)"/g,
+                  "<span class='text-purple-600'>&quot;$1&quot;</span>"
+                ),
+            }}
+          />
         )}
 
         {!queryResult.success && (
