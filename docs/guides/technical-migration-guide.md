@@ -10,6 +10,7 @@
 ### Two-Column Layout
 
 **Frontend Structure:**
+
 ```
 ┌─────────────────────────────────────────────────┐
 │ MainLayout (Client Component)                   │
@@ -28,6 +29,7 @@
 ### State Management
 
 **Sidebar State (MainLayout.tsx)**
+
 ```typescript
 const [sidebarWidth, setSidebarWidth] = useState(420);
 const [isCollapsed, setIsCollapsed] = useState(false);
@@ -35,6 +37,7 @@ const [isDragging, setIsDragging] = useState(false);
 ```
 
 **Main State (QueryBuilder.tsx)**
+
 ```typescript
 const [selectedFieldCodes, setSelectedFieldCodes] = useState([]);
 const [selectedJournalISSNs, setSelectedJournalISSNs] = useState([]);
@@ -45,17 +48,20 @@ const [selectedJournalISSNs, setSelectedJournalISSNs] = useState([]);
 ## Key Components
 
 ### MainLayout
+
 - Manages sidebar width and collapse state
 - Handles drag resize events
 - Persists width to localStorage
 - Renders sidebar and main content
 
 ### SidebarContainer
+
 - Orchestrates all sidebar sections
 - Passes props to filter components
 - Manages sidebar content layout
 
 ### QueryBuilder
+
 - Main app component
 - Manages search blocks
 - Handles global filters
@@ -86,6 +92,7 @@ MainLayout (Props)
 ## Multi-Select Implementation
 
 ### FieldOfResearchSidebar.tsx
+
 ```typescript
 // Allows selecting multiple fields
 const [selectedFieldCodes, setSelectedFieldCodes] = useState([]);
@@ -95,15 +102,18 @@ const handleFieldToggle = (fieldCode, checked) => {
   if (checked) {
     setSelectedFieldCodes([...selectedFieldCodes, fieldCode]);
   } else {
-    setSelectedFieldCodes(selectedFieldCodes.filter(code => code !== fieldCode));
+    setSelectedFieldCodes(
+      selectedFieldCodes.filter((code) => code !== fieldCode)
+    );
   }
 };
 ```
 
 ### Auto-Population
+
 ```typescript
 // Filter journals by selected fields
-const availableJournals = journals.filter(j =>
+const availableJournals = journals.filter((j) =>
   selectedFieldCodes.includes(j.fieldCode)
 );
 ```
@@ -113,6 +123,7 @@ const availableJournals = journals.filter(j =>
 ## Resizable Sidebar Implementation
 
 ### Drag Handling
+
 ```typescript
 // On mouse down on divider
 const handleDividerMouseDown = () => {
@@ -130,6 +141,7 @@ const handleMouseMove = (e: MouseEvent) => {
 ```
 
 ### Persistence
+
 ```typescript
 // Save to localStorage
 localStorage.setItem(STORAGE_KEY, sidebarWidth.toString());
@@ -144,6 +156,7 @@ if (savedWidth) setSidebarWidth(parseInt(savedWidth, 10));
 ## Component Props Flow
 
 ### MainLayout
+
 ```typescript
 interface MainLayoutProps {
   children: ReactNode;
@@ -164,18 +177,17 @@ interface MainLayoutProps {
 ## URL Query Building
 
 ### Query Translation Module (QTM)
+
 ```typescript
-buildScholarUrl(
-  searchBlocks,
-  {
-    ...globalFilters,
-    selectedJournalISSNs,
-    selectedFieldCode
-  }
-)
+buildScholarUrl(searchBlocks, {
+  ...globalFilters,
+  selectedJournalISSNs,
+  selectedFieldCode,
+});
 ```
 
 Returns:
+
 ```
 https://scholar.google.com/scholar?
 q=intitle%3A%22search+term%22+...
@@ -188,6 +200,7 @@ q=intitle%3A%22search+term%22+...
 ## Type Definitions
 
 ### SearchBlock
+
 ```typescript
 interface SearchBlock {
   fieldId: string;
@@ -201,6 +214,7 @@ interface SearchBlock {
 ```
 
 ### GlobalFilters
+
 ```typescript
 interface GlobalFilters {
   yearFrom?: number;
@@ -215,6 +229,7 @@ interface GlobalFilters {
 ## Build & Performance
 
 ### Build Output
+
 - **Time:** 6.2-8.5 seconds
 - **Bundle:** ~163 kB First Load JS
 - **Pages:** 5/5 static generated
@@ -222,6 +237,7 @@ interface GlobalFilters {
 - **Warnings:** 0
 
 ### Optimizations
+
 - Event listeners cleanup
 - Efficient re-renders
 - localStorage with error handling
@@ -232,16 +248,19 @@ interface GlobalFilters {
 ## Testing
 
 ### Run Tests
+
 ```bash
 bun test
 ```
 
 ### Type Checking
+
 ```bash
 bun run type-check
 ```
 
 ### Linting
+
 ```bash
 bun run lint
 ```
@@ -257,16 +276,19 @@ See [deployment-guide.md](deployment-guide.md) for deployment procedures.
 ## Troubleshooting
 
 **Sidebar not saving width?**
+
 - Check localStorage is enabled
 - Check browser console for errors
 - Verify STORAGE_KEY constant
 
 **Multi-select not working?**
+
 - Ensure selectedFieldCodes is array
 - Check field codes in data
 - Verify checkbox handlers
 
 **Journals not populating?**
+
 - Ensure fields are selected
 - Check journal fieldCode mapping
 - Verify CSV data loaded

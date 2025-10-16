@@ -12,11 +12,13 @@
 ### Replaced "Selected Journals" with "Available Journals"
 
 **Before:**
+
 - Section showed already-selected journals
 - Users couldn't see journals to select
 - No way to browse and select journals
 
 **After:**
+
 - Shows ALL available journals from selected fields
 - Users can see and scroll through all journals
 - Checkboxes allow users to select journals they want
@@ -31,13 +33,14 @@
 
 1. **Select Field(s)** in "Field of Research" dropdown
    - Multi-select multiple fields
-   
 2. **See Available Journals** automatically populate
+
    - Only journals from selected fields shown
    - Shows title, ISSN, and rating badge
    - Empty message if no fields selected
 
 3. **Select Journals** using checkboxes
+
    - Click checkbox to select journal
    - Multiple journals can be selected
    - Selection persists in state
@@ -54,6 +57,7 @@
 ### SelectedJournalsSidebar.tsx - Completely Redesigned
 
 **Old Behavior:**
+
 ```typescript
 // Only showed already-selected journals
 selectedJournals.length > 0 ? (
@@ -64,6 +68,7 @@ selectedJournals.length > 0 ? (
 ```
 
 **New Behavior:**
+
 ```typescript
 // Shows ALL available journals with checkboxes
 availableJournals.length > 0 ? (
@@ -78,16 +83,19 @@ availableJournals.length > 0 ? (
 ## Key Features
 
 1. **Checkboxes for Selection**
+
    - Multi-select interface
    - Instant feedback
    - Clear visual state
 
 2. **Journal Information Display**
+
    - Title (truncated if long)
    - ISSN with label
-   - Rating badge (A*, A, B, C)
+   - Rating badge (A\*, A, B, C)
 
 3. **Bulk Actions**
+
    - Select All button
    - Clear All button
    - Only visible when journals available
@@ -104,7 +112,7 @@ availableJournals.length > 0 ? (
 ✅ TypeScript: 0 errors (strict mode)  
 ✅ ESLint: 0 warnings  
 ✅ No Breaking Changes: TRUE  
-✅ Backwards Compatible: TRUE  
+✅ Backwards Compatible: TRUE
 
 ---
 

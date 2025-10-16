@@ -16,17 +16,20 @@
 ## Local Development
 
 ### 1. Clone Repository
+
 ```bash
 git clone <repository-url>
 cd gs-search-kit
 ```
 
 ### 2. Install Dependencies
+
 ```bash
 bun install
 ```
 
 ### 3. Run Development Server
+
 ```bash
 bun dev
 ```
@@ -38,16 +41,19 @@ Access at: http://localhost:3002
 ## Build for Production
 
 ### Create Production Build
+
 ```bash
 bun run build
 ```
 
 ### Verify Build
+
 ```bash
 bun run build 2>&1 | tail -20
 ```
 
 Expected output:
+
 ```
 ✓ Compiled successfully in X.Xs
 ✅ Build: PASSING
@@ -60,16 +66,19 @@ Expected output:
 ## Quality Checks
 
 ### Run TypeScript Check
+
 ```bash
 bun run type-check
 ```
 
 ### Run ESLint
+
 ```bash
 bun run lint
 ```
 
 ### Build and Verify
+
 ```bash
 bun run build && echo "✅ Build successful!"
 ```
@@ -94,13 +103,14 @@ bun run build && echo "✅ Build successful!"
 ✅ Build Time: 6.2-8.5 seconds  
 ✅ Bundle Size: ~163 kB First Load JS  
 ✅ Static Pages: 5/5 generated  
-✅ Production Ready: YES  
+✅ Production Ready: YES
 
 ---
 
 ## Troubleshooting
 
 ### Build Fails
+
 ```bash
 # Clear cache and rebuild
 rm -rf .next node_modules
@@ -109,12 +119,14 @@ bun run build
 ```
 
 ### TypeScript Errors
+
 ```bash
 # Check types
 bun run type-check
 ```
 
 ### ESLint Issues
+
 ```bash
 # Check linting
 bun run lint
