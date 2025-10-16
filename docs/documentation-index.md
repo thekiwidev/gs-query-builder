@@ -45,7 +45,14 @@ Phase 1 implementation documentation:
 - **phase-1-refinements.md** - Phase 1 refinement changes
 - **refinements-complete.md** - Refinements completion status
 - **refinements-quick-reference.md** - Quick reference for refinements
-- **readme-phase-1.md** - Phase 1 specific README
+
+### 📍 /docs/phase-2/
+
+Phase 2 implementation documentation (Search Block Simplification):
+
+- **phase-2-implementation.md** - Complete Phase 2 implementation guide
+- **phase-2-quick-reference.md** - Quick reference for Phase 2 features
+- **phase-2-validation-deep-dive.md** - Detailed operator validation rules
 
 ### 🔗 /docs/reference/
 
@@ -76,6 +83,7 @@ Additional documentation:
 - How-to guides? → See `/docs/guides/`
 - Project status? → See `/docs/summaries/`
 - Phase 1 details? → See `/docs/phase-1/`
+- Phase 2 details? → See `/docs/phase-2/` (Search Block Simplification)
 
 **Want complete history?**
 

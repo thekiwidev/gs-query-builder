@@ -19,6 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "./ui/select";
+import { Trash2 } from "lucide-react";
 
 interface SearchBlockComponentProps {
   /** The search block data */
@@ -106,8 +107,9 @@ export function SearchBlockComponent({
           />
         </div>
 
+        {/* @note: removing redundant is exact button */}
         {/* Is Exact Checkbox */}
-        <div className="flex items-center justify-center w-10 h-10 rounded hover:bg-gray-100 cursor-pointer">
+        {/* <div className="flex items-center justify-center w-10 h-10 rounded hover:bg-gray-100 cursor-pointer">
           <input
             type="checkbox"
             id={`exact-${index}`}
@@ -116,7 +118,7 @@ export function SearchBlockComponent({
             className="w-4 h-4 cursor-pointer"
             title="Is Exact"
           />
-        </div>
+        </div> */}
 
         {/* Remove Button */}
         <Button
@@ -124,9 +126,11 @@ export function SearchBlockComponent({
           disabled={isOnlyBlock}
           variant="ghost"
           size="sm"
-          className="flex items-center justify-center w-10 h-10 rounded hover:bg-gray-100 text-gray-400 hover:text-red-600 p-0"
+          className="flex items-center justify-center w-10 h-10 rounded-lg hover:bg-red-100 text-gray-400 hover:text-red-600 p-0"
         >
-          <span className="text-lg">×</span>
+          <span className="text-lg">
+            <Trash2 />
+          </span>
         </Button>
       </div>
 
@@ -183,9 +187,12 @@ export function SearchBlockComponent({
           </Select>
         </div>
 
-        <div className="flex-1" />
+        {/* <div className="flex-1" /> */}
 
-        <div className="flex items-center justify-center w-10 h-8 rounded hover:bg-gray-100 cursor-pointer">
+        <label
+          htmlFor={`exact-ops-${index}`}
+          className="flex items-center justify-center gap-x-2 h-8 rounded-xl hover:bg-gray-100 cursor-pointer px-3"
+        >
           <input
             type="checkbox"
             id={`exact-ops-${index}`}
@@ -194,7 +201,10 @@ export function SearchBlockComponent({
             className="w-4 h-4 cursor-pointer"
             title="Is Exact"
           />
-        </div>
+          <label htmlFor={`exact-ops-${index}`} className="cursor-pointer">
+            Is exact phrase
+          </label>
+        </label>
       </div>
     </div>
   );

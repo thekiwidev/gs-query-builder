@@ -16,7 +16,7 @@ export function ActionButtonsSection({
   hasErrors,
 }: ActionButtonsSectionProps) {
   return (
-    <div className="flex gap-4 justify-center pt-4">
+    <div className="flex gap-4 justify-start pt-4">
       <Button
         onClick={onAddBlock}
         variant="outline"
@@ -29,7 +29,7 @@ export function ActionButtonsSection({
       <Button
         onClick={onSearch}
         disabled={hasErrors}
-        className="flex items-center gap-2"
+        className="flex items-center gap-2 bg-black text-white"
       >
         <Search className="h-4 w-4" />
         Search
