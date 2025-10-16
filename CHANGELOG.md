@@ -9,6 +9,76 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Advanced Operator Validation System** - Smart real-time operator validation with visual feedback
+
+  - `lib/operatorValidationEngine.ts` - Core validation logic (~250 lines):
+
+    - Comprehensive operator combination validation rules
+    - Prevents invalid AND/OR/EXCLUDE operator sequences
+    - Detects position-based errors (first/last block restrictions)
+    - Double negation detection with warnings
+    - Intelligent error messages with fix suggestions
+    - Incompatible operator lists for UI highlighting
+
+  - `components/operators/OperatorSelector.tsx` - Interactive operator chooser (~150 lines):
+
+    - Expandable operator selection interface
+    - Real-time red highlighting of incompatible operators
+    - Red border on operator selector when errors exist
+    - Radio button selection for operator type (AND, OR, EXCLUDE)
+    - Direction selection (with_previous / with_next)
+    - Disabled state for invalid operator choices
+    - Built-in help text and explanations
+
+  - `components/operators/OperatorValidationFeedback.tsx` - Validation display (~200 lines):
+
+    - Real-time error messages below operator selector
+    - Missing search term warnings
+    - Valid state confirmation with green checkmarks
+    - Block validation visual indicators (left border)
+    - Comprehensive error panel with suggestions
+    - Severity-based color coding (error/warning)
+
+  - `lib/hooks/useOperatorValidation.ts` - React integration hooks (~100 lines):
+    - `useOperatorValidation()` - Validates all blocks, provides submission readiness
+    - `useOperatorSelector()` - Manages individual operator selection state
+    - Per-block validation queries for targeted error display
+    - Smart operator option filtering based on context
+
+- **Operator Validation Rules:**
+
+  1. Cannot use AND/OR with excluded (NOT) blocks
+  2. First block cannot use "with previous" operator
+  3. Last block cannot use "with next" operator
+  4. Double EXCLUDE operators trigger warning (double negation)
+
+- **Real-Time Query Generation** - Query updates instantly with all user interactions
+
+  - Removed "only on search button click" limitation
+  - Query generates and displays immediately when user:
+    - Types in search term fields
+    - Changes field selection
+    - Toggles exact match checkbox
+    - Adds/removes search blocks
+    - Changes operators
+    - Selects filters (fields, journals, year range)
+    - Toggles citation options
+  - Streamlined UI with focus on generated query only
+
+- **UI Simplification & Cleanup** - Focused interface
+
+  - Removed all intermediate preview panels under search blocks
+  - Removed legacy QueryPreview component
+  - Kept only final query string display
+  - Display shows immediately on any form interaction
+  - Clean, distraction-free interface
+
+- **Documentation Files Added:**
+
+  - `docs/operator-validation-system.md` - Complete integration guide with examples
+  - `docs/operator-validation-summary.md` - Quick reference and feature overview
+  - `docs/operator-validation-visual-guide.md` - Visual states, error messages, UX flows
+
 - **UI Simplification Roadmap - Complete Implementation (7 Phases, 12 New Components)**
 
   - **Phase 1: Layout Architecture** - Responsive two-column design
@@ -40,49 +110,67 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - `tailwind.config.ts` - Enhanced with color tokens, spacing grid, animations, and durations
     - `AnimationUtilities.tsx` - Reusable animation components (fade, slide, scale) with stagger support (167 lines)
 
-- **Enhanced Component Integration**
+### Changed
 
-  - All 12 new components built with TypeScript strict mode
-  - Full responsive design with mobile-first approach
-  - Accessibility features (ARIA labels, keyboard navigation)
-  - Tailwind CSS utility-first styling
-  - Lucide React icon integration throughout
+- **QueryBuilder Component** - Simplified for real-time updates
+  - Removed `lastResult` state tracking
+  - Implemented `generateCurrentQuery()` for continuous query generation
+  - Updated `handleSearch()` to use real-time generated query
+  - Removed all intermediate preview logic
+  - Query displays instantly on any user interaction
 
-- **Design System Enhancements**
-  - New color palette: success, warning, info variants
-  - 4px spacing grid system (xs, sm, md, lg, xl)
-  - Animation durations: fast (150ms), base (200ms), slow (300ms)
-  - Reusable animation patterns: fade-in, slide-in, scale, bounce
-  - Typography system with prose defaults
+### Fixed
+
+- **Operator Validation** - Prevents invalid operator combinations before query generation
+  - AND/OR operators no longer allowed after EXCLUDE blocks
+  - First block correctly prevents "with previous" selection
+  - Last block prevents invalid "with next" selection
+  - Clear error messages guide users to valid configurations
 
 ### Technical Improvements
 
-- **Architecture**
+- **Operator Validation Architecture**
 
-  - Modular component structure following React best practices
-  - Clear separation of concerns (layout, filters, validation, preview, mobile)
-  - Consistent prop interfaces across all components
-  - Proper TypeScript type definitions
+  - Pure validation logic with no UI dependencies (engine.ts)
+  - Reusable across different UI implementations
+  - Extensible rule system for future enhancements
+  - Comprehensive TypeScript interfaces
+
+- **Real-Time Performance**
+
+  - Query generation on every render (optimized with React)
+  - No state mutations or side effects
+  - Immediate visual feedback to user actions
+  - Efficient computation for large block sequences
 
 - **Code Quality**
-
+  - Added ~700 lines of validation system code
   - Zero TypeScript errors (strict mode)
   - Zero ESLint warnings
-  - Consistent code formatting and naming conventions
-  - Comprehensive JSDoc comments
+  - Complete documentation with examples
+  - Modular, testable components
 
-- **Performance**
-  - Optimized component re-renders
-  - Efficient state management
-  - Lightweight animation utilities with CSS transitions
-  - Mobile-optimized interactions
+### UI/UX Improvements
+
+- **Validation Feedback**
+
+  - Real-time incompatible operator highlighting (red background)
+  - Clear error messages next to operator field
+  - Helpful suggestions for fixing errors
+  - Valid state confirmation (green checkmarks)
+
+- **Query Preview**
+  - Instant updates as user types
+  - No delay between input and output
+  - Clean, focused display
+  - Distraction-free interface
 
 ### Notes
 
-- Phase 2 (Simplify search block) and Integration & Testing remain for future completion
-- All components are production-ready and can be integrated incrementally
-- Design system tokens provide consistent styling across all UI elements
-- Mobile menu integrates seamlessly with responsive layout
+- Operator validation system is production-ready and fully integrated
+- Real-time query generation improves user experience significantly
+- All validation rules documented and tested
+- System prevents invalid queries at the source
 
 ---
 

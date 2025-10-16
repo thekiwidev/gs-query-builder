@@ -7,19 +7,13 @@
 "use client";
 
 import React, { useState } from "react";
-import {
-  SearchBlock,
-  buildScholarUrl,
-  QTMResult,
-  GlobalFilters,
-} from "../lib/qtm";
+import { SearchBlock, buildScholarUrl, GlobalFilters } from "../lib/qtm";
 import { MainLayout } from "./layouts/MainLayout";
 import { MainContentArea } from "./layouts/MainContentArea";
 import { SearchBlocksContainer } from "./search/SearchBlocksContainer";
 import { ActionButtonsSection } from "./search/ActionButtonsSection";
-import { QueryPreview } from "./QueryPreview";
 import { Button } from "./ui/button";
-import { CheckCircle, XCircle } from "lucide-react";
+import { CheckCircle } from "lucide-react";
 
 export function QueryBuilder() {
   const [searchBlocks, setSearchBlocks] = useState<SearchBlock[]>([
@@ -45,7 +39,18 @@ export function QueryBuilder() {
   const [selectedJournalISSNs, setSelectedJournalISSNs] = useState<string[]>(
     []
   );
-  const [lastResult, setLastResult] = useState<QTMResult | null>(null);
+
+  // Generate query in real-time
+  const generateCurrentQuery = () => {
+    const enhancedFilters = {
+      ...globalFilters,
+      selectedJournalISSNs,
+      selectedFieldCode,
+    };
+    return buildScholarUrl(searchBlocks, enhancedFilters);
+  };
+
+  const currentQuery = generateCurrentQuery();
 
   const addSearchBlock = () => {
     const newBlocks = [...searchBlocks];
@@ -220,14 +225,7 @@ export function QueryBuilder() {
   };
 
   const handleSearch = () => {
-    const enhancedFilters = {
-      ...globalFilters,
-      selectedJournalISSNs,
-      selectedFieldCode,
-    };
-
-    const result = buildScholarUrl(searchBlocks, enhancedFilters);
-    setLastResult(result);
+    const result = currentQuery;
 
     if (result.success) {
       window.open(result.url, "_blank");
@@ -253,7 +251,6 @@ export function QueryBuilder() {
 
     setSelectedJournalISSNs([]);
     setSelectedFieldCode(undefined);
-    setLastResult(null);
   };
 
   const hasValidTerms = searchBlocks.some(
@@ -308,82 +305,23 @@ export function QueryBuilder() {
           hasErrors={!hasValidTerms}
         />
 
-        {/* Results/Messages */}
-        {lastResult && (
-          <div
-            className={`rounded-lg p-6 mb-8 border ${
-              lastResult.success
-                ? "bg-green-50 border-green-200"
-                : "bg-red-50 border-red-200"
-            }`}
-          >
+        {/* Generated Query Display */}
+        {currentQuery.success && (
+          <div className="rounded-lg p-6 mb-8 border bg-blue-50 border-blue-200">
             <div className="flex items-center gap-2 mb-3">
-              {lastResult.success ? (
-                <CheckCircle className="h-5 w-5 text-green-600" />
-              ) : (
-                <XCircle className="h-5 w-5 text-red-600" />
-              )}
-              <h3
-                className={`font-semibold ${
-                  lastResult.success ? "text-green-800" : "text-red-800"
-                }`}
-              >
-                {lastResult.success
-                  ? "Query Generated Successfully"
-                  : "Query Generation Failed"}
-              </h3>
+              <CheckCircle className="h-5 w-5 text-blue-600" />
+              <h3 className="font-semibold text-blue-800">Generated Query</h3>
             </div>
-
-            {lastResult.messages.map((message, index) => (
-              <p
-                key={index}
-                className={`text-sm mb-2 ${
-                  lastResult.success ? "text-green-700" : "text-red-700"
-                }`}
-              >
-                {message}
+            <div>
+              <p className="text-sm font-medium text-blue-800 mb-2">
+                Query String:
               </p>
-            ))}
-
-            {lastResult.success && (
-              <div className="mt-4 space-y-3">
-                <div>
-                  <p className="text-sm font-medium text-green-800 mb-1">
-                    Generated Query:
-                  </p>
-                  <pre className="block p-3 bg-green-100 text-green-800 text-sm rounded border break-all font-mono whitespace-pre-wrap">
-                    {lastResult.rawQuery}
-                  </pre>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-green-800 mb-1">
-                    Full URL:
-                  </p>
-                  <pre className="block p-3 bg-green-100 text-green-800 text-xs rounded border break-all font-mono whitespace-pre-wrap">
-                    {lastResult.url}
-                  </pre>
-                </div>
-              </div>
-            )}
+              <pre className="block p-3 bg-blue-100 text-blue-800 text-sm rounded border break-all font-mono whitespace-pre-wrap">
+                {currentQuery.rawQuery}
+              </pre>
+            </div>
           </div>
         )}
-
-        {/* Query Preview */}
-        <div className="mb-8">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            Query Preview
-          </h3>
-          <QueryPreview
-            searchBlocks={searchBlocks}
-            journalBlocks={[]}
-            globalFilters={{
-              ...globalFilters,
-              selectedFieldCode,
-              selectedJournalISSNs,
-            }}
-            onExecuteSearch={handleSearch}
-          />
-        </div>
 
         {/* Reset Button */}
         <div className="flex justify-center mb-8">
