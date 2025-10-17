@@ -6,7 +6,7 @@
 
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useMemo } from "react";
 import { useRouter } from "next/navigation";
 import { SearchBlock, buildScholarUrl, GlobalFilters } from "../lib/qtm";
 import { MainLayout } from "./layouts/MainLayout";
@@ -46,17 +46,19 @@ export function QueryBuilder() {
 
   const router = useRouter();
 
-  // Generate query in real-time
-  const generateCurrentQuery = () => {
+  const currentQuery = useMemo(() => {
     const enhancedFilters = {
       ...globalFilters,
       selectedJournalISSNs,
       selectedFieldCode,
     };
     return buildScholarUrl(searchBlocks, enhancedFilters);
-  };
-
-  const currentQuery = generateCurrentQuery();
+  }, [
+    searchBlocks,
+    globalFilters,
+    selectedJournalISSNs,
+    selectedFieldCode,
+  ]);
 
   const addSearchBlock = () => {
     const newBlocks = [...searchBlocks];
