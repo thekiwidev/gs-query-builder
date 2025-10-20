@@ -25,7 +25,7 @@ const OPERATOR_RULES = {
   },
   NOT: {
     canFollowOperators: ["AND", "OR"],
-    description: "Excludes results matching the condition",
+    description: "Does not include results matching the condition",
   },
 };
 

@@ -14,7 +14,6 @@ import { MainContentArea } from "./layouts/MainContentArea";
 import { SearchBlocksContainer } from "./search/SearchBlocksContainer";
 import { ActionButtonsSection } from "./search/ActionButtonsSection";
 import { Button } from "./ui/button";
-import { CheckCircle } from "lucide-react";
 
 export function QueryBuilder() {
   const [searchBlocks, setSearchBlocks] = useState<SearchBlock[]>([
@@ -337,24 +336,6 @@ export function QueryBuilder() {
           onSearch={handleSearch}
           hasErrors={!hasValidTerms}
         />
-
-        {/* Generated Query Display */}
-        {currentQuery.success && (
-          <div className="rounded-lg p-6 mb-8 border bg-blue-50 border-blue-200">
-            <div className="flex items-center gap-2 mb-3">
-              <CheckCircle className="h-5 w-5 text-blue-600" />
-              <h3 className="font-semibold text-blue-800">Generated Query</h3>
-            </div>
-            <div>
-              <p className="text-sm font-medium text-blue-800 mb-2">
-                Query String:
-              </p>
-              <pre className="block p-3 bg-blue-100 text-blue-800 text-sm rounded border break-all font-mono whitespace-pre-wrap">
-                {currentQuery.rawQuery}
-              </pre>
-            </div>
-          </div>
-        )}
 
         {/* Reset Button */}
         <div className="flex justify-center mb-8">

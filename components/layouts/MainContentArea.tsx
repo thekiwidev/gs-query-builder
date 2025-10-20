@@ -7,5 +7,9 @@ interface MainContentAreaProps {
 }
 
 export function MainContentArea({ children }: MainContentAreaProps) {
-  return <main className="p-8 space-y-8 bg-white">{children}</main>;
+  return (
+    <main className="flex-1 overflow-y-auto bg-white">
+      <div className="max-w-6xl mx-auto p-8 space-y-8">{children}</div>
+    </main>
+  );
 }

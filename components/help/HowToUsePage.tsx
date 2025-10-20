@@ -2,7 +2,9 @@
 
 import React, { useState } from "react";
 import { useRouter } from "next/navigation";
-import { X, ChevronDown, ChevronUp } from "lucide-react";
+import Link from "next/link";
+import { X, ChevronDown, ChevronUp, Home } from "lucide-react";
+import { Footer } from "@/components/layout/Footer";
 
 interface CollapsibleSectionProps {
   title: string;
@@ -65,13 +67,23 @@ export function HowToUsePage({ showCloseButton = false }: HowToUsePageProps) {
             </p>
           </div>
           {showCloseButton && (
-            <button
-              onClick={() => router.back()}
-              className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-              title="Close"
-            >
-              <X className="w-6 h-6 text-gray-600" />
-            </button>
+            <div className="flex gap-2 items-center">
+              <Link
+                href="/"
+                className="flex items-center gap-2 px-3 py-2 hover:bg-blue-50 text-blue-600 rounded-lg transition-colors border border-blue-200"
+                title="Go Back Home"
+              >
+                <Home className="w-5 h-5" />
+                <span className="text-sm font-medium">Home</span>
+              </Link>
+              <button
+                onClick={() => router.back()}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
+                title="Close"
+              >
+                <X className="w-6 h-6 text-gray-600" />
+              </button>
+            </div>
           )}
         </div>
       </div>
@@ -228,12 +240,15 @@ export function HowToUsePage({ showCloseButton = false }: HowToUsePageProps) {
                 </p>
                 <p className="mb-2">
                   Use AND to narrow your results by adding more requirements.
+                  This is useful when you want to find papers that match
+                  multiple criteria simultaneously.
                 </p>
                 <p className="text-sm bg-blue-50 p-2 rounded">
-                  Example: [Author] &quot;John Smith&quot; AND [Title]
-                  &quot;machine learning&quot; returns papers where John Smith
-                  is the author AND the title contains &quot;machine
-                  learning&quot;
+                  For example, if you search for an author in one block and a
+                  topic in another block with AND, the results will only show
+                  papers where that specific author wrote about that specific
+                  topic. This helps narrow down broad searches to find exactly
+                  what you need.
                 </p>
               </CollapsibleSection>
 
@@ -241,28 +256,83 @@ export function HowToUsePage({ showCloseButton = false }: HowToUsePageProps) {
                 <p className="font-semibold text-green-900 mb-2">
                   Meaning: Papers can contain EITHER search term
                 </p>
-                <p className="mb-2">
-                  Use OR to broaden results or search for related concepts.
+                <p className="text-sm mb-2">
+                  Use OR to broaden results or search for related concepts. When
+                  you use OR between blocks, papers matching any of the search
+                  terms will be included in your results.
                 </p>
                 <p className="text-sm bg-green-50 p-2 rounded">
-                  Example: [Title] &quot;AI&quot; OR [Title] &quot;artificial
-                  intelligence&quot; returns papers with either term in the
-                  title
+                  This is helpful when you&apos;re looking for papers about
+                  multiple variations of a topic or synonyms. For instance,
+                  searching for different technical terms that mean the same
+                  thing, or papers about any of several related research areas.
+                  OR expands your search to catch more relevant papers.
                 </p>
               </CollapsibleSection>
 
-              <CollapsibleSection title="EXCLUDE Operator (NOT)">
+              <CollapsibleSection title="Does Not Include Operator (NOT)">
                 <p className="font-semibold text-orange-900 mb-2">
                   Meaning: Papers must NOT contain this search term
                 </p>
                 <p className="mb-2">
-                  Use EXCLUDE to eliminate unwanted results from your search.
+                  Use &quot;Does Not Include&quot; to narrow down your search by
+                  removing specific unwanted papers. Instead of eliminating an
+                  entire category, you&apos;re filtering out papers that mention
+                  a specific word, author, journal, or phrase.
                 </p>
                 <p className="text-sm bg-orange-50 p-2 rounded">
-                  Example: [Title] &quot;machine learning&quot; EXCLUDE
-                  [Keywords] &quot;robotics&quot; returns machine learning
-                  papers that do NOT discuss robotics
+                  For example: If you search for &quot;machine learning&quot;
+                  and get results you want, but some papers focus on
+                  &quot;robotics&quot; (which you don&apos;t need), you can add
+                  a &quot;Does Not Include&quot; block that excludes papers with
+                  &quot;robotics&quot; in the title. Now your results show only
+                  machine learning papers that don&apos;t discuss robotics.
+                  Similarly, you could use &quot;Does Not Include&quot; with an
+                  author name to remove papers by a specific person, or with a
+                  journal name to filter out papers from a particular
+                  publication. This helps you refine your search without
+                  throwing away entire topics.
                 </p>
+              </CollapsibleSection>
+
+              <CollapsibleSection title="Understanding Operator Grouping">
+                <p className="mb-2">
+                  When you chain multiple blocks together with operators, they
+                  form groups (shown as parentheses in the final query).
+                </p>
+                <div className="bg-blue-50 p-3 rounded text-sm space-y-2 mb-2">
+                  <p>
+                    <strong>Example of a valid chain:</strong>
+                  </p>
+                  <p>Block 1: &quot;AI&quot; → AND with next block</p>
+                  <p>
+                    Block 2: &quot;machine learning&quot; → AND with previous
+                    block AND with next block
+                  </p>
+                  <p>
+                    Block 3: &quot;neural networks&quot; → AND with previous
+                    block
+                  </p>
+                  <p className="text-blue-800">
+                    Result: (Block 1 AND Block 2 AND Block 3)
+                  </p>
+                </div>
+                <div className="bg-orange-50 p-3 rounded text-sm space-y-2">
+                  <p>
+                    <strong>Important rules:</strong>
+                  </p>
+                  <ul className="list-disc list-inside space-y-1 text-orange-800">
+                    <li>
+                      All blocks in a chain must use the SAME operator (all AND
+                      or all OR)
+                    </li>
+                    <li>You cannot mix AND and OR in the same group</li>
+                    <li>
+                      To start a new group, leave a block empty (no search term)
+                    </li>
+                    <li>The system will warn you if operators conflict</li>
+                  </ul>
+                </div>
               </CollapsibleSection>
 
               {/* <CollapsibleSection title="Operator Rules">
@@ -518,23 +588,24 @@ export function HowToUsePage({ showCloseButton = false }: HowToUsePageProps) {
                   journals after 2020
                 </p>
 
-                <p className="font-semibold mb-2">Configuration:</p>
-                <div className="bg-gray-50 p-3 rounded text-sm space-y-2">
-                  <p>
-                    <strong>Block 1:</strong> [Article Title] &quot;deep
-                    learning&quot;
-                  </p>
-                  <p>
-                    <strong>Operator:</strong> AND
-                  </p>
-                  <p>
-                    <strong>Block 2:</strong> [Author] &quot;Yann LeCun&quot;
-                    (Is Exact ON)
-                  </p>
-                  <p>
-                    <strong>Filters:</strong> A* journals, From: 2020
-                  </p>
-                </div>
+                <p className="font-semibold mb-2">What This Search Does:</p>
+                <p className="text-sm text-gray-700">
+                  You would create one search block looking for &quot;deep
+                  learning&quot; in article titles, then add a second block
+                  connected with AND that searches for the author &quot;Yann
+                  LeCun&quot;. The AND operator ensures only papers that mention
+                  deep learning in the title AND were written by Yann LeCun are
+                  included.
+                </p>
+                <p className="text-sm text-gray-700 mt-2">
+                  Then you would enable the &quot;Is Exact&quot; toggle for the
+                  author name to ensure you get the exact spelling. Finally,
+                  you&apos;d set the journal filter to show only A* (top-tier)
+                  journals, and set the year range to start from 2020 to get
+                  only recent publications. This combination gives you recent,
+                  high-quality papers on deep learning written by this specific
+                  researcher.
+                </p>
               </CollapsibleSection>
 
               <CollapsibleSection title="Example 2: Comprehensive Topic Survey with Exclusions">
@@ -544,30 +615,26 @@ export function HowToUsePage({ showCloseButton = false }: HowToUsePageProps) {
                   robotics
                 </p>
 
-                <p className="font-semibold mb-2">Configuration:</p>
-                <div className="bg-gray-50 p-3 rounded text-sm space-y-2">
-                  <p>
-                    <strong>Block 1:</strong> [Article Title] &quot;artificial
-                    intelligence&quot;
-                  </p>
-                  <p>
-                    <strong>Operator:</strong> OR
-                  </p>
-                  <p>
-                    <strong>Block 2:</strong> [Article Title] &quot;machine
-                    learning&quot;
-                  </p>
-                  <p>
-                    <strong>Operator:</strong> EXCLUDE
-                  </p>
-                  <p>
-                    <strong>Block 3:</strong> [Keywords] &quot;robotics&quot;
-                    (Is Exact ON)
-                  </p>
-                  <p>
-                    <strong>Filters:</strong> A*, A journals
-                  </p>
-                </div>
+                <p className="font-semibold mb-2">What This Search Does:</p>
+                <p className="text-sm text-gray-700">
+                  You would create a broad search using OR operators to capture
+                  multiple AI-related terms. You&apos;d set up one block
+                  searching for &quot;artificial intelligence&quot; in the
+                  title, connect it with OR to a second block searching for
+                  &quot;machine learning&quot;. This OR relationship means you
+                  get papers about either topic.
+                </p>
+                <p className="text-sm text-gray-700 mt-2">
+                  Then you&apos;d add a third block with a &quot;Does Not
+                  Include&quot; operator (NOT) that filters out papers
+                  mentioning &quot;robotics&quot; in the keywords. This tells
+                  the search engine to remove any papers that discuss robotics
+                  from your results, even if they match the AI criteria.
+                  Finally, you&apos;d set the journal filter to A* and A tier
+                  journals to ensure high-quality sources. The result is a
+                  comprehensive view of recent AI research without
+                  robotics-focused papers.
+                </p>
               </CollapsibleSection>
 
               <CollapsibleSection title="Example 3: Author Citation Search">
@@ -576,24 +643,25 @@ export function HowToUsePage({ showCloseButton = false }: HowToUsePageProps) {
                   Find all papers by Jennifer Doudna in Nature journals
                 </p>
 
-                <p className="font-semibold mb-2">Configuration:</p>
-                <div className="bg-gray-50 p-3 rounded text-sm space-y-2">
-                  <p>
-                    <strong>Block 1:</strong> [Author] &quot;Jennifer
-                    Doudna&quot; (Is Exact ON)
-                  </p>
-                  <p>
-                    <strong>Operator:</strong> AND
-                  </p>
-                  <p>
-                    <strong>Block 2:</strong> [Source] &quot;Nature&quot; (Is
-                    Exact ON)
-                  </p>
-                  <p>
-                    <strong>Filters:</strong> Select Nature journals
-                    specifically
-                  </p>
-                </div>
+                <p className="font-semibold mb-2">What This Search Does:</p>
+                <p className="text-sm text-gray-700">
+                  You would create one search block with the author field set to
+                  &quot;Jennifer Doudna&quot; with &quot;Is Exact&quot; enabled
+                  to ensure you capture the exact name spelling. Then you&apos;d
+                  add a second block connected with AND that searches in the
+                  source field for &quot;Nature&quot;, also with &quot;Is
+                  Exact&quot; enabled. This AND operator means only papers where
+                  Jennifer Doudna is the author AND the paper was published in
+                  Nature journal will be returned.
+                </p>
+                <p className="text-sm text-gray-700 mt-2">
+                  Additionally, you can select Nature-specific journals from the
+                  journal filter in the sidebar to further refine your results.
+                  The combination of the author AND source search, plus the
+                  journal selection, gives you a focused list of this
+                  researcher&apos;s publications in that specific prestigious
+                  journal.
+                </p>
               </CollapsibleSection>
             </section>
 
@@ -671,14 +739,15 @@ export function HowToUsePage({ showCloseButton = false }: HowToUsePageProps) {
               >
                 <p className="text-sm mb-2">
                   <strong>Cause:</strong> Invalid operator combination (e.g.,
-                  AND after EXCLUDE)
+                  AND after Does Not Include)
                 </p>
                 <p className="text-sm mb-2">
                   <strong>Solution:</strong> Read the error message and follow
                   suggestions. System only allows valid combinations.
                 </p>
                 <p className="text-sm text-gray-600">
-                  Keep EXCLUDE blocks at the end, use AND/OR in the middle.
+                  Keep &quot;Does Not Include&quot; blocks at the end, use
+                  AND/OR in the middle.
                 </p>
               </CollapsibleSection>
 
@@ -740,7 +809,9 @@ export function HowToUsePage({ showCloseButton = false }: HowToUsePageProps) {
                       <li>Use complex boolean syntax manually</li>
                       <li>Select all 2,510 journals at once</li>
                       <li>Leave search terms empty</li>
-                      <li>Use EXCLUDE without positive search</li>
+                      <li>
+                        Use &quot;Does Not Include&quot; without positive search
+                      </li>
                     </ul>
                   </div>
                 </div>
@@ -750,7 +821,7 @@ export function HowToUsePage({ showCloseButton = false }: HowToUsePageProps) {
             {/* Footer */}
             <div className="mt-12 pt-8 border-t border-gray-200">
               <p className="text-center text-gray-600 text-sm">
-                Last Updated: October 16, 2025
+                Last Updated: October 20, 2025
               </p>
               <p className="text-center text-gray-500 text-sm mt-2">
                 Happy Researching! 📚🔍
@@ -759,6 +830,9 @@ export function HowToUsePage({ showCloseButton = false }: HowToUsePageProps) {
           </div>
         </div>
       </div>
+
+      {/* Main Footer */}
+      <Footer />
     </div>
   );
 }

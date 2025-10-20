@@ -30,6 +30,7 @@ export function SearchBlocksContainer({
             onRemove={() => onBlockRemove(index)}
             isOnlyBlock={blocks.length === 1}
             index={index}
+            allBlocks={blocks}
           />
         </div>
       ))}

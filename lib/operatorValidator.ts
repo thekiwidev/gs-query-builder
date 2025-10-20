@@ -1,6 +1,12 @@
 /**
  * Operator Validation Module
  * Handles validation of search block operator configurations
+ *
+ * Grouping Rules:
+ * - Blocks connected with AND/OR operators chain together in the same parentheses group
+ * - You cannot mix AND and OR in the same chain (e.g., "AND_NEXT" followed by "OR_PREV" is invalid)
+ * - Empty blocks (no search term) break the chain - they start a new grouping
+ * - Does Not Include (EXCLUDE) can only appear at the end of a chain
  */
 
 import type {
@@ -62,7 +68,79 @@ export function validateSearchBlock(
     }
   }
 
-  // Rule 4: EXCLUDE cannot have direction
+  // Rule 4: Validate operator chaining - cannot mix AND and OR in same chain
+  // Split into backward and forward checks for complete coverage
+
+  // Backward Check: If this block has "previous" direction, verify compatibility with previous block
+  if (
+    (block.operator === "AND" || block.operator === "OR") &&
+    block.operatorDirection === "previous" &&
+    blockIndex > 0
+  ) {
+    const previousBlock = allBlocks[blockIndex - 1];
+
+    if (
+      previousBlock &&
+      previousBlock.operator &&
+      previousBlock.operatorDirection === "next"
+    ) {
+      // Direct conflict: block's operator differs from previous block's operator
+      // Example: AND_NEXT followed by OR_PREV (different operators)
+      if (previousBlock.operator !== block.operator) {
+        return {
+          valid: false,
+          message: `Invalid operator combination: Cannot use ${block.operator} with previous when the previous block uses ${previousBlock.operator} with next. Operators must match in a chain.`,
+          suggestion: `Use "${previousBlock.operator} with previous" to continue the ${previousBlock.operator} chain.`,
+        };
+      }
+    }
+  }
+
+  // Forward Check: If this block has "next" direction, verify compatibility with next block
+  // NOTE: This check runs for all blocks including block 0 (fixes bug #1)
+  if (
+    (block.operator === "AND" || block.operator === "OR") &&
+    block.operatorDirection === "next" &&
+    blockIndex < allBlocks.length - 1
+  ) {
+    const nextBlock = allBlocks[blockIndex + 1];
+
+    if (nextBlock && nextBlock.operator) {
+      // Direct conflict: this block's operator differs from next block's operator
+      // Example: AND_NEXT followed by OR_PREV (different operators forming incompatible pair)
+      if (
+        block.operator === "AND" &&
+        nextBlock.operator === "OR" &&
+        nextBlock.operatorDirection === "previous"
+      ) {
+        return {
+          valid: false,
+          message:
+            "Invalid operator combination: You selected AND with next, but the next block uses OR with previous. Operators must match in a chain.",
+          suggestion:
+            'Change the next block operator to AND, or change this block to "OR with next".',
+        };
+      }
+      if (
+        block.operator === "OR" &&
+        nextBlock.operator === "AND" &&
+        nextBlock.operatorDirection === "previous"
+      ) {
+        return {
+          valid: false,
+          message:
+            "Invalid operator combination: You selected OR with next, but the next block uses AND with previous. Operators must match in a chain.",
+          suggestion:
+            'Change the next block operator to OR, or change this block to "AND with next".',
+        };
+      }
+      // Allow: AND_NEXT → OR_NEXT (starts new chain, both are "next" so not a direct connection)
+      // Allow: OR_NEXT → AND_NEXT (starts new chain, both are "next" so not a direct connection)
+      // The next block will validate its own "previous" direction if set
+    }
+  }
+
+  // Rule 5: EXCLUDE cannot have direction
   if (block.operator === "EXCLUDE" && block.operatorDirection) {
     return {
       valid: false,
@@ -70,7 +148,7 @@ export function validateSearchBlock(
     };
   }
 
-  // Rule 5: Last block cannot use "with next"
+  // Rule 6: Last block cannot use "with next"
   if (
     blockIndex === allBlocks.length - 1 &&
     block.operatorDirection === "next"
@@ -81,7 +159,7 @@ export function validateSearchBlock(
     };
   }
 
-  // Rule 6: First block cannot use "with previous"
+  // Rule 7: First block cannot use "with previous"
   if (blockIndex === 0 && block.operatorDirection === "previous") {
     return {
       valid: false,
