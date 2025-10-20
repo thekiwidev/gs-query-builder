@@ -5,6 +5,65 @@ All notable changes to the Google Scholar Query Translator (QTM) project will be
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.1] - 2025-10-20 - Fixed Operator Chaining Validation Logic
+
+### Fixed
+
+- **Critical: Operator Chaining Validation Flaws** - Fixed two major validation issues in `lib/operatorValidator.ts`
+
+  - **Issue 1: First block not validated against next block**
+    - Forward-chain validation (checking current block's `next` direction against next block's operator) was incorrectly nested within `blockIndex > 0` condition
+    - This skipped validation of the first block (index 0), allowing invalid operator chains starting at position 0
+    - Fixed by implementing forward check that runs for all blocks from index 0 to n-2
+
+  - **Issue 2: Overly broad conflict detection**
+    - Conflict checks were flagging valid operator sequences as errors (e.g., `AND with next` followed by `OR with next`)
+    - This incorrectly rejected cases where one chain ends and another begins (perfectly valid in Boolean logic)
+    - Fixed by implementing precise rules: only flag direct conflicts (e.g., `AND with next` followed by `OR with previous`)
+
+- **Implementation Changes:**
+
+  1. **Backward Check (for blocks 1 to n-1):**
+     - Validates blocks with `operator="AND/OR"` and `operatorDirection="previous"`
+     - Compares against previous block's `operatorDirection="next"` and operator type
+     - Only flags error if operators differ (AND paired with OR or vice versa)
+
+  2. **Forward Check (for blocks 0 to n-2):**
+     - Validates blocks with `operator="AND/OR"` and `operatorDirection="next"`
+     - Compares against next block's operator type and direction
+     - Only flags error for direct incompatible pairs:
+       - `(operator: AND, direction: next)` followed by `(operator: OR, direction: previous)` → ERROR
+       - `(operator: OR, direction: next)` followed by `(operator: AND, direction: previous)` → ERROR
+     - Allows chain boundaries (e.g., AND→next followed by OR→next)
+
+  3. **Enhanced error messages:**
+     - Messages now explain exactly which block has which operator
+     - Suggestions guide users to fix the specific incompatibility
+     - Example: "Cannot use OR with previous when the previous block uses AND with next"
+
+### Technical Details
+
+- Rule 4 in `operatorValidator.ts` completely rewritten for correctness (lines 73-108)
+- Backward check runs for blocks with `operatorDirection="previous"` (blocks 1 to n-1)
+- Forward check runs for blocks with `operatorDirection="next"` (blocks 0 to n-2)
+- No block validation is skipped; coverage is complete from index 0 to last block
+- Direct conflicts are the only errors flagged; valid chain transitions are allowed
+- `ValidationResult` interface updated to include optional `suggestion` property
+
+### Validation Examples
+
+**Valid (before was incorrectly marked as error):**
+- Block 0: `(AND, next)` | Block 1: `(OR, next)` | Block 2: ... ✅ (AND chain, then OR chain)
+- Block 0: `(OR, next)` | Block 1: `(AND, next)` | Block 2: ... ✅ (OR chain, then AND chain)
+
+**Invalid (now correctly caught at position 0):**
+- Block 0: `(AND, next)` | Block 1: `(OR, previous)` ❌ (direct conflict - caught by forward check)
+
+**Invalid (still correctly caught):**
+- Block 0: `(AND, next)` | Block 1: `(AND, next)` | Block 2: `(OR, previous)` ❌ (OR mismatch - caught by backward check)
+
+---
+
 ## [1.3.0] - 2025-10-20 - UI Polish, Footer Integration, and Responsive Layout Improvements
 
 ### Added

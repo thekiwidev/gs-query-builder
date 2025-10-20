@@ -34,6 +34,7 @@ export interface SearchField {
 export interface ValidationResult {
   valid: boolean;
   message?: string;
+  suggestion?: string;
 }
 
 /**
