@@ -86,7 +86,10 @@ The project **must** maintain a history of significant changes.
 
 **Instruction:** Every time a change is deployed that affects the QTM logic, the core data layer, or public interface features, the developer **MUST** update the `CHANGELOG.md` file located at the project root.
 
-- **Standard:** Use the "Keep a Changelog" standard (Unreleased, Added, Changed, Fixed, Removed).
+- **Standard:** Use the "Keep a Changelog" standard (Added, Changed, Fixed, Removed).
+- **Version Format:** Each new entry should have a version number and a short, descriptive title for the changes. Do not use "Unreleased".
+  - Example: `## [1.2.0] - Feature Name or Descriptive Title`
+  - Example: `## [1.2.1] - Bug Fix for Query Encoding`
 - **Trigger for Update:** Any modification to the `GS_SEARCH_FIELDS` data, logic within the `buildScholarUrl` function, or the introduction of new optional filters (e.g., date ranges). [5]
 
 ### 10. Defensive Programming

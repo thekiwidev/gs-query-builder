@@ -5,7 +5,65 @@ All notable changes to the Google Scholar Query Translator (QTM) project will be
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [Unreleased] - 2025-10-17
+## [1.1.1] - 2025-10-20 - Enhanced Collapsible Sidebar with Mobile Responsiveness
+
+### Added
+
+- **Enhanced Collapsible Sidebar with Mobile Responsiveness**
+
+  - Visible collapsed sidebar (50px spacebar width) that remains visible at all times
+  - Hamburger menu icon at the top of collapsed sidebar for easy expansion
+  - Rotated "FILTER" text centered vertically in collapsed sidebar
+  - Smooth fade-in animation for sidebar content (0.2s delay) when expanded
+  - Mobile-responsive sidebar overlay that doesn't shift page content
+  - Fixed positioning on mobile that overlaps content without layout shift
+  - Smooth transitions with 300ms duration for all sidebar state changes
+
+### Changed
+
+- **Sidebar Layout Architecture** (`components/layouts/MainLayout.tsx`)
+
+  - Changed from `overflow-hidden` to `overflow-visible` to allow chevron to display outside sidebar bounds
+  - Improved collapsed state UX with clear visual indicators
+  - Mobile detection using 768px breakpoint (Tailwind `md` breakpoint)
+  - Sidebar content visibility now controlled by state rather than just CSS classes
+  - Main content now maintains proper spacing regardless of sidebar state
+
+- **Animation System** (`app/globals.css`)
+
+  - Added `fadeIn` CSS keyframe animation for smooth content appearance
+  - Content fade-in triggered on sidebar expansion with 0.2s delay
+  - Prevents jittery animation during sidebar resize transitions
+
+- **Mobile UX Improvements**
+
+  - Sidebar fixed positioning on mobile prevents content shifts
+  - Added shadow effect to expanded sidebar on mobile for depth perception
+  - Close button (X icon) visible in top-left when sidebar is open on mobile
+  - Draggable divider hidden on mobile and when sidebar is collapsed
+
+### Fixed
+
+- Sidebar content appearing too early during expansion animation (now fades in smoothly after sidebar finishes expanding)
+- Main content falling behind collapsed sidebar (now properly offset by COLLAPSED_SIDEBAR_WIDTH)
+- Sidebar overflow issues preventing display of interactive elements beyond sidebar bounds
+
+### Technical Details
+
+- `COLLAPSED_SIDEBAR_WIDTH` constant set to 50px for spacebar-like appearance
+- Mobile detection implemented with `window.innerWidth < 768` check on mount and resize
+- Absolute positioning with `translate(50%, -50%)` for proper centering of interactive elements
+- `overflow-visible` allows buttons positioned outside sidebar to be clickable
+- Z-index layering: sidebar (z-40), close button (z-30), fixed buttons (z-50)
+
+### Notes
+
+- Sidebar remains visible even when collapsed, providing clear affordance for expansion
+- Mobile overlay prevents accidental content interaction while sidebar is open
+- Smooth animations improve perceived performance and UX fluidity
+- Storage of sidebar width persists across sessions for desktop users
+
+## [1.1.0] - In-App Help System, Advanced Operator Validation, and Real-Time Query Generation
 
 ### Added
 
@@ -256,7 +314,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [1.0.0] - 2025-10-16 14:30:00
+## [1.0.0] - Advanced Query Controls, Resizable Sidebar, and UI Simplification
 
 ### Added
 
@@ -443,7 +501,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [0.3.0] - 2025-10-12
+## [0.3.0] - Advanced Journal Filtering and Enhanced Boolean Logic
 
 ### Added
 
@@ -564,7 +622,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - All major UI/UX issues from user feedback have been resolved
 - System successfully compiles and builds without errors using bun
 
-## [0.2.0] - 2025-10-10
+## [0.2.0] - Modern UI with shadcn/ui and Advanced Query Logic
 
 ### Added
 
@@ -628,7 +686,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Input hover effects** provide visual feedback before focus
 - **Checkbox interactions** include hover states and smooth transitions
 
-## [0.1.0] - 2025-10-10
+## [0.1.0] - Initial Project Setup and Core QTM Implementation
 
 ### Added
 
