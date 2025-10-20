@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - **Light-Themed Footer Component** - Consistent branding across all pages
+
   - `components/layout/Footer.tsx` - Production-ready footer (185 lines)
   - Four-column grid layout with responsive design (1 col mobile, 4 cols desktop)
   - Sections: Brand, Product, Resources, Contact & Feedback
@@ -21,11 +22,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Responsive Tailwind styling with smooth transitions
 
 - **"How to Use" Page Footer Integration**
+
   - Added Footer component to HowToUsePage
   - Footer now appears at bottom of all pages via MainLayout
   - Consistent footer appearance across main site and documentation pages
 
 - **"Go Back Home" Button on Help Page**
+
   - Added Home button next to X close button in HowToUsePage header
   - Blue-themed button with Home icon and text label
   - Direct navigation to homepage (`/`)
@@ -33,6 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Provides users with both back-navigation and home-navigation options
 
 - **Help Page Quotation Error Fixes**
+
   - Fixed 78 compilation errors in HowToUsePage.tsx
   - Converted all straight quotes to HTML entities (`&quot;`)
   - Converted all apostrophes to HTML entities (`&apos;`)
@@ -50,6 +54,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - **Footer Styling** - Updated from dark to light theme
+
   - Background: `bg-gray-900` → `bg-white`
   - Text: `text-gray-100` → `text-gray-900`
   - Headers: `text-white` → `text-gray-900`
@@ -58,6 +63,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Consistent with website light theme
 
 - **MainContentArea Component Architecture**
+
   - Changed from simple full-width `main` to structured layout
   - Added inner `div` with `max-w-6xl mx-auto` for content constraining
   - Implemented `flex-1 overflow-y-auto` for proper scrolling
@@ -65,6 +71,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Better responsive behavior across all screen sizes
 
 - **HowToUsePage Imports** - Added Header navigation support
+
   - Added `Link` import from `next/link`
   - Added `Home` icon from `lucide-react`
   - Added `Footer` import from `@/components/layout/Footer`
