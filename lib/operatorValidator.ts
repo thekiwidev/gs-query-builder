@@ -70,7 +70,7 @@ export function validateSearchBlock(
 
   // Rule 4: Validate operator chaining - cannot mix AND and OR in same chain
   // Split into backward and forward checks for complete coverage
-  
+
   // Backward Check: If this block has "previous" direction, verify compatibility with previous block
   if (
     (block.operator === "AND" || block.operator === "OR") &&
@@ -79,14 +79,17 @@ export function validateSearchBlock(
   ) {
     const previousBlock = allBlocks[blockIndex - 1];
 
-    if (previousBlock && previousBlock.operator && previousBlock.operatorDirection === "next") {
+    if (
+      previousBlock &&
+      previousBlock.operator &&
+      previousBlock.operatorDirection === "next"
+    ) {
       // Direct conflict: block's operator differs from previous block's operator
       // Example: AND_NEXT followed by OR_PREV (different operators)
       if (previousBlock.operator !== block.operator) {
         return {
           valid: false,
-          message:
-            `Invalid operator combination: Cannot use ${block.operator} with previous when the previous block uses ${previousBlock.operator} with next. Operators must match in a chain.`,
+          message: `Invalid operator combination: Cannot use ${block.operator} with previous when the previous block uses ${previousBlock.operator} with next. Operators must match in a chain.`,
           suggestion: `Use "${previousBlock.operator} with previous" to continue the ${previousBlock.operator} chain.`,
         };
       }
@@ -103,22 +106,32 @@ export function validateSearchBlock(
     const nextBlock = allBlocks[blockIndex + 1];
 
     if (nextBlock && nextBlock.operator) {
-      // Direct conflict: this block's operator differs from next block's operator  
+      // Direct conflict: this block's operator differs from next block's operator
       // Example: AND_NEXT followed by OR_PREV (different operators forming incompatible pair)
-      if (block.operator === "AND" && nextBlock.operator === "OR" && nextBlock.operatorDirection === "previous") {
+      if (
+        block.operator === "AND" &&
+        nextBlock.operator === "OR" &&
+        nextBlock.operatorDirection === "previous"
+      ) {
         return {
           valid: false,
           message:
             "Invalid operator combination: You selected AND with next, but the next block uses OR with previous. Operators must match in a chain.",
-          suggestion: 'Change the next block operator to AND, or change this block to "OR with next".',
+          suggestion:
+            'Change the next block operator to AND, or change this block to "OR with next".',
         };
       }
-      if (block.operator === "OR" && nextBlock.operator === "AND" && nextBlock.operatorDirection === "previous") {
+      if (
+        block.operator === "OR" &&
+        nextBlock.operator === "AND" &&
+        nextBlock.operatorDirection === "previous"
+      ) {
         return {
           valid: false,
           message:
             "Invalid operator combination: You selected OR with next, but the next block uses AND with previous. Operators must match in a chain.",
-          suggestion: 'Change the next block operator to OR, or change this block to "AND with next".',
+          suggestion:
+            'Change the next block operator to OR, or change this block to "AND with next".',
         };
       }
       // Allow: AND_NEXT → OR_NEXT (starts new chain, both are "next" so not a direct connection)

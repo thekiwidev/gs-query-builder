@@ -3,6 +3,7 @@
 ## 🎯 Quick Start
 
 **What was fixed?** Two critical bugs in operator chaining validation:
+
 1. **First block not validated** against next block
 2. **Valid chain boundaries rejected** as errors
 
@@ -14,11 +15,11 @@
 
 ### Changed Files
 
-| File | Changes | Lines |
-|------|---------|-------|
-| `lib/operatorValidator.ts` | Rewrote Rule 4 with bidirectional validation | 73-108 |
-| `types/search.ts` | Added `suggestion` to `ValidationResult` | Interface updated |
-| `CHANGELOG.md` | Added version 1.3.1 entry | Top of file |
+| File                       | Changes                                      | Lines             |
+| -------------------------- | -------------------------------------------- | ----------------- |
+| `lib/operatorValidator.ts` | Rewrote Rule 4 with bidirectional validation | 73-108            |
+| `types/search.ts`          | Added `suggestion` to `ValidationResult`     | Interface updated |
+| `CHANGELOG.md`             | Added version 1.3.1 entry                    | Top of file       |
 
 ### Key Code Locations
 
@@ -36,6 +37,7 @@
 ## 📚 Documentation Files
 
 ### Summary & Overview
+
 - **`OPERATOR_CHAINING_FIX_SUMMARY.md`** (This workspace)
   - High-level overview of what was fixed
   - Before/after comparison
@@ -43,6 +45,7 @@
   - ⏱️ Read time: 5 minutes
 
 ### Technical Detailed Explanation
+
 - **`docs/operator-chaining-validation-fix.md`**
   - Deep technical analysis of both bugs
   - Solution architecture explanation
@@ -51,6 +54,7 @@
   - ⏱️ Read time: 10 minutes
 
 ### Before/After Comparison
+
 - **`docs/operator-chaining-before-after.md`**
   - Visual inspector analogy
   - Code-level before/after
@@ -59,6 +63,7 @@
   - ⏱️ Read time: 12 minutes
 
 ### Visual Diagrams
+
 - **`docs/operator-chaining-visual-diagrams.md`**
   - Inspector analogy illustrated
   - Validation flow diagrams
@@ -68,6 +73,7 @@
   - ⏱️ Read time: 10 minutes
 
 ### Test Cases & Validation
+
 - **`docs/operator-chaining-test-cases.md`**
   - 5 test suites with 15+ test cases
   - Expected vs actual results
@@ -81,6 +87,7 @@
 ## 🧪 Testing & Verification
 
 ### Run TypeScript Validation
+
 ```bash
 cd /Users/adedotungabriel/work/me/gs-search-kit
 bunx tsc --noEmit
@@ -91,43 +98,43 @@ bunx tsc --noEmit
 
 From `docs/operator-chaining-test-cases.md`:
 
-| Test Suite | What It Tests | Expected Result |
-|---|---|---|
-| **1.1** | Block 0 AND→next to OR→prev | Should now ERROR ✅ |
-| **1.2** | Block 0 OR→next to AND→prev | Should now ERROR ✅ |
-| **2.1** | Valid AND→next to OR→next | Should now PASS ✅ |
-| **2.2** | Valid OR→next to AND→next | Should now PASS ✅ |
-| **2.3** | Multiple chain transitions | Should now PASS ✅ |
-| **3.1** | Invalid AND→next to OR→prev | Should still ERROR ✓ |
-| **3.2** | Invalid OR→next to AND→prev | Should still ERROR ✓ |
-| **4.1** | Long AND chain | Should still PASS ✓ |
-| **4.2** | Long OR chain | Should still PASS ✓ |
+| Test Suite | What It Tests               | Expected Result      |
+| ---------- | --------------------------- | -------------------- |
+| **1.1**    | Block 0 AND→next to OR→prev | Should now ERROR ✅  |
+| **1.2**    | Block 0 OR→next to AND→prev | Should now ERROR ✅  |
+| **2.1**    | Valid AND→next to OR→next   | Should now PASS ✅   |
+| **2.2**    | Valid OR→next to AND→next   | Should now PASS ✅   |
+| **2.3**    | Multiple chain transitions  | Should now PASS ✅   |
+| **3.1**    | Invalid AND→next to OR→prev | Should still ERROR ✓ |
+| **3.2**    | Invalid OR→next to AND→prev | Should still ERROR ✓ |
+| **4.1**    | Long AND chain              | Should still PASS ✓  |
+| **4.2**    | Long OR chain               | Should still PASS ✓  |
 
 ### Programmatic Testing
 
 ```typescript
-import { validateSearchBlock } from '@/lib/operatorValidator';
+import { validateSearchBlock } from "@/lib/operatorValidator";
 
 // Test the fix
 const blocks = [
-  { 
-    id: '0', 
-    fieldId: 'title', 
-    term: 'AI', 
-    operator: 'AND', 
-    operatorDirection: 'next' 
+  {
+    id: "0",
+    fieldId: "title",
+    term: "AI",
+    operator: "AND",
+    operatorDirection: "next",
   },
-  { 
-    id: '1', 
-    fieldId: 'title', 
-    term: 'Ethics', 
-    operator: 'OR', 
-    operatorDirection: 'previous' 
-  }
+  {
+    id: "1",
+    fieldId: "title",
+    term: "Ethics",
+    operator: "OR",
+    operatorDirection: "previous",
+  },
 ];
 
 const result = validateSearchBlock(blocks[0], 0, blocks);
-console.log(result.valid);  // Should be false (ERROR)
+console.log(result.valid); // Should be false (ERROR)
 console.log(result.message); // Should describe the conflict
 ```
 
@@ -138,15 +145,19 @@ console.log(result.message); // Should describe the conflict
 ### Reading Order (Recommended)
 
 1. **Start here:** `OPERATOR_CHAINING_FIX_SUMMARY.md`
+
    - Get the high-level overview
 
 2. **Visual learner?** `docs/operator-chaining-visual-diagrams.md`
+
    - See diagrams and flowcharts
 
 3. **Want details?** `docs/operator-chaining-validation-fix.md`
+
    - Understand the technical implementation
 
 4. **Need comparison?** `docs/operator-chaining-before-after.md`
+
    - See side-by-side before/after
 
 5. **Ready to test?** `docs/operator-chaining-test-cases.md`
@@ -155,22 +166,26 @@ console.log(result.message); // Should describe the conflict
 ### Key Concepts
 
 #### Backward Check
+
 - Validates blocks with `operatorDirection === "previous"`
 - Checks against previous block's `operatorDirection === "next"`
 - Only flags error if operators differ (AND paired with OR)
 
 #### Forward Check
+
 - Validates blocks with `operatorDirection === "next"`
 - Checks against next block's operator and direction
 - Only flags error for direct conflicts (AND→next + OR→previous)
 - **NEW:** Runs for all blocks including block 0!
 
 #### Direct Conflict
+
 - AND→next paired with OR→previous (incompatible)
 - OR→next paired with AND→previous (incompatible)
 - These are the ONLY errors flagged
 
 #### Valid Boundaries
+
 - AND→next followed by OR→next (ends AND, starts OR)
 - OR→next followed by AND→next (ends OR, starts AND)
 - These are now correctly ALLOWED
@@ -182,17 +197,20 @@ console.log(result.message); // Should describe the conflict
 ### What to Look For
 
 1. **Rule 4 Structure** (lines 73-108)
+
    - Backward check: Lines 74-92
    - Forward check: Lines 95-108
    - Both checks run independently
    - No nesting that skips blocks
 
 2. **Backward Check Logic**
+
    - Only validates `operatorDirection === "previous"`
    - Compares against previous block's `operatorDirection === "next"`
    - Flags error only if operators differ
 
 3. **Forward Check Logic**
+
    - Only validates `operatorDirection === "next"`
    - Compares against next block's operator and direction
    - Flags error only for AND→next/OR→prev or OR→next/AND→prev
@@ -310,15 +328,15 @@ gs-search-kit/
 
 ## ✅ Verification Status
 
-| Check | Status | Details |
-|-------|--------|---------|
-| TypeScript Compilation | ✅ PASS | No errors in validator or types |
-| ESLint Validation | ✅ PASS | No warnings |
-| Code Quality | ✅ PASS | Clear, documented, production-ready |
-| Test Coverage | ✅ PASS | 15+ test cases covering all scenarios |
-| Documentation | ✅ COMPLETE | 5 comprehensive documentation files |
-| Backward Compatibility | ✅ YES | No breaking changes |
-| Production Ready | ✅ YES | Ready for immediate deployment |
+| Check                  | Status      | Details                               |
+| ---------------------- | ----------- | ------------------------------------- |
+| TypeScript Compilation | ✅ PASS     | No errors in validator or types       |
+| ESLint Validation      | ✅ PASS     | No warnings                           |
+| Code Quality           | ✅ PASS     | Clear, documented, production-ready   |
+| Test Coverage          | ✅ PASS     | 15+ test cases covering all scenarios |
+| Documentation          | ✅ COMPLETE | 5 comprehensive documentation files   |
+| Backward Compatibility | ✅ YES      | No breaking changes                   |
+| Production Ready       | ✅ YES      | Ready for immediate deployment        |
 
 ---
 

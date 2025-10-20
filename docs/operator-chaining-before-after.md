@@ -16,7 +16,7 @@ The Flawed Process:
 │     (too strict, flags valid sequences as errors)   │
 └─────────────────────────────────────────────────────┘
 
-Result: 
+Result:
 ✗ Misses errors at block 0 (skipped location)
 ✗ Creates false errors (AND_NEXT → OR_NEXT marked invalid)
 ✗ Invalid chains like [Block0: AND_NEXT, Block1: OR_PREV] PASS
@@ -56,7 +56,7 @@ Result:
 // Rule 4: FLAWED LOGIC
 if (
   (block.operator === "AND_NEXT" || block.operator === "OR_NEXT") &&
-  blockIndex > 0  // ← PROBLEM 1: Skips block 0!
+  blockIndex > 0 // ← PROBLEM 1: Skips block 0!
 ) {
   // Only check next block if previous block has operator
   if (previousBlock && previousBlock.operator) {
@@ -90,7 +90,7 @@ if (
 // Backward Check (blocks 1 to n-1)
 if (
   (block.operator === "AND_PREV" || block.operator === "OR_PREV") &&
-  blockIndex > 0  // ← Safe here: only checking _PREV for non-first blocks
+  blockIndex > 0 // ← Safe here: only checking _PREV for non-first blocks
 ) {
   const previousBlock = allBlocks[blockIndex - 1];
 
@@ -98,13 +98,13 @@ if (
     // ONLY flag direct conflicts
     if (
       previousBlock.operator === "AND_NEXT" &&
-      block.operator === "OR_PREV"  // ← Direct conflict ONLY
+      block.operator === "OR_PREV" // ← Direct conflict ONLY
     ) {
       return { valid: false, message: "..." };
     }
     if (
       previousBlock.operator === "OR_NEXT" &&
-      block.operator === "AND_PREV"  // ← Direct conflict ONLY
+      block.operator === "AND_PREV" // ← Direct conflict ONLY
     ) {
       return { valid: false, message: "..." };
     }
@@ -114,7 +114,7 @@ if (
 // Forward Check (blocks 0 to n-2)
 if (
   (block.operator === "AND_NEXT" || block.operator === "OR_NEXT") &&
-  blockIndex < allBlocks.length - 1  // ← Starts at block 0! Problem 1 fixed
+  blockIndex < allBlocks.length - 1 // ← Starts at block 0! Problem 1 fixed
 ) {
   const nextBlock = allBlocks[blockIndex + 1];
 
@@ -147,7 +147,7 @@ Block 3 (AND_NEXT)    ← ✓ Forward check runs
 
 Result:
 - Block 0 → Block 1: ERROR MISSED ✗ (no forward check for block 0)
-- Block 1 → Block 2: ERROR (or false positive) 
+- Block 1 → Block 2: ERROR (or false positive)
 - Block 2 → Block 3: May be false positive if OR_NEXT → AND_NEXT
 ```
 
@@ -173,11 +173,13 @@ Result:
 ### Scenario 1: Research on AI Ethics and Machine Learning
 
 **User's Intent:**
+
 ```
 (Title: AI AND Title: Ethics) OR (Title: Machine Learning)
 ```
 
 **Block Configuration:**
+
 ```
 Block 0: field=Title, term=AI, operator=AND_NEXT
 Block 1: field=Title, term=Ethics, operator=OR_NEXT
@@ -185,6 +187,7 @@ Block 2: field=Title, term=Machine Learning
 ```
 
 **BEFORE:** ❌ ERROR - "Cannot use OR operators when previous block uses AND"
+
 - False positive: User wanted to chain two independent searches
 
 **AFTER:** ✅ VALID - Correctly allows chaining AND within first group, then OR
@@ -194,6 +197,7 @@ Block 2: field=Title, term=Machine Learning
 ### Scenario 2: Invalid Configuration (Should Fail)
 
 **User's Mistake:**
+
 ```
 Block 0: field=Title, term=AI, operator=AND_NEXT
 Block 1: field=Title, term=Ethics, operator=OR_PREV
@@ -204,6 +208,7 @@ Block 1: field=Title, term=Ethics, operator=OR_PREV
 **BEFORE:** ❌ ERROR - But message is confusing and overly broad
 
 **AFTER:** ✓ ERROR - Clear message: "Cannot use OR with previous when the previous block uses AND with next"
+
 - Suggests: 'Use "AND with previous" to continue the AND chain.'
 
 ---
@@ -211,11 +216,13 @@ Block 1: field=Title, term=Ethics, operator=OR_PREV
 ### Scenario 3: Complex Multi-Chain Query
 
 **User's Intent:**
+
 ```
 (Author: Smith OR Author: Johnson) AND (Year: 2023 OR Year: 2024)
 ```
 
 **Block Configuration:**
+
 ```
 Block 0: field=Author, term=Smith, operator=OR_NEXT
 Block 1: field=Author, term=Johnson, operator=AND_NEXT
@@ -226,6 +233,7 @@ Block 3: field=Year, term=2024
 **BEFORE:** ❌ MULTIPLE ERRORS - Too strict about operator transitions
 
 **AFTER:** ✓ VALID - Correctly interprets:
+
 - OR_NEXT at Block 0 (start of OR chain)
 - AND_NEXT at Block 1 (end OR, start AND)
 - OR_NEXT at Block 2 (within new OR chain)
@@ -235,39 +243,39 @@ Block 3: field=Year, term=2024
 
 ## Detailed Validation Rules
 
-### Forward Check Rules (Applied to Block's _NEXT Operator)
+### Forward Check Rules (Applied to Block's \_NEXT Operator)
 
-| Current Block | Next Block | Allowed? | Reason |
-|---|---|---|---|
-| AND_NEXT | AND_PREV | ✅ | Continues AND chain |
-| AND_NEXT | AND_NEXT | ✅ | Chains forward in AND |
-| AND_NEXT | OR_PREV | ❌ | Direct conflict |
-| AND_NEXT | OR_NEXT | ✅ | Ends AND, starts OR |
-| OR_NEXT | AND_PREV | ❌ | Direct conflict |
-| OR_NEXT | AND_NEXT | ✅ | Ends OR, starts AND |
-| OR_NEXT | OR_PREV | ✅ | Continues OR chain |
-| OR_NEXT | OR_NEXT | ✅ | Chains forward in OR |
+| Current Block | Next Block | Allowed? | Reason                |
+| ------------- | ---------- | -------- | --------------------- |
+| AND_NEXT      | AND_PREV   | ✅       | Continues AND chain   |
+| AND_NEXT      | AND_NEXT   | ✅       | Chains forward in AND |
+| AND_NEXT      | OR_PREV    | ❌       | Direct conflict       |
+| AND_NEXT      | OR_NEXT    | ✅       | Ends AND, starts OR   |
+| OR_NEXT       | AND_PREV   | ❌       | Direct conflict       |
+| OR_NEXT       | AND_NEXT   | ✅       | Ends OR, starts AND   |
+| OR_NEXT       | OR_PREV    | ✅       | Continues OR chain    |
+| OR_NEXT       | OR_NEXT    | ✅       | Chains forward in OR  |
 
-### Backward Check Rules (Applied to Block's _PREV Operator)
+### Backward Check Rules (Applied to Block's \_PREV Operator)
 
-| Previous Block | Current Block | Allowed? | Reason |
-|---|---|---|---|
-| AND_NEXT | AND_PREV | ✅ | Continues AND chain |
-| AND_NEXT | AND_NEXT | ✅ | Previous already connects forward |
-| AND_NEXT | OR_PREV | ❌ | Direct conflict |
-| AND_NEXT | OR_NEXT | ✅ | Previous chains forward, this starts new OR |
-| OR_NEXT | AND_PREV | ❌ | Direct conflict |
-| OR_NEXT | AND_NEXT | ✅ | Previous chains forward, this starts new AND |
-| OR_NEXT | OR_PREV | ✅ | Continues OR chain |
-| OR_NEXT | OR_NEXT | ✅ | Previous already connects forward |
+| Previous Block | Current Block | Allowed? | Reason                                       |
+| -------------- | ------------- | -------- | -------------------------------------------- |
+| AND_NEXT       | AND_PREV      | ✅       | Continues AND chain                          |
+| AND_NEXT       | AND_NEXT      | ✅       | Previous already connects forward            |
+| AND_NEXT       | OR_PREV       | ❌       | Direct conflict                              |
+| AND_NEXT       | OR_NEXT       | ✅       | Previous chains forward, this starts new OR  |
+| OR_NEXT        | AND_PREV      | ❌       | Direct conflict                              |
+| OR_NEXT        | AND_NEXT      | ✅       | Previous chains forward, this starts new AND |
+| OR_NEXT        | OR_PREV       | ✅       | Continues OR chain                           |
+| OR_NEXT        | OR_NEXT       | ✅       | Previous already connects forward            |
 
 ## Key Differences Summary
 
-| Aspect | BEFORE | AFTER |
-|--------|--------|-------|
-| **Block 0 Coverage** | Forward check skipped | Forward check runs ✓ |
-| **Chain Boundaries** | Rejected as errors | Allowed ✓ |
-| **Error Messages** | Generic/broad | Specific and actionable ✓ |
-| **Valid Query Support** | Limited | Full ✓ |
-| **User Experience** | Confusing | Clear ✓ |
-| **Completion Status** | Incomplete | Production-ready ✓ |
+| Aspect                  | BEFORE                | AFTER                     |
+| ----------------------- | --------------------- | ------------------------- |
+| **Block 0 Coverage**    | Forward check skipped | Forward check runs ✓      |
+| **Chain Boundaries**    | Rejected as errors    | Allowed ✓                 |
+| **Error Messages**      | Generic/broad         | Specific and actionable ✓ |
+| **Valid Query Support** | Limited               | Full ✓                    |
+| **User Experience**     | Confusing             | Clear ✓                   |
+| **Completion Status**   | Incomplete            | Production-ready ✓        |

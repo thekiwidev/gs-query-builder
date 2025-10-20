@@ -11,13 +11,18 @@ Successfully fixed two critical bugs in the operator chaining validation logic. 
 ### 1. Fixed `lib/operatorValidator.ts` (Rule 4)
 
 **Before:** Incomplete and overly-strict validation
+
 ```typescript
 // ❌ Bug 1: blockIndex > 0 excludes first block
 // ❌ Bug 2: Too broad conflict checks
-if ((block.operator === "AND_NEXT" || block.operator === "OR_NEXT") && blockIndex > 0) {
+if (
+  (block.operator === "AND_NEXT" || block.operator === "OR_NEXT") &&
+  blockIndex > 0
+) {
   if (previousBlock && previousBlock.operator) {
     if (previousBlock.operator === "AND_NEXT") {
-      if (block.operator === "OR_PREV" || block.operator === "OR_NEXT") {  // Both flagged as error!
+      if (block.operator === "OR_PREV" || block.operator === "OR_NEXT") {
+        // Both flagged as error!
         return ERROR; // ❌ OR_NEXT should be allowed
       }
     }
@@ -26,24 +31,35 @@ if ((block.operator === "AND_NEXT" || block.operator === "OR_NEXT") && blockInde
 ```
 
 **After:** Complete and precise validation
+
 ```typescript
 // ✅ Backward check: validates "previous" direction against previous block's "next"
-if ((block.operator === "AND" || block.operator === "OR") && 
-    block.operatorDirection === "previous" && blockIndex > 0) {
+if (
+  (block.operator === "AND" || block.operator === "OR") &&
+  block.operatorDirection === "previous" &&
+  blockIndex > 0
+) {
   if (previousBlock?.operator && previousBlock.operatorDirection === "next") {
-    if (previousBlock.operator !== block.operator) {  // Different operators = error
+    if (previousBlock.operator !== block.operator) {
+      // Different operators = error
       return ERROR;
     }
   }
 }
 
 // ✅ Forward check: validates "next" direction against next block (includes block 0!)
-if ((block.operator === "AND" || block.operator === "OR") && 
-    block.operatorDirection === "next" && blockIndex < allBlocks.length - 1) {
+if (
+  (block.operator === "AND" || block.operator === "OR") &&
+  block.operatorDirection === "next" &&
+  blockIndex < allBlocks.length - 1
+) {
   if (nextBlock?.operator) {
     // Only flag direct conflicts: AND→next paired with OR→previous
-    if (block.operator === "AND" && nextBlock.operator === "OR" && 
-        nextBlock.operatorDirection === "previous") {
+    if (
+      block.operator === "AND" &&
+      nextBlock.operator === "OR" &&
+      nextBlock.operatorDirection === "previous"
+    ) {
       return ERROR;
     }
   }
@@ -53,17 +69,19 @@ if ((block.operator === "AND" || block.operator === "OR") &&
 ### 2. Enhanced `types/search.ts`
 
 Added `suggestion` property to `ValidationResult` interface:
+
 ```typescript
 export interface ValidationResult {
   valid: boolean;
   message?: string;
-  suggestion?: string;  // ✅ New: Provides actionable fix suggestions
+  suggestion?: string; // ✅ New: Provides actionable fix suggestions
 }
 ```
 
 ### 3. Updated `CHANGELOG.md`
 
 Added version 1.3.1 entry documenting:
+
 - Two critical bugs fixed
 - Backward and forward check implementation
 - Specific validation rules
@@ -78,6 +96,7 @@ Added version 1.3.1 entry documenting:
 **Problem:** Forward check nested in `if (blockIndex > 0)` meant block 0 was never validated against block 1
 
 **Example:**
+
 ```typescript
 blocks = [
   { fieldId: 'title', term: 'AI', operator: 'AND', operatorDirection: 'next' },     // Block 0
@@ -93,6 +112,7 @@ After:  ❌ ERROR (correctly caught by forward check in block 0)
 **Problem:** Validator flagged ANY operator mismatch, including valid chain boundaries
 
 **Example:**
+
 ```typescript
 blocks = [
   { fieldId: 'title', term: 'AI', operator: 'AND', operatorDirection: 'next' },      // Block 0
@@ -112,27 +132,27 @@ After:  ✅ VALID (correctly allows AND→next followed by OR→next)
 
 ### Block 0 Validation - NOW FIXED ✅
 
-| Rule | Before | After |
-|------|--------|-------|
-| **Backward Check** | N/A (block has no previous) | ✅ Runs if has "previous" direction |
-| **Forward Check** | ❌ SKIPPED (blockIndex > 0 false) | ✅ RUNS (blockIndex < len-1 true) |
-| **Overall** | ❌ Incomplete | ✅ Complete |
+| Rule               | Before                            | After                               |
+| ------------------ | --------------------------------- | ----------------------------------- |
+| **Backward Check** | N/A (block has no previous)       | ✅ Runs if has "previous" direction |
+| **Forward Check**  | ❌ SKIPPED (blockIndex > 0 false) | ✅ RUNS (blockIndex < len-1 true)   |
+| **Overall**        | ❌ Incomplete                     | ✅ Complete                         |
 
 ### Block n-1 (Last) Validation - UNCHANGED
 
-| Rule | Before | After |
-|------|--------|-------|
-| **Backward Check** | ✅ Runs | ✅ Runs |
-| **Forward Check** | N/A (block has no next) | ✅ Doesn't run (blockIndex < len-1 false) |
-| **Overall** | ✅ Complete | ✅ Complete |
+| Rule               | Before                  | After                                     |
+| ------------------ | ----------------------- | ----------------------------------------- |
+| **Backward Check** | ✅ Runs                 | ✅ Runs                                   |
+| **Forward Check**  | N/A (block has no next) | ✅ Doesn't run (blockIndex < len-1 false) |
+| **Overall**        | ✅ Complete             | ✅ Complete                               |
 
 ### Middle Blocks - FIXED ✅
 
-| Rule | Before | After |
-|------|--------|-------|
+| Rule               | Before                    | After                      |
+| ------------------ | ------------------------- | -------------------------- |
 | **Backward Check** | ✅ Runs but overly strict | ✅ Runs with precise rules |
-| **Forward Check** | ✅ Runs but overly strict | ✅ Runs with precise rules |
-| **Overall** | ❌ Too strict | ✅ Correctly balanced |
+| **Forward Check**  | ✅ Runs but overly strict | ✅ Runs with precise rules |
+| **Overall**        | ❌ Too strict             | ✅ Correctly balanced      |
 
 ---
 
@@ -170,9 +190,10 @@ After:  ✅ VALID (correctly allows AND→next followed by OR→next)
 ## Test Results
 
 All TypeScript compilation checks pass:
+
 ```
 ✅ No TypeScript errors
-✅ No ESLint warnings  
+✅ No ESLint warnings
 ✅ lib/operatorValidator.ts - Valid
 ✅ types/search.ts - Valid
 ```
@@ -182,11 +203,13 @@ All TypeScript compilation checks pass:
 ## Files Modified
 
 1. **`lib/operatorValidator.ts`** (lines 73-108)
+
    - Completely rewrote Rule 4 with bidirectional validation
    - Added clear comments explaining the logic
    - Precise conflict detection only
 
-2. **`types/search.ts`** 
+2. **`types/search.ts`**
+
    - Added `suggestion?: string` to `ValidationResult` interface
 
 3. **`CHANGELOG.md`**
@@ -201,16 +224,19 @@ All TypeScript compilation checks pass:
 Comprehensive documentation provided:
 
 1. **`docs/operator-chaining-fix-summary.md`**
+
    - High-level overview (this file)
    - Quick reference for the fix
    - Key improvements
 
 2. **`docs/operator-chaining-validation-fix.md`**
+
    - Detailed technical explanation
    - Problem analysis with examples
    - Solution architecture
 
 3. **`docs/operator-chaining-before-after.md`**
+
    - Visual comparison using inspector analogy
    - Code-level before/after
    - Real-world scenario examples
@@ -227,18 +253,22 @@ Comprehensive documentation provided:
 ## Key Improvements
 
 ### ✅ Complete Coverage
+
 - **Before:** Blocks 1 to n-1 forward-checked, block 0 skipped
 - **After:** Blocks 0 to n-2 forward-checked, blocks 1 to n-1 backward-checked
 
 ### ✅ Precise Detection
+
 - **Before:** Any operator mismatch flagged as error
 - **After:** Only direct conflicts (incompatible adjacent pairs) flagged
 
 ### ✅ Better User Experience
+
 - **Before:** Confusing error messages about mixing operators
 - **After:** Clear messages explaining exactly what's wrong and how to fix it
 
 ### ✅ Production Ready
+
 - **Before:** Incomplete validation, false positives
 - **After:** Production-ready with full test coverage and documentation
 
@@ -278,6 +308,7 @@ This fix addresses critical gaps in the operator chaining validation logic:
 4. **Full validation coverage** from block 0 to n-1
 
 The implementation uses separate backward and forward checks to ensure:
+
 - No positions are skipped
 - Only direct conflicts are flagged as errors
 - Valid Boolean expressions are properly recognized

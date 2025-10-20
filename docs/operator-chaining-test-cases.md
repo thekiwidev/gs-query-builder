@@ -7,6 +7,7 @@ Run these test cases to verify the operator chaining validation is working corre
 ## Test Suite 1: First Block Validation (Previously Missed)
 
 ### Test Case 1.1: AND_NEXT → OR_PREV at Position 0
+
 ```typescript
 const blocks = [
   { id: '0', fieldId: 'title', term: 'AI', operator: 'AND_NEXT' },
@@ -19,6 +20,7 @@ After: ❌ ERROR (fixed: forward check catches it)
 ```
 
 ### Test Case 1.2: OR_NEXT → AND_PREV at Position 0
+
 ```typescript
 const blocks = [
   { id: '0', fieldId: 'author', term: 'Smith', operator: 'OR_NEXT' },
@@ -35,6 +37,7 @@ After: ❌ ERROR (fixed)
 ## Test Suite 2: Valid Chain Boundaries (Previously Rejected)
 
 ### Test Case 2.1: AND_NEXT → OR_NEXT (End AND, Start OR)
+
 ```typescript
 const blocks = [
   { id: '0', fieldId: 'title', term: 'AI', operator: 'AND_NEXT' },
@@ -50,6 +53,7 @@ Interpretation: (Title: AI AND Title: Ethics) OR (Year: 2023 AND ...)
 ```
 
 ### Test Case 2.2: OR_NEXT → AND_NEXT (End OR, Start AND)
+
 ```typescript
 const blocks = [
   { id: '0', fieldId: 'author', term: 'Smith', operator: 'OR_NEXT' },
@@ -65,6 +69,7 @@ Interpretation: (Author: Smith OR Author: Johnson) AND (Year: 2023 OR ...)
 ```
 
 ### Test Case 2.3: Multiple Chain Transitions
+
 ```typescript
 const blocks = [
   { id: '0', fieldId: 'title', term: 'AI', operator: 'AND_NEXT' },
@@ -86,6 +91,7 @@ Interpretation: (Title: AI AND Ethics) OR (Source: Nature OR Science) AND (Year:
 ## Test Suite 3: Invalid Operator Combinations (Should Still Fail)
 
 ### Test Case 3.1: AND_NEXT → OR_PREV (Mid-Chain)
+
 ```typescript
 const blocks = [
   { id: '0', fieldId: 'title', term: 'AI', operator: 'AND_NEXT' },
@@ -99,6 +105,7 @@ After: ❌ ERROR (correctly caught: OR_PREV after AND chain)
 ```
 
 ### Test Case 3.2: OR_NEXT → AND_PREV (Mid-Chain)
+
 ```typescript
 const blocks = [
   { id: '0', fieldId: 'author', term: 'Smith', operator: 'OR_NEXT' },
@@ -116,6 +123,7 @@ After: ❌ ERROR (correctly caught: AND_PREV after OR chain)
 ## Test Suite 4: Continuous Chains (Should Pass)
 
 ### Test Case 4.1: Long AND Chain
+
 ```typescript
 const blocks = [
   { id: '0', fieldId: 'title', term: 'AI', operator: 'AND_NEXT' },
@@ -132,6 +140,7 @@ Interpretation: (Title: AI AND Title: Ethics AND Title: Society AND Title: Impac
 ```
 
 ### Test Case 4.2: Long OR Chain
+
 ```typescript
 const blocks = [
   { id: '0', fieldId: 'author', term: 'Smith', operator: 'OR_NEXT' },
@@ -152,6 +161,7 @@ Interpretation: (Author: Smith OR Author: Johnson OR Author: Davis OR Author: Wi
 ## Test Suite 5: Symmetric Chains
 
 ### Test Case 5.1: Bidirectional Validation for AND
+
 ```typescript
 // Block validation from left:
 Block 0 (AND_NEXT) → Block 1 (AND_PREV) = ✅
@@ -163,6 +173,7 @@ After: ✅ Both forward and backward checks pass
 ```
 
 ### Test Case 5.2: Bidirectional Validation for OR
+
 ```typescript
 // Block validation from left:
 Block 0 (OR_NEXT) → Block 1 (OR_PREV) = ✅
@@ -174,6 +185,7 @@ After: ✅ Both forward and backward checks pass
 ```
 
 ### Test Case 5.3: Bidirectional Validation for Conflict
+
 ```typescript
 // Block validation from left:
 Block 0 (AND_NEXT) → Block 1 (OR_PREV) = ❌
@@ -189,6 +201,7 @@ After: ❌ Both forward and backward checks detect it
 ## Edge Cases
 
 ### Edge Case 1: Single Block (No Operators)
+
 ```typescript
 const blocks = [
   { id: '0', fieldId: 'title', term: 'AI' }
@@ -199,6 +212,7 @@ After: ✅ No checks run (blockIndex > 0 is false, blockIndex < len-1 is false)
 ```
 
 ### Edge Case 2: Two Blocks with Partial Operators
+
 ```typescript
 const blocks = [
   { id: '0', fieldId: 'title', term: 'AI', operator: 'AND_NEXT' },
@@ -210,6 +224,7 @@ After: ✅ Forward check finds next block has no operator, doesn't flag error
 ```
 
 ### Edge Case 3: Blocks with EXCLUDE (No Direction)
+
 ```typescript
 const blocks = [
   { id: '0', fieldId: 'title', term: 'AI', operator: 'AND_NEXT' },
@@ -233,19 +248,19 @@ After: ❌ ERROR (Rule 3 catches it before Rule 4)
 
 ## Expected Results Summary
 
-| Test Suite | BEFORE | AFTER | Status |
-|---|---|---|---|
-| 1.1 (Block 0 validation) | ✅ PASS ❌ | ❌ FAIL ✅ | **FIXED** |
-| 1.2 (Block 0 validation) | ✅ PASS ❌ | ❌ FAIL ✅ | **FIXED** |
-| 2.1 (Valid boundary) | ❌ FAIL ✅ | ✅ PASS ✅ | **FIXED** |
-| 2.2 (Valid boundary) | ❌ FAIL ✅ | ✅ PASS ✅ | **FIXED** |
-| 2.3 (Multiple transitions) | ❌ FAIL ✅ | ✅ PASS ✅ | **FIXED** |
-| 3.1 (Invalid combination) | ❌ FAIL ✅ | ❌ FAIL ✅ | Unchanged |
-| 3.2 (Invalid combination) | ❌ FAIL ✅ | ❌ FAIL ✅ | Unchanged |
-| 4.1 (Long AND chain) | ✅ PASS ✅ | ✅ PASS ✅ | Unchanged |
-| 4.2 (Long OR chain) | ✅ PASS ✅ | ✅ PASS ✅ | Unchanged |
-| 5.1 (Bidirectional AND) | ✅ PASS ✅ | ✅ PASS ✅ | Unchanged |
-| 5.2 (Bidirectional OR) | ✅ PASS ✅ | ✅ PASS ✅ | Unchanged |
+| Test Suite                   | BEFORE     | AFTER      | Status             |
+| ---------------------------- | ---------- | ---------- | ------------------ |
+| 1.1 (Block 0 validation)     | ✅ PASS ❌ | ❌ FAIL ✅ | **FIXED**          |
+| 1.2 (Block 0 validation)     | ✅ PASS ❌ | ❌ FAIL ✅ | **FIXED**          |
+| 2.1 (Valid boundary)         | ❌ FAIL ✅ | ✅ PASS ✅ | **FIXED**          |
+| 2.2 (Valid boundary)         | ❌ FAIL ✅ | ✅ PASS ✅ | **FIXED**          |
+| 2.3 (Multiple transitions)   | ❌ FAIL ✅ | ✅ PASS ✅ | **FIXED**          |
+| 3.1 (Invalid combination)    | ❌ FAIL ✅ | ❌ FAIL ✅ | Unchanged          |
+| 3.2 (Invalid combination)    | ❌ FAIL ✅ | ❌ FAIL ✅ | Unchanged          |
+| 4.1 (Long AND chain)         | ✅ PASS ✅ | ✅ PASS ✅ | Unchanged          |
+| 4.2 (Long OR chain)          | ✅ PASS ✅ | ✅ PASS ✅ | Unchanged          |
+| 5.1 (Bidirectional AND)      | ✅ PASS ✅ | ✅ PASS ✅ | Unchanged          |
+| 5.2 (Bidirectional OR)       | ✅ PASS ✅ | ✅ PASS ✅ | Unchanged          |
 | 5.3 (Bidirectional conflict) | ❌ FAIL ✅ | ❌ FAIL ✅ | Improved detection |
 
 ---
@@ -253,16 +268,12 @@ After: ❌ ERROR (Rule 3 catches it before Rule 4)
 ## How to Run Tests Programmatically
 
 ```typescript
-import { validateSearchBlock } from '@/lib/operatorValidator';
+import { validateSearchBlock } from "@/lib/operatorValidator";
 
 // Test Case 1.1
-const result = validateSearchBlock(
-  blocks[0],
-  0,
-  blocks
-);
+const result = validateSearchBlock(blocks[0], 0, blocks);
 
-console.log(`Test 1.1: ${result.valid ? 'FAIL' : 'PASS'} (expected: false)`);
+console.log(`Test 1.1: ${result.valid ? "FAIL" : "PASS"} (expected: false)`);
 console.log(`Message: ${result.message}`);
 
 // Should output:

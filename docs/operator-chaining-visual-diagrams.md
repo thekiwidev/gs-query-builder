@@ -106,7 +106,7 @@ Result: INCOMPLETE + OVERLY STRICT
 
 ```
 Block Iteration (0 to n):
-├─ Block 0: 
+├─ Block 0:
 │  ├─ Backward check? direction=prev? NO (doesn't apply)
 │  └─ Forward check? direction=next? YES ✓ (RUNS for block 0!)
 │     └─ Checks AND/next vs next block's operator
@@ -242,7 +242,7 @@ Validation sequence:
     - Check required fields? ✓ OK
     - Forward check? blockIndex > 0? NO ❌
       └─ SKIPPED! Error at block 0→1 never detected
-  
+
   Block 1:
     - Check required fields? ✓ OK
     - Forward check? blockIndex > 0? YES
@@ -269,18 +269,20 @@ Result: ✅ ERROR (caught at position 0, clear message)
 ### Error Messages
 
 **Before:**
+
 ```
-"Invalid operator combination: Cannot use OR operators when 
-previous block uses AND. You must maintain consistent operators 
+"Invalid operator combination: Cannot use OR operators when
+previous block uses AND. You must maintain consistent operators
 within a chain."
 ```
 
 **After:**
+
 ```
-"Invalid operator combination: You selected AND with next, but the 
+"Invalid operator combination: You selected AND with next, but the
 next block uses OR with previous. Operators must match in a chain."
 
-Suggestion: "Change the next block operator to AND, or change this 
+Suggestion: "Change the next block operator to AND, or change this
 block to 'OR with next'."
 ```
 
@@ -351,4 +353,3 @@ Status:                 BROKEN ❌                  FIXED ✅
 3. **Run test cases:** Use test suite in `docs/operator-chaining-test-cases.md`
 4. **Validate in UI:** Test with actual search block configurations
 5. **Monitor production:** Watch for validation improvements
-

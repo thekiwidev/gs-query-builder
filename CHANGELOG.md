@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Critical: Operator Chaining Validation Flaws** - Fixed two major validation issues in `lib/operatorValidator.ts`
 
   - **Issue 1: First block not validated against next block**
+
     - Forward-chain validation (checking current block's `next` direction against next block's operator) was incorrectly nested within `blockIndex > 0` condition
     - This skipped validation of the first block (index 0), allowing invalid operator chains starting at position 0
     - Fixed by implementing forward check that runs for all blocks from index 0 to n-2
@@ -24,11 +25,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Implementation Changes:**
 
   1. **Backward Check (for blocks 1 to n-1):**
+
      - Validates blocks with `operator="AND/OR"` and `operatorDirection="previous"`
      - Compares against previous block's `operatorDirection="next"` and operator type
      - Only flags error if operators differ (AND paired with OR or vice versa)
 
   2. **Forward Check (for blocks 0 to n-2):**
+
      - Validates blocks with `operator="AND/OR"` and `operatorDirection="next"`
      - Compares against next block's operator type and direction
      - Only flags error for direct incompatible pairs:
@@ -53,13 +56,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Validation Examples
 
 **Valid (before was incorrectly marked as error):**
+
 - Block 0: `(AND, next)` | Block 1: `(OR, next)` | Block 2: ... ✅ (AND chain, then OR chain)
 - Block 0: `(OR, next)` | Block 1: `(AND, next)` | Block 2: ... ✅ (OR chain, then AND chain)
 
 **Invalid (now correctly caught at position 0):**
+
 - Block 0: `(AND, next)` | Block 1: `(OR, previous)` ❌ (direct conflict - caught by forward check)
 
 **Invalid (still correctly caught):**
+
 - Block 0: `(AND, next)` | Block 1: `(AND, next)` | Block 2: `(OR, previous)` ❌ (OR mismatch - caught by backward check)
 
 ---

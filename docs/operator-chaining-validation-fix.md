@@ -13,6 +13,7 @@ Fixed two critical flaws in the operator chaining validation logic that prevente
 **Impact:** Invalid operator chains starting at position 0 were silently allowed.
 
 **Example of Missed Error:**
+
 ```
 Block 0: AND_NEXT | Block 1: OR_PREV ← ERROR NOT DETECTED
 ```
@@ -26,6 +27,7 @@ The inspector would never look at this connection because the check starts from 
 **Impact:** Valid sequences like `AND_NEXT` followed by `OR_NEXT` were incorrectly rejected, preventing users from having multiple independent operator chains.
 
 **Examples of Incorrectly Flagged Errors:**
+
 ```
 Block 0: AND_NEXT | Block 1: OR_NEXT | Block 2: ...     ← VALID, but marked ERROR
 Block 0: OR_NEXT  | Block 1: AND_NEXT | Block 2: ...    ← VALID, but marked ERROR
@@ -60,6 +62,7 @@ if (block.operator === "AND_NEXT" || block.operator === "OR_NEXT") {
 ### Key Improvements
 
 1. **Complete Coverage:** Both first and last blocks are properly validated
+
    - Forward check runs for blocks 0 to n-2 (can look at next block)
    - Backward check runs for blocks 1 to n-1 (can look at previous block)
    - No block is skipped
@@ -74,20 +77,20 @@ if (block.operator === "AND_NEXT" || block.operator === "OR_NEXT") {
 
 ### Valid Sequences (Now Allowed)
 
-| Block 0 | Block 1 | Block 2 | Interpretation | Status |
-|---------|---------|---------|---|---|
-| AND_NEXT | OR_NEXT | ... | (Block0 AND Block1) OR Block2... | ✅ |
-| OR_NEXT | AND_NEXT | ... | (Block0 OR Block1) AND Block2... | ✅ |
-| AND_NEXT | AND_PREV | OR_PREV | (Block0 AND Block1) OR Block2 | ✅ |
-| AND_NEXT | AND_NEXT | AND_PREV | (Block0 AND Block1 AND Block2) | ✅ |
+| Block 0  | Block 1  | Block 2  | Interpretation                   | Status |
+| -------- | -------- | -------- | -------------------------------- | ------ |
+| AND_NEXT | OR_NEXT  | ...      | (Block0 AND Block1) OR Block2... | ✅     |
+| OR_NEXT  | AND_NEXT | ...      | (Block0 OR Block1) AND Block2... | ✅     |
+| AND_NEXT | AND_PREV | OR_PREV  | (Block0 AND Block1) OR Block2    | ✅     |
+| AND_NEXT | AND_NEXT | AND_PREV | (Block0 AND Block1 AND Block2)   | ✅     |
 
 ### Invalid Sequences (Now Correctly Caught)
 
-| Block 0 | Block 1 | Issue | Status |
-|---------|---------|-------|--------|
-| AND_NEXT | OR_PREV | Incompatible pair at position 0 | ❌ ERROR |
-| AND_NEXT | AND_PREV | AND_PREV | Valid chain (AND0 AND1) but Block2 is OR | ✅ |
-| AND_NEXT | OR_PREV | OR_PREV | Cannot have OR_PREV after AND_NEXT | ❌ ERROR |
+| Block 0  | Block 1  | Issue                           | Status                                   |
+| -------- | -------- | ------------------------------- | ---------------------------------------- | -------- |
+| AND_NEXT | OR_PREV  | Incompatible pair at position 0 | ❌ ERROR                                 |
+| AND_NEXT | AND_PREV | AND_PREV                        | Valid chain (AND0 AND1) but Block2 is OR | ✅       |
+| AND_NEXT | OR_PREV  | OR_PREV                         | Cannot have OR_PREV after AND_NEXT       | ❌ ERROR |
 
 ## Implementation Details
 
@@ -98,15 +101,18 @@ Located in `/lib/operatorValidator.ts` lines 73-126
 ```typescript
 // BACKWARD CHECK: Validate block's _PREV against previous block's _NEXT
 // Runs for blocks 1 to n-1 (all except first)
-if ((block.operator === "AND_PREV" || block.operator === "OR_PREV") && blockIndex > 0) {
+if (
+  (block.operator === "AND_PREV" || block.operator === "OR_PREV") &&
+  blockIndex > 0
+) {
   const previousBlock = allBlocks[blockIndex - 1];
-  
+
   if (previousBlock?.operator) {
     // AND_NEXT → OR_PREV is a direct conflict
     if (previousBlock.operator === "AND_NEXT" && block.operator === "OR_PREV") {
       return { valid: false, message: "...", suggestion: "..." };
     }
-    
+
     // OR_NEXT → AND_PREV is a direct conflict
     if (previousBlock.operator === "OR_NEXT" && block.operator === "AND_PREV") {
       return { valid: false, message: "...", suggestion: "..." };
@@ -116,15 +122,18 @@ if ((block.operator === "AND_PREV" || block.operator === "OR_PREV") && blockInde
 
 // FORWARD CHECK: Validate block's _NEXT against next block's operator
 // Runs for blocks 0 to n-2 (all except last)
-if ((block.operator === "AND_NEXT" || block.operator === "OR_NEXT") && blockIndex < allBlocks.length - 1) {
+if (
+  (block.operator === "AND_NEXT" || block.operator === "OR_NEXT") &&
+  blockIndex < allBlocks.length - 1
+) {
   const nextBlock = allBlocks[blockIndex + 1];
-  
+
   if (nextBlock?.operator) {
     // AND_NEXT → OR_PREV is a direct conflict
     if (block.operator === "AND_NEXT" && nextBlock.operator === "OR_PREV") {
       return { valid: false, message: "...", suggestion: "..." };
     }
-    
+
     // OR_NEXT → AND_PREV is a direct conflict
     if (block.operator === "OR_NEXT" && nextBlock.operator === "AND_PREV") {
       return { valid: false, message: "...", suggestion: "..." };
@@ -136,6 +145,7 @@ if ((block.operator === "AND_NEXT" || block.operator === "OR_NEXT") && blockInde
 ## Testing Scenarios
 
 ### Test 1: First Block Validation (Previously Missed)
+
 ```typescript
 blocks: [
   { id: '0', operator: 'AND_NEXT', ... },
@@ -147,6 +157,7 @@ blocks: [
 ```
 
 ### Test 2: Chain Boundary (Previously Incorrectly Flagged)
+
 ```typescript
 blocks: [
   { id: '0', operator: 'AND_NEXT', ... },
@@ -159,6 +170,7 @@ blocks: [
 ```
 
 ### Test 3: Mid-Chain Validation (Now Properly Checked)
+
 ```typescript
 blocks: [
   { id: '0', operator: 'AND_NEXT', ... },
@@ -173,13 +185,15 @@ blocks: [
 ## Error Messages
 
 All error messages now clearly indicate:
+
 1. Which block and operator are involved
 2. What the conflict is
 3. How to fix it
 
 Example:
+
 ```
-"Invalid operator combination: You selected AND with next, but the next block 
+"Invalid operator combination: You selected AND with next, but the next block
 uses OR with previous. Operators must match in a chain."
 
 Suggestion: 'Change the next block to "OR with next" to start a new chain.'
