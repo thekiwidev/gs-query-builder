@@ -5,6 +5,109 @@ All notable changes to the Google Scholar Query Translator (QTM) project will be
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.3.0] - 2025-10-20 - UI Polish, Footer Integration, and Responsive Layout Improvements
+
+### Added
+
+- **Light-Themed Footer Component** - Consistent branding across all pages
+  - `components/layout/Footer.tsx` - Production-ready footer (185 lines)
+  - Four-column grid layout with responsive design (1 col mobile, 4 cols desktop)
+  - Sections: Brand, Product, Resources, Contact & Feedback
+  - Social media links (Github, Twitter, LinkedIn) with hover effects
+  - Dynamic copyright year calculation
+  - Clean light theme matching website design (white background, gray text)
+  - Links to Help & Documentation, Features, Pricing, Citation, Terms, Privacy
+  - Contact section with email link and feedback options
+  - Responsive Tailwind styling with smooth transitions
+
+- **"How to Use" Page Footer Integration**
+  - Added Footer component to HowToUsePage
+  - Footer now appears at bottom of all pages via MainLayout
+  - Consistent footer appearance across main site and documentation pages
+
+- **"Go Back Home" Button on Help Page**
+  - Added Home button next to X close button in HowToUsePage header
+  - Blue-themed button with Home icon and text label
+  - Direct navigation to homepage (`/`)
+  - Complements existing X button (router.back())
+  - Provides users with both back-navigation and home-navigation options
+
+- **Help Page Quotation Error Fixes**
+  - Fixed 78 compilation errors in HowToUsePage.tsx
+  - Converted all straight quotes to HTML entities (`&quot;`)
+  - Converted all apostrophes to HTML entities (`&apos;`)
+  - Examples fixed: "Does Not Include", "machine learning", "artificial intelligence", "Jennifer Doudna", "Nature", etc.
+  - All operator descriptions and examples now use proper entity encoding
+
+- **Responsive Content Container with Max-Width**
+  - `MainContentArea.tsx` updated with centered layout
+  - Added `max-w-6xl` constraint for optimal readability
+  - Content centered with `mx-auto` (auto margins)
+  - Search block container no longer stretches too wide
+  - Proper spacing on both sidebar open and collapsed states
+  - Works seamlessly with collapsible/expanded sidebar
+
+### Changed
+
+- **Footer Styling** - Updated from dark to light theme
+  - Background: `bg-gray-900` → `bg-white`
+  - Text: `text-gray-100` → `text-gray-900`
+  - Headers: `text-white` → `text-gray-900`
+  - Links: `text-gray-400 hover:text-white` → `text-gray-600 hover:text-gray-900`
+  - Borders: `border-gray-800` → `border-gray-200`
+  - Consistent with website light theme
+
+- **MainContentArea Component Architecture**
+  - Changed from simple full-width `main` to structured layout
+  - Added inner `div` with `max-w-6xl mx-auto` for content constraining
+  - Implemented `flex-1 overflow-y-auto` for proper scrolling
+  - Maintains `p-8 space-y-8` spacing within constrained container
+  - Better responsive behavior across all screen sizes
+
+- **HowToUsePage Imports** - Added Header navigation support
+  - Added `Link` import from `next/link`
+  - Added `Home` icon from `lucide-react`
+  - Added `Footer` import from `@/components/layout/Footer`
+
+- **HowToUsePage Header Section**
+  - Updated button layout to use flex container with gap-2
+  - Home button positioned next to X close button
+  - Home button styling: blue border, blue text, blue hover background
+  - Responsive button group with proper alignment
+
+### Fixed
+
+- **Search block container too-wide issue** - Now respects maximum width on all screen sizes
+- **Quotation syntax errors in HowToUsePage** - All 78 errors resolved with proper HTML entities
+- **Footer theme mismatch** - Footer now uses light theme consistent with website
+- **Content centering** - Main content area now properly centered with auto margins
+
+### Technical Details
+
+- Footer uses `next/link` for internal navigation and `mailto:` for email
+- Light theme colors follow consistent palette: gray-900 (text), gray-600 (secondary), gray-200 (borders)
+- Home button uses `router.push()` in MainLayout and `Link` component in HowToUsePage
+- `max-w-6xl` (64rem / 1024px) chosen as optimal content width for readability
+- MainContentArea structure: `main (flex-1 overflow) → div (max-w-6xl mx-auto) → children`
+- Footer responsive: 1 column on mobile (stack), 4 columns on desktop (grid)
+
+### Browser Support
+
+- ✅ All modern browsers with CSS Grid and Flexbox support
+- ✅ Responsive design tested on mobile (< 768px) and desktop (≥ 768px)
+- ✅ Light theme renders correctly on all browsers
+
+### Notes
+
+- Footer appears on all pages with consistent styling
+- HowToUsePage now has complete navigation options (home + back buttons)
+- Content width constraint improves readability on ultra-wide displays
+- All HTML entities in HowToUsePage use standard ampersand notation (&quot;, &apos;)
+- Light theme provides better visual hierarchy and readability
+- Search blocks container width optimized for better UX on narrow sidebar state
+
+---
+
 ## [1.2.0] - 2025-10-20 - Advanced Operator Chaining and Parenthetical Grouping
 
 ### Added

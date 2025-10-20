@@ -2,6 +2,7 @@
 
 import React, { ReactNode, useState, useRef, useEffect } from "react";
 import { SidebarContainer } from "@/components/sidebar/SidebarContainer";
+import { Footer } from "@/components/layout/Footer";
 import { ChevronLeft, Menu, X } from "lucide-react";
 
 interface MainLayoutProps {
@@ -194,7 +195,7 @@ export function MainLayout({ children, sidebarProps }: MainLayoutProps) {
 
       {/* MAIN CONTENT */}
       <main
-        className="flex-1 overflow-y-auto transition-all duration-300"
+        className="flex-1 overflow-y-auto transition-all duration-300 flex flex-col"
         style={{
           marginLeft:
             isMobile || isCollapsed
@@ -214,7 +215,11 @@ export function MainLayout({ children, sidebarProps }: MainLayoutProps) {
           </button>
         )}
 
-        {children}
+        {/* Page Content */}
+        <div className="flex-1">{children}</div>
+
+        {/* Footer */}
+        <Footer />
       </main>
     </div>
   );
