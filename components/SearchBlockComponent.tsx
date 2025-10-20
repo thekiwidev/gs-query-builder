@@ -32,6 +32,8 @@ interface SearchBlockComponentProps {
   isOnlyBlock: boolean;
   /** Block index for display purposes */
   index: number;
+  /** All blocks for operator validation */
+  allBlocks?: SearchBlock[];
 }
 
 export function SearchBlockComponent({
@@ -40,6 +42,7 @@ export function SearchBlockComponent({
   onRemove,
   isOnlyBlock,
   index,
+  allBlocks = [],
 }: SearchBlockComponentProps) {
   const handleFieldChange = (fieldId: string) => {
     onChange({ ...block, fieldId });
@@ -48,6 +51,41 @@ export function SearchBlockComponent({
   const handleTermChange = (term: string) => {
     onChange({ ...block, term });
   };
+
+  // Determine which operators are valid based on surrounding blocks
+  const getValidOperators = () => {
+    const previousBlock = index > 0 ? allBlocks[index - 1] : null;
+    const valid: {
+      and_next: boolean;
+      and_prev: boolean;
+      or_next: boolean;
+      or_prev: boolean;
+      exclude: boolean;
+    } = {
+      and_next: !isOnlyBlock,
+      and_prev: index > 0,
+      or_next: !isOnlyBlock,
+      or_prev: index > 0,
+      exclude: true,
+    };
+
+    // CRITICAL RULE: The current block's PREV operator MUST match the previous block's NEXT operator
+    // This keeps all blocks in the same parenthesis group until the chain is broken
+
+    // If previous block has AND_NEXT, current block MUST use AND_PREV (cannot use OR_PREV)
+    if (previousBlock?.operator?.type === "AND_NEXT") {
+      valid.or_prev = false;
+    }
+
+    // If previous block has OR_NEXT, current block MUST use OR_PREV (cannot use AND_PREV)
+    if (previousBlock?.operator?.type === "OR_NEXT") {
+      valid.and_prev = false;
+    }
+
+    return valid;
+  };
+
+  const validOperators = getValidOperators();
 
   // New handler for the enhanced operator options
   const handleOperatorChange = (
@@ -158,31 +196,35 @@ export function SearchBlockComponent({
               <SelectItem value="NONE">No special operator</SelectItem>
 
               {/* AND operators - adds parenthetical grouping */}
-              {!isOnlyBlock && (
+              {validOperators.and_next && (
                 <SelectItem value="AND_NEXT">
                   AND with next block - (this AND next)
                 </SelectItem>
               )}
-              {index > 0 && (
+              {validOperators.and_prev && (
                 <SelectItem value="AND_PREV">
                   AND with previous block - (prev AND this)
                 </SelectItem>
               )}
 
               {/* OR operators - adds parenthetical grouping */}
-              {!isOnlyBlock && (
+              {validOperators.or_next && (
                 <SelectItem value="OR_NEXT">
                   OR with next block - (this OR next)
                 </SelectItem>
               )}
-              {index > 0 && (
+              {validOperators.or_prev && (
                 <SelectItem value="OR_PREV">
                   OR with previous block - (prev OR this)
                 </SelectItem>
               )}
 
-              {/* Exclude operator - adds NOT logic */}
-              <SelectItem value="EXCLUDE">Exclude this block (NOT)</SelectItem>
+              {/* Does Not Include operator - adds NOT logic */}
+              {validOperators.exclude && (
+                <SelectItem value="EXCLUDE">
+                  Does Not Include this block (NOT)
+                </SelectItem>
+              )}
             </SelectContent>
           </Select>
         </div>

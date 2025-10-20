@@ -66,6 +66,19 @@ export interface QTMResult {
 /**
  * Groups search blocks based on their operator relationships with enhanced parenthetical grouping
  *
+ * Core grouping logic:
+ * - Blocks form an unbroken CHAIN if they are connected via operators
+ * - A block connects FORWARD if it has AND_NEXT or OR_NEXT
+ * - A block connects BACKWARD if it has AND_PREV or OR_PREV
+ * - All chained blocks stay in the same parenthesis group
+ * - The chain BREAKS only when a block has no forward operator AND the next block has no backward operator
+ *
+ * Example: Block1(AND_NEXT) Block2(OR_NEXT) Block3() Block4(AND_PREV)
+ * - Block1 chains to Block2 via AND_NEXT
+ * - Block2 chains forward to Block3 via OR_NEXT AND backward connects
+ * - Block3 has no forward op BUT Block4 chains back via AND_PREV
+ * - All 4 blocks stay in same group: (Block1 AND Block2 OR Block3 AND Block4)
+ *
  * @param blocks Array of valid search blocks
  * @param synthesizedBlocks Array of synthesized block strings
  * @returns Properly formatted query string with parenthetical grouping
@@ -82,104 +95,124 @@ function groupBlocksByOperator(
     return synthesizedBlocks[0];
   }
 
-  // First pass: Identify relationship pairs and mark blocks for processing
-  interface ProcessingBlock {
-    index: number;
-    synthesized: string;
-    processed: boolean;
-    relatedTo?: number; // Index of related block
-    relationType?: string; // Type of relationship
-  }
-
-  const processingBlocks: ProcessingBlock[] = synthesizedBlocks.map(
-    (synthesized, index) => ({
-      index,
-      synthesized,
-      processed: false,
-    })
-  );
-
-  // Mark relationship pairs
-  for (let i = 0; i < blocks.length; i++) {
-    const block = blocks[i];
-    let operatorType = "NONE";
-
-    // Determine operator type from new format or legacy format
+  // Helper: Extract operator type from block
+  const getOperatorType = (
+    block: SearchBlock
+  ): "AND_NEXT" | "AND_PREV" | "OR_NEXT" | "OR_PREV" | "EXCLUDE" | "NONE" => {
     if (block.operator && block.operator.type) {
-      operatorType = block.operator.type;
-    } else if (block.booleanOperator === "OR") {
-      operatorType = "OR_NEXT";
-    } else if (block.booleanOperator === "AND") {
-      operatorType = "AND_NEXT";
+      return block.operator.type;
     }
+    if (block.booleanOperator === "OR") return "OR_NEXT";
+    if (block.booleanOperator === "AND") return "AND_NEXT";
+    if (block.booleanOperator === "NOT") return "EXCLUDE";
+    return "NONE";
+  };
 
-    // Handle forward relationships
-    if (operatorType === "AND_NEXT" || operatorType === "OR_NEXT") {
-      if (i + 1 < blocks.length) {
-        processingBlocks[i].relatedTo = i + 1;
-        processingBlocks[i].relationType = operatorType;
+  // Step 1: Identify all chains by finding connected groups
+  const chains: number[][] = [];
+  const processed = new Set<number>();
+
+  for (let i = 0; i < blocks.length; i++) {
+    if (processed.has(i)) continue;
+
+    const chain: number[] = [];
+    let current = i;
+
+    // Find the start of this chain by going backwards
+    while (current > 0) {
+      const prevBlock = blocks[current - 1];
+      const prevOp = getOperatorType(prevBlock);
+      const currentOp = getOperatorType(blocks[current]);
+
+      // Check if previous block chains forward to current block
+      const prevChainsForward = prevOp === "AND_NEXT" || prevOp === "OR_NEXT";
+      // Check if current block chains backward to previous block
+      const currentChainsBackward =
+        currentOp === "AND_PREV" || currentOp === "OR_PREV";
+
+      // Chain continues backward if previous goes forward OR current comes back
+      if (prevChainsForward || currentChainsBackward) {
+        current--;
+      } else {
+        break;
       }
     }
 
-    // Handle backward relationships
-    if (operatorType === "AND_PREV" || operatorType === "OR_PREV") {
-      if (i > 0) {
-        processingBlocks[i].relatedTo = i - 1;
-        processingBlocks[i].relationType = operatorType;
+    // Now current is the start of the chain, traverse forward
+    const chainStart = current;
+    chain.push(current);
+    current = chainStart;
+
+    while (current < blocks.length - 1) {
+      const currentOp = getOperatorType(blocks[current]);
+      const nextBlock = blocks[current + 1];
+      const nextOp = getOperatorType(nextBlock);
+
+      // Chain continues forward if current goes forward OR next comes back
+      const currentChainsForward =
+        currentOp === "AND_NEXT" || currentOp === "OR_NEXT";
+      const nextChainsBackward = nextOp === "AND_PREV" || nextOp === "OR_PREV";
+
+      if (currentChainsForward || nextChainsBackward) {
+        chain.push(current + 1);
+        current++;
+      } else {
+        break;
       }
     }
+
+    // Mark all blocks in this chain as processed
+    chain.forEach((idx) => processed.add(idx));
+    chains.push(chain);
   }
 
-  // Second pass: Process blocks with their relationships
+  // Step 2: Build query from chains
   let resultQuery = "";
-  let i = 0;
 
-  while (i < processingBlocks.length) {
-    const current = processingBlocks[i];
+  for (const chain of chains) {
+    if (chain.length === 0) continue;
 
-    // Skip if already processed
-    if (current.processed) {
-      i++;
-      continue;
+    let chainQuery = "";
+
+    // Build the query for this chain
+    for (let i = 0; i < chain.length; i++) {
+      const idx = chain[i];
+      const block = blocks[idx];
+      const synthesized = synthesizedBlocks[idx];
+      const op = getOperatorType(block);
+
+      if (i === 0) {
+        // First block in chain
+        chainQuery = synthesized;
+      } else {
+        // Subsequent blocks - use the previous block's NEXT operator or this block's PREV operator
+        const prevBlock = blocks[chain[i - 1]];
+        const prevOp = getOperatorType(prevBlock);
+
+        if (prevOp === "AND_NEXT" || (prevOp === "NONE" && op === "AND_PREV")) {
+          chainQuery += " AND " + synthesized;
+        } else if (
+          prevOp === "OR_NEXT" ||
+          (prevOp === "NONE" && op === "OR_PREV")
+        ) {
+          chainQuery += " OR " + synthesized;
+        } else {
+          // Default to AND if unclear
+          chainQuery += " AND " + synthesized;
+        }
+      }
     }
 
-    // Handle relationships
-    if (current.relatedTo !== undefined && current.relationType) {
-      const related = processingBlocks[current.relatedTo];
-      const operatorType = current.relationType;
-
-      // Create grouping based on relationship
-      let groupQuery = "";
-
-      if (operatorType === "AND_NEXT" || operatorType === "AND_PREV") {
-        groupQuery = `(${current.synthesized} AND ${related.synthesized})`;
-      } else if (operatorType === "OR_NEXT" || operatorType === "OR_PREV") {
-        groupQuery = `(${current.synthesized} OR ${related.synthesized})`;
-      }
-
-      // Add to result query
-      if (resultQuery) {
-        resultQuery += " " + groupQuery;
-      } else {
-        resultQuery = groupQuery;
-      }
-
-      // Mark both blocks as processed
-      current.processed = true;
-      related.processed = true;
-
-      i++; // Move to next unprocessed block
+    // Wrap chain in parentheses if it has multiple blocks
+    if (chain.length > 1) {
+      chainQuery = `(${chainQuery})`;
     }
-    // Handle blocks without relationships or with processed relationships
-    else {
-      if (resultQuery) {
-        resultQuery += " " + current.synthesized;
-      } else {
-        resultQuery = current.synthesized;
-      }
 
-      current.processed = true;
-      i++;
+    // Add to result
+    if (resultQuery) {
+      resultQuery += " " + chainQuery;
+    } else {
+      resultQuery = chainQuery;
     }
   }
 

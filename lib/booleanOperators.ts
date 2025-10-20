@@ -41,7 +41,7 @@ export const BOOLEAN_OPERATORS: Record<BooleanOperator, BooleanOperation> = {
   },
   NOT: {
     operator: "NOT",
-    description: "Exclude terms from results",
+    description: "Does not include terms from results",
     example: "machine learning -review",
     rules: [
       "Use hyphen (-) directly before term, no space",

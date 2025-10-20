@@ -5,6 +5,116 @@ All notable changes to the Google Scholar Query Translator (QTM) project will be
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.2.0] - 2025-10-20 - Advanced Operator Chaining and Parenthetical Grouping
+
+### Added
+
+- **Advanced Operator Chaining Validation** - Sophisticated operator relationship enforcement
+
+  - Directional operator types: AND_NEXT, AND_PREV, OR_NEXT, OR_PREV, EXCLUDE
+  - Prevents invalid operator combinations (e.g., AND_NEXT followed by OR_PREV)
+  - Context-aware operator filtering in SearchBlockComponent
+  - PREV operator must match previous block's NEXT operator to maintain chain integrity
+  - Comprehensive validation in operatorValidator.ts Rule 4
+
+- **Intelligent Parenthetical Grouping** - Automatic chain detection and grouping
+
+  - Identifies complete chains by checking forward (NEXT) and backward (PREV) connections
+  - All connected blocks stay in same parenthesis group regardless of intermediate blocks
+  - Chain breaking: Blocks disconnect only when operators don't connect
+  - Example: Block1(AND_NEXT) Block2(OR_NEXT) Block3() Block4(AND_PREV) = (Block1 AND Block2 OR Block3 AND Block4)
+  - Rewritten groupBlocksByOperator() function in qtm.ts with full chain detection logic
+
+### Changed
+
+- **SearchBlockComponent Operator Validation** (`components/SearchBlockComponent.tsx`)
+
+  - Added allBlocks prop for context-aware validation
+  - Implemented getValidOperators() function filtering operators based on previous block
+  - Only shows valid operator options in dropdown that don't conflict with chain
+  - PREV operator options disabled when incompatible with previous block's NEXT
+
+- **Search Blocks Container** (`components/search/SearchBlocksContainer.tsx`)
+
+  - Now passes allBlocks prop to SearchBlockComponent
+  - Enables context-aware operator validation for entire query
+
+- **Query Translation Module** (`lib/qtm.ts`)
+
+  - Complete rewrite of groupBlocksByOperator() function
+  - New chain identification algorithm: backward traversal to find chain start, forward traversal to find chain end
+  - Helper function getOperatorType() to extract operator from block (supports new and legacy formats)
+  - Proper handling of blocks with no explicit operators that are part of a chain
+  - Chains properly wrapped in parentheses for all grouped blocks
+
+- **Operator Validator Enhancement** (`lib/operatorValidator.ts`)
+
+  - Added comprehensive Rule 4 for operator chaining validation
+  - Bidirectional checking: validates both previous block's connection and next block's connection
+  - Specific error messages for AND_NEXT/OR_PREV conflicts and OR_NEXT/AND_PREV conflicts
+  - Suggestions provided for fixing operator conflicts
+
+- **Terminology Updates** (Multiple files)
+
+  - Changed "EXCLUDE" to "Does Not Include" for user clarity
+  - Updated in SearchBlockComponent operator descriptions
+  - Updated in SmartOperatorValidator.tsx description
+  - Updated in booleanOperators.ts (NOT operator description)
+  - Updated in HowToUsePage.tsx with better "Does Not Include" examples
+
+- **Help Documentation Enhancement** (`components/help/HowToUsePage.tsx`)
+
+  - Added new section: "Understanding Operator Grouping"
+  - Replaced query format examples with English behavior descriptions
+  - New examples show concrete use cases instead of configuration steps
+  - Better explanation of what AND, OR, and "Does Not Include" actually do
+  - Improved Example 1, 2, 3 with outcome-focused descriptions
+  - Added visual example of operator chaining with expected results
+
+- **Query Builder** (`components/QueryBuilder.tsx`)
+
+  - Removed "Generated Query Display" section showing query string
+  - Focus shifted from query syntax to query behavior and results
+
+### Fixed
+
+- Operator chaining no longer allows invalid AND/OR combinations within a chain
+- Parenthetical grouping now correctly handles chains with blocks containing no forward operator
+- Operator validation now prevents users from selecting incompatible operators
+- Help page no longer shows technical query format syntax that confused users
+
+### Technical Details
+
+- Operator chaining uses directional indicators (NEXT/PREV) to create bidirectional connections
+- Chain detection is O(n²) but acceptable for typical query sizes (<10 blocks)
+- All blocks in a chain must use compatible operators: AND_NEXT must pair with AND_PREV (or AND_NEXT for forwarding)
+- Empty blocks (no search term) don't break chains - they're filtered out during query building
+
+### Validation Rules Summary
+
+1. **PREV must match NEXT:** If Block 1 has AND_NEXT, Block 2 must use AND_PREV (not OR_PREV)
+2. **All operators valid forward:** Block can have AND_NEXT OR OR_NEXT for next connection, independent of PREV
+3. **First block no operators:** Cannot have AND_PREV or OR_PREV on first block
+4. **Last block no forward:** Cannot have AND_NEXT or OR_NEXT on last block
+5. **EXCLUDE at end only:** "Does Not Include" blocks typically at end of query
+6. **No mixing in chain:** All blocks in same parenthesis group must use same operator type for that group
+
+### User Experience Improvements
+
+- Operator dropdown only shows valid choices eliminating user confusion
+- Help page explains what operators do instead of how to format them
+- Error messages guide users to valid operator configurations
+- Consistent terminology ("Does Not Include" instead of "EXCLUDE")
+
+### Notes
+
+- This release makes the operator system much more sophisticated and user-friendly
+- Prevents entire categories of invalid queries that would confuse users
+- Help documentation now focuses on outcomes rather than syntax
+- All changes are backward compatible - legacy booleanOperator still supported
+
+---
+
 ## [1.1.1] - 2025-10-20 - Enhanced Collapsible Sidebar with Mobile Responsiveness
 
 ### Added
