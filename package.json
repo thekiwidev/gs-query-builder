@@ -17,6 +17,7 @@
     "@tamagui/config": "^1.135.2",
     "@tamagui/next-plugin": "^1.135.2",
     "@tamagui/next-theme": "^1.135.2",
+    "@vercel/analytics": "^1.5.0",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.545.0",
