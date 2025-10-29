@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Comprehensive UI Enhancement Package** - Major visual and interaction improvements across the entire application
 
   - **Enhanced Search Terms Container** with structured layout
+
     - Dedicated header section with "Search Terms" title inside container
     - Individual search blocks with white backgrounds and `rounded-2xl` styling
     - "Add Another" button integrated within the container for better UX
@@ -20,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Gray background container (`bg-gray-50`) with prominent `rounded-xl` styling
 
   - **Improved Button System** with enhanced interactions
+
     - "Add Another" button as clean text + icon (blue color, no borders)
     - Hover effects with scaling (`hover:scale-105`) and color transitions
     - Search button with proper enabled/disabled states and cursor feedback
@@ -29,19 +31,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Enhanced Journal Ratings Interface** - Fully clickable, color-coded rating cards
     - 2x2 grid layout with individual colored cards for each rating
     - Full card click area (not just checkbox) for better usability
-    - Color-themed ratings: A* (amber), A (blue), B (green), C (gray)
+    - Color-themed ratings: A\* (amber), A (blue), B (green), C (gray)
     - Hover scaling effects and smooth transitions
     - Enhanced "Select All" and "Clear All" buttons with color-coded hover states
 
 - **Scholarle Branding Implementation** - Complete rebrand from Google Scholar to Scholarle
 
   - **New Brand Identity** with Library icon integration
+
     - Library icon (`lucide-react`) as primary brand symbol
     - Consistent icon usage in header and footer with brand blue color
     - Very close icon-to-text spacing (`gap-0.5`) for cohesive logo appearance
     - Proper icon sizing: `w-7 h-7` in header, `w-6 h-6` in footer
 
   - **Complete Name Migration** - All references updated throughout codebase
+
     - "Google Scholar Query Builder" → "Scholarle Query Builder"
     - Updated in metadata, headers, footers, documentation, and comments
     - Package name changed to "scholarle-query-builder"
@@ -55,6 +59,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Modern Form Controls** with consistent rounded styling
 
   - **Enhanced Border Radius System** - Balanced visual hierarchy
+
     - Input fields and select dropdowns: `rounded-lg` (optimal balance)
     - Search block containers: `rounded-2xl` (prominent modern look)
     - Checkbox containers: `rounded-lg` (consistent with form elements)
@@ -74,15 +79,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **Complete UI Design System Overhaul** 
+- **Complete UI Design System Overhaul**
 
   - **Search Interface Redesign** - Containerized, structured layout
+
     - Search terms now contained within a bordered, rounded container
     - Three distinct sections: header, search blocks, action buttons
     - Improved visual hierarchy with consistent spacing and borders
     - Enhanced mobile responsiveness and desktop usability
 
   - **Button Styling Standardization** - Professional, consistent interactions
+
     - Primary buttons use solid brand blue instead of gradients
     - Consistent hover states with proper cursor feedback
     - Enhanced disabled states with clear visual indicators
@@ -97,6 +104,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Brand Identity Migration** - Complete transition to Scholarle
 
   - **Header and Footer Updates** - Consistent branding elements
+
     - Header: Library icon + "Scholarle" with minimal spacing
     - Footer: Brand section updated with icon integration
     - Removed "ScholarGO" legacy branding completely
@@ -111,6 +119,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Enhanced User Experience** - Improved interactions and feedback
 
   - **Cursor States and Hover Effects** - Professional interaction design
+
     - Proper cursor states: `cursor-pointer` for clickable, `cursor-not-allowed` for disabled
     - Hover scaling and color transitions on interactive elements
     - Enhanced button feedback with `hover:scale-105` and `active:scale-95`
@@ -125,12 +134,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - **React Hooks Compliance** - Proper hook usage patterns
+
   - Fixed `useCallback` hook violation in HowToUsePage component
   - Moved callback definition outside `useEffect` to component top level
   - Proper dependency array management for intersection observer
   - Eliminated "Invalid hook call" runtime errors
 
 - **Border Radius Balance** - Consistent visual design
+
   - Reduced overly rounded elements from `rounded-xl` to `rounded-lg`
   - Achieved optimal balance between modern appearance and usability
   - Consistent form element styling throughout application
@@ -147,12 +158,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Component Architecture Enhancements**
 
   - **SearchBlocksContainer** - Complete restructure for better UX
+
     - Self-contained component with internal header, blocks, and actions
     - Proper prop management for search and block operations
     - Enhanced error handling and validation states
     - Improved accessibility with proper ARIA labels
 
   - **Button Component System** - Unified styling and behavior
+
     - Base button styles updated with `rounded-lg` default
     - Consistent size variants with proper border radius inheritance
     - Enhanced disabled and active states across all button types
@@ -167,6 +180,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Performance Optimizations**
 
   - **Intersection Observer Implementation** - Efficient scroll tracking
+
     - Optimized viewport detection with proper root margins
     - Efficient cleanup and memory management
     - Minimal re-renders with proper callback optimization
@@ -188,6 +202,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Migration Notes
 
 - **Branding Migration** - All external references updated
+
   - Documentation files maintain Google Scholar references where historically relevant
   - API endpoints and external integrations use new Scholarle branding
   - User-facing elements completely migrated to Scholarle identity

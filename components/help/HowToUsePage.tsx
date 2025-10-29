@@ -45,35 +45,41 @@ export function HowToUsePage() {
   };
 
   // Callback for intersection observer
-  const observerCallback = useCallback((entries: IntersectionObserverEntry[]) => {
-    entries.forEach((entry) => {
-      if (entry.isIntersecting) {
-        setActiveSection(entry.target.id);
-      }
-    });
-  }, []);
+  const observerCallback = useCallback(
+    (entries: IntersectionObserverEntry[]) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setActiveSection(entry.target.id);
+        }
+      });
+    },
+    []
+  );
 
   // Setup intersection observer for automatic section highlighting
   useEffect(() => {
     const sections = [
       "getting-started",
-      "search-blocks", 
+      "search-blocks",
       "operators",
       "exact-match",
       "journals",
-      "filters", 
+      "filters",
       "examples",
       "tips",
-      "issues"
+      "issues",
     ];
 
     const observerOptions = {
       root: null,
       rootMargin: "-20% 0% -70% 0%", // Trigger when section is in the middle third of viewport
-      threshold: 0
+      threshold: 0,
     };
 
-    const observer = new IntersectionObserver(observerCallback, observerOptions);
+    const observer = new IntersectionObserver(
+      observerCallback,
+      observerOptions
+    );
 
     // Observe all sections
     sections.forEach((sectionId) => {
