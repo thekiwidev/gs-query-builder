@@ -105,7 +105,7 @@ export function SelectedJournalsSidebar({
       </h3>
 
       {/* Journals List */}
-      <div className="border border-gray-300 rounded max-h-3/5 overflow-y-auto bg-white">
+      <div className="border border-gray-300 rounded-lg max-h-3/5 overflow-y-auto bg-white">
         {availableJournals.length > 0 ? (
           <div className="divide-y divide-gray-100">
             {availableJournals.map((journal) => (
@@ -119,7 +119,7 @@ export function SelectedJournalsSidebar({
                   onCheckedChange={(checked) =>
                     handleJournalToggle(journal.issn, checked as boolean)
                   }
-                  className="mt-0.5 flex-shrink-0"
+                  className="mt-0.5 shrink-0"
                 />
                 <label
                   htmlFor={`journal-${journal.issn}`}

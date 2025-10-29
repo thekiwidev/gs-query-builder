@@ -7,7 +7,7 @@ export const metadata = {
 };
 
 const HowToUse = () => {
-  return <HowToUsePage showCloseButton={true} />;
+  return <HowToUsePage />;
 };
 
 export default HowToUse;

@@ -1,9 +1,430 @@
 # Changelog
 
-All notable changes to the Google Scholar Query Translator (QTM) project will be documented in this file.
+All notable changes to the Scholarle Query Builder project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [1.5.1] - 2025-10-29 - Comprehensive Feedback Page and UI Component Additions
+
+### Added
+
+- **Complete Feedback Page Implementation** (`app/feedback/page.tsx`)
+
+  - Professional feedback collection interface matching design system
+  - "Share Your Feedback" hero section with descriptive content
+  - Blue "Go to Feedback Form" button linking to external Google Form (uses `feedbackFormUrl` from utils)
+  - Opens external form in new tab with proper security attributes
+
+- **How to Send Feedback Section** - Three-card layout with visual icons
+
+  - **Email Us** card with Mail icon and support@scholarle.com contact
+  - **Report a Bug** card with Bug icon and submission guidelines
+  - **Feature Requests** card with Lightbulb icon and workflow improvement focus
+  - Cards feature hover effects and consistent brand color scheme
+
+- **Feedback Guidelines and Process** - Two-column informational layout
+
+  - **Feedback Guidelines** with green checkmark bullets for best practices
+  - **What Happens With Your Feedback** with numbered blue process steps
+  - Clear expectations setting for feedback handling and response times
+
+- **Interactive FAQ Section** - Collapsible questions with smooth animations
+
+  - Three common questions about feedback responses, implementation timelines, and security reporting
+  - ChevronDown icons with rotation animation on expand/collapse
+  - Detailed answers with clear next steps and contact information
+
+- **Anonymous Feedback Notice** - Blue info box with privacy information
+
+  - Explains Google Form anonymous submission options
+  - Notes optional email provision for follow-up questions
+
+- **Card UI Component System** (`components/ui/card.tsx`)
+
+  - Complete shadcn/ui compatible Card component library
+  - Six card variants: Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter
+  - Forward ref implementation with proper TypeScript interfaces
+  - Consistent styling with `rounded-xl` borders and shadow effects
+  - Flexible className merging with `cn()` utility function
+
+### Changed
+
+- **Enhanced Visual Design** - Professional appearance matching Scholarle brand
+
+  - Consistent use of brand blue (`#4D90FD`) throughout feedback interface
+  - Gray-50 background for visual depth and section separation
+  - Proper spacing with 12-unit padding and 16-unit section margins
+  - Responsive grid layouts (3-column cards, 2-column guidelines)
+
+- **User Experience Improvements**
+
+  - External link integration with `feedbackFormUrl` constant from utils
+  - Proper accessibility with semantic HTML structure and ARIA considerations
+  - Mobile-responsive design with responsive grid breakpoints
+  - Smooth transition animations for interactive elements
+
+### Technical Details
+
+- **Component Architecture**
+
+  - Client-side component with React hooks for FAQ state management
+  - TypeScript strict mode compliance with proper type definitions
+  - Lucide React icons for consistent iconography (Mail, Bug, Lightbulb, ExternalLink, ChevronDown)
+  - Next.js Link component for internal navigation and external link handling
+
+- **State Management**
+
+  - Simple useState hook for FAQ expansion/collapse functionality
+  - Controlled component pattern for interactive FAQ sections
+  - Minimal state with efficient re-rendering
+
+- **Styling System**
+  - Tailwind CSS utility classes for responsive design
+  - Custom color tokens matching existing design system
+  - Hover states and transitions for enhanced interactivity
+  - Consistent typography hierarchy with proper font weights and sizes
+
+### Fixed
+
+- **HTML Entity Compliance** - Resolved React JSX compilation errors
+  - Converted all apostrophes to `&apos;` HTML entities
+  - Fixed "what's working, what's not" and similar constructions
+  - Resolved all unescaped entity warnings for production build
+
+### Browser Compatibility
+
+- ✅ All modern browsers with CSS Grid and Flexbox support
+- ✅ Mobile responsive design tested on various screen sizes
+- ✅ External link handling with proper security attributes (noopener noreferrer)
+- ✅ Smooth animations and transitions across supported browsers
+
+### Notes
+
+- Feedback page accessible at `/feedback` route as referenced in main navigation
+- External feedback form integration maintains user privacy and data security
+- Design system consistency maintained with existing Scholarle brand colors and typography
+- Card component system provides foundation for future UI component additions
+
+---
+
+## [1.5.0] - 2025-10-29 - Complete UI Overhaul: Modern Design System, Enhanced UX, and Scholarle Branding
+
+### Added
+
+- **Comprehensive UI Enhancement Package** - Major visual and interaction improvements across the entire application
+
+  - **Enhanced Search Terms Container** with structured layout
+
+    - Dedicated header section with "Search Terms" title inside container
+    - Individual search blocks with white backgrounds and `rounded-2xl` styling
+    - "Add Another" button integrated within the container for better UX
+    - Search button positioned in its own bordered section at the bottom
+    - Faint border separators (`border-gray-100`) between all sections
+    - Gray background container (`bg-gray-50`) with prominent `rounded-xl` styling
+
+  - **Improved Button System** with enhanced interactions
+
+    - "Add Another" button as clean text + icon (blue color, no borders)
+    - Hover effects with scaling (`hover:scale-105`) and color transitions
+    - Search button with proper enabled/disabled states and cursor feedback
+    - Enhanced reset form button with red hover states and clean styling
+    - All buttons use primary brand blue (`#4D90FD`) consistently
+
+  - **Enhanced Journal Ratings Interface** - Fully clickable, color-coded rating cards
+    - 2x2 grid layout with individual colored cards for each rating
+    - Full card click area (not just checkbox) for better usability
+    - Color-themed ratings: A\* (amber), A (blue), B (green), C (gray)
+    - Hover scaling effects and smooth transitions
+    - Enhanced "Select All" and "Clear All" buttons with color-coded hover states
+
+- **Scholarle Branding Implementation** - Complete rebrand from Google Scholar to Scholarle
+
+  - **New Brand Identity** with Library icon integration
+
+    - Library icon (`lucide-react`) as primary brand symbol
+    - Consistent icon usage in header and footer with brand blue color
+    - Very close icon-to-text spacing (`gap-0.5`) for cohesive logo appearance
+    - Proper icon sizing: `w-7 h-7` in header, `w-6 h-6` in footer
+
+  - **Complete Name Migration** - All references updated throughout codebase
+
+    - "Google Scholar Query Builder" → "Scholarle Query Builder"
+    - Updated in metadata, headers, footers, documentation, and comments
+    - Package name changed to "scholarle-query-builder"
+    - Maintained backward compatibility with functionality
+
+  - **Enhanced Brand Presentation**
+    - Professional description: "Build sophisticated academic search queries with advanced field targeting and precision filtering for comprehensive literature discovery"
+    - Library icon integrated into all headers and brand mentions
+    - Consistent brand color (`#4D90FD`) used throughout interface
+
+- **Modern Form Controls** with consistent rounded styling
+
+  - **Enhanced Border Radius System** - Balanced visual hierarchy
+
+    - Input fields and select dropdowns: `rounded-lg` (optimal balance)
+    - Search block containers: `rounded-2xl` (prominent modern look)
+    - Checkbox containers: `rounded-lg` (consistent with form elements)
+    - Button components: `rounded-lg` baseline with size-specific overrides
+
+  - **Sidebar Component Enhancements**
+    - Field of Research dropdown: `rounded-lg` trigger and menu
+    - Journal selector container: `rounded-lg` for modern appearance
+    - Action buttons: Enhanced with `rounded-lg` and improved hover states
+    - Year range inputs: Proper sizing and styling consistency
+
+- **Automatic Section Highlighting** on How to Use page
+  - Intersection Observer API implementation for scroll-based highlighting
+  - Real-time sidebar navigation updates as user scrolls through sections
+  - Smart viewport detection (middle third triggering) for accurate highlighting
+  - Smooth transitions between active section states
+
+### Changed
+
+- **Complete UI Design System Overhaul**
+
+  - **Search Interface Redesign** - Containerized, structured layout
+
+    - Search terms now contained within a bordered, rounded container
+    - Three distinct sections: header, search blocks, action buttons
+    - Improved visual hierarchy with consistent spacing and borders
+    - Enhanced mobile responsiveness and desktop usability
+
+  - **Button Styling Standardization** - Professional, consistent interactions
+
+    - Primary buttons use solid brand blue instead of gradients
+    - Consistent hover states with proper cursor feedback
+    - Enhanced disabled states with clear visual indicators
+    - Removed excessive visual effects, focused on functionality
+
+  - **Form Input Enhancements** - Modern, accessible controls
+    - Increased border radius from `rounded-md` to `rounded-lg` for inputs
+    - Select components updated with consistent styling
+    - Checkbox components enhanced with proper border radius
+    - Improved focus states and hover interactions throughout
+
+- **Brand Identity Migration** - Complete transition to Scholarle
+
+  - **Header and Footer Updates** - Consistent branding elements
+
+    - Header: Library icon + "Scholarle" with minimal spacing
+    - Footer: Brand section updated with icon integration
+    - Removed "ScholarGO" legacy branding completely
+    - Professional typography and spacing improvements
+
+  - **Metadata and Configuration Updates**
+    - App title: "Scholarle Query Builder"
+    - Package configuration: Updated name and branding
+    - All user-facing text migrated to new brand
+    - Technical documentation updated for new identity
+
+- **Enhanced User Experience** - Improved interactions and feedback
+
+  - **Cursor States and Hover Effects** - Professional interaction design
+
+    - Proper cursor states: `cursor-pointer` for clickable, `cursor-not-allowed` for disabled
+    - Hover scaling and color transitions on interactive elements
+    - Enhanced button feedback with `hover:scale-105` and `active:scale-95`
+    - Smooth transitions with consistent timing (200ms duration)
+
+  - **Sidebar Improvements** - Better usability and visual appeal
+    - Journal rating cards fully clickable with clear visual feedback
+    - Enhanced dropdown styling with improved border radius
+    - Better button interactions without excessive visual effects
+    - Improved spacing and typography throughout sidebar sections
+
+### Fixed
+
+- **React Hooks Compliance** - Proper hook usage patterns
+
+  - Fixed `useCallback` hook violation in HowToUsePage component
+  - Moved callback definition outside `useEffect` to component top level
+  - Proper dependency array management for intersection observer
+  - Eliminated "Invalid hook call" runtime errors
+
+- **Border Radius Balance** - Consistent visual design
+
+  - Reduced overly rounded elements from `rounded-xl` to `rounded-lg`
+  - Achieved optimal balance between modern appearance and usability
+  - Consistent form element styling throughout application
+  - Professional appearance without excessive roundness
+
+- **Icon and Text Alignment** - Cohesive brand presentation
+  - Proper spacing between Library icon and text in all locations
+  - Consistent icon sizing relative to text elements
+  - Eliminated background containers on icons for cleaner appearance
+  - Improved visual balance in header and footer sections
+
+### Technical Improvements
+
+- **Component Architecture Enhancements**
+
+  - **SearchBlocksContainer** - Complete restructure for better UX
+
+    - Self-contained component with internal header, blocks, and actions
+    - Proper prop management for search and block operations
+    - Enhanced error handling and validation states
+    - Improved accessibility with proper ARIA labels
+
+  - **Button Component System** - Unified styling and behavior
+
+    - Base button styles updated with `rounded-lg` default
+    - Consistent size variants with proper border radius inheritance
+    - Enhanced disabled and active states across all button types
+    - Improved TypeScript interfaces for better type safety
+
+  - **UI Component Updates** - Modern design system implementation
+    - Input components: Enhanced with `rounded-lg` and better hover states
+    - Select components: Consistent styling with improved dropdown appearance
+    - Checkbox components: Better border radius and interaction feedback
+    - Form elements: Unified styling approach across all input types
+
+- **Performance Optimizations**
+
+  - **Intersection Observer Implementation** - Efficient scroll tracking
+
+    - Optimized viewport detection with proper root margins
+    - Efficient cleanup and memory management
+    - Minimal re-renders with proper callback optimization
+    - Smooth performance even with multiple sections
+
+  - **State Management Improvements** - Better component efficiency
+    - Optimized re-rendering patterns in enhanced components
+    - Proper dependency management in useEffect hooks
+    - Efficient prop drilling and state updates
+    - Reduced unnecessary component updates
+
+### Browser Compatibility
+
+- ✅ All modern browsers with CSS Grid, Flexbox, and Intersection Observer support
+- ✅ Enhanced mobile responsiveness with improved touch targets
+- ✅ Proper accessibility with ARIA labels and keyboard navigation
+- ✅ Smooth animations and transitions across all supported browsers
+
+### Migration Notes
+
+- **Branding Migration** - All external references updated
+
+  - Documentation files maintain Google Scholar references where historically relevant
+  - API endpoints and external integrations use new Scholarle branding
+  - User-facing elements completely migrated to Scholarle identity
+  - Technical implementation remains compatible with Google Scholar backend
+
+- **UI Component Compatibility** - Backward compatible enhancements
+  - All existing component APIs maintained for easy adoption
+  - Enhanced styling doesn't break existing implementations
+  - Gradual migration path for any custom styling overrides
+  - No breaking changes to component interfaces
+
+### Build Status
+
+- ✅ TypeScript compilation passes (strict mode, zero errors)
+- ✅ All pages render correctly with new branding and styling
+- ✅ Enhanced components maintain full functionality
+- ✅ Automatic section highlighting works smoothly
+- ✅ All interactive elements properly functional with enhanced UX
+- ✅ Complete brand migration successful across all touchpoints
+
+### Notes
+
+- This release represents a major visual and branding overhaul while maintaining full functional compatibility
+- Enhanced user experience with modern design principles and improved interaction patterns
+- Scholarle branding provides a unique identity while maintaining academic search functionality
+- All UI enhancements focus on usability, accessibility, and professional appearance
+- Future development will build upon this enhanced design system foundation
+
+---
+
+## [1.4.0] - 2025-10-29 - UI Refinements, Button Styling Standardization, and Layout Improvements
+
+### Added
+
+- **Hero-Style Section on How-to-Use Page** (`components/help/HowToUsePage.tsx`)
+  - Transformed header into hero section with gradient background
+  - Added badge label "Complete Learning Guide"
+  - Large gradient text title matching design system
+  - Enhanced subtitle with better descriptive copy
+  - Gradient blur effects for visual depth (blue and purple)
+  - Increased padding for more spacious feel (pt-32 pb-20)
+
+### Changed
+
+- **Global Button Styling Standardization** - Unified primary button appearance
+
+  - Updated default button variant in `components/ui/button.tsx` to use solid blue color
+  - Changed from gradient (`bg-linear-to-r from-blue-500 to-blue-700`) to solid color (`bg-[#4D90FD]`)
+  - White text color for all primary buttons (`text-white`)
+  - Darker hover state (`hover:bg-[#3D7CDB]`) for better interaction feedback
+  - Applied changes to:
+    - `components/layout/Header.tsx` - Get Started button
+    - `app/about/page.tsx` - Hero section and CTA buttons (2 instances)
+  - Removed all inline gradient classes from button elements
+
+- **Header Scrolling Behavior** (`components/layout/Header.tsx`)
+
+  - Changed header from fixed positioning to scrolling naturally with page content
+  - Removed `fixed top-0 left-0 right-0 z-50` classes
+  - Header now part of normal document flow
+  - Improves user experience by not obscuring content
+
+- **How-to-Use Page Navigation** (`components/help/HowToUsePage.tsx`)
+
+  - Removed Home button and Close button from hero section
+  - Simplified header to focus on content title and description
+  - Cleaner hero section without action buttons
+
+- **How-to-Use Page Sidebar Sticky Positioning** (`components/help/HowToUsePage.tsx`)
+  - Adjusted sticky top position from `top-32` to `top-6`
+  - Sidebar now sticks much closer to viewport top when scrolling
+  - Reduced unnecessary padding gap between header and sidebar
+  - Improved vertical space utilization
+
+### Fixed
+
+- **Duplicate Footer on Help Page** (`components/help/HowToUsePage.tsx`)
+
+  - Removed duplicate `Footer` component import and rendering
+  - Now uses global footer from `LayoutWrapper` instead of page-specific footer
+  - Prevents double footer appearance on `/how-to-use` route
+
+- **Duplicate Footer on About Page** (`app/about/page.tsx`)
+
+  - Removed duplicate `Footer` component import and rendering
+  - Now uses global footer from `LayoutWrapper` instead of page-specific footer
+  - Prevents double footer appearance on `/about` route
+
+- **JSX Syntax Error on About Page** (`app/about/page.tsx`)
+  - Fixed extra closing `</div>` tag in CTA section
+  - Resolved parsing error that prevented build completion
+  - Removed one extra `</div>` from lines 407-408
+
+### Technical Details
+
+- Button color `#4D90FD` chosen as primary brand blue across all UI elements
+- Hover state `#3D7CDB` provides ~20% darker shade for clear interaction feedback
+- Header scroll behavior improves page real-estate utilization
+- Sidebar sticky positioning now accounts for scrolling header with minimal gap
+- Global footer system prevents duplication issues across page variants
+- All changes maintain backward compatibility with existing component structure
+
+### Build Status
+
+- ✅ TypeScript compilation passes (no errors)
+- ✅ All pages render without errors
+- ✅ Button styling applied consistently across codebase
+- ✅ Header scrolling functional on all pages
+- ✅ Footer appears exactly once on each page
+
+### Notes
+
+- Solid blue button styling provides more professional appearance than gradients
+- Header now scrolls with content, improving UX on long pages
+- Hero section on help page better matches about page design system
+- Sidebar positioning optimized for pages with scrolling headers
+- All UI refinements maintain responsive design across mobile and desktop
+
+---
 
 ## [1.3.1] - 2025-10-20 - Fixed Operator Chaining Validation Logic
 

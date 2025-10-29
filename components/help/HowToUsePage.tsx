@@ -1,10 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
-import { useRouter } from "next/navigation";
-import Link from "next/link";
-import { X, ChevronDown, ChevronUp, Home } from "lucide-react";
-import { Footer } from "@/components/layout/Footer";
+import React, { useState, useEffect, useCallback } from "react";
+import { ChevronDown, ChevronUp } from "lucide-react";
 
 interface CollapsibleSectionProps {
   title: string;
@@ -39,61 +36,96 @@ function CollapsibleSection({
   );
 }
 
-interface HowToUsePageProps {
-  showCloseButton?: boolean;
-}
-
-export function HowToUsePage({ showCloseButton = false }: HowToUsePageProps) {
+export function HowToUsePage() {
   const [activeSection, setActiveSection] = useState("getting-started");
-  const router = useRouter();
 
   const scrollToSection = (sectionId: string) => {
-    setActiveSection(sectionId);
     const element = document.getElementById(sectionId);
     element?.scrollIntoView({ behavior: "smooth" });
   };
 
+  // Callback for intersection observer
+  const observerCallback = useCallback(
+    (entries: IntersectionObserverEntry[]) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          setActiveSection(entry.target.id);
+        }
+      });
+    },
+    []
+  );
+
+  // Setup intersection observer for automatic section highlighting
+  useEffect(() => {
+    const sections = [
+      "getting-started",
+      "search-blocks",
+      "operators",
+      "exact-match",
+      "journals",
+      "filters",
+      "examples",
+      "tips",
+      "issues",
+    ];
+
+    const observerOptions = {
+      root: null,
+      rootMargin: "-20% 0% -70% 0%", // Trigger when section is in the middle third of viewport
+      threshold: 0,
+    };
+
+    const observer = new IntersectionObserver(
+      observerCallback,
+      observerOptions
+    );
+
+    // Observe all sections
+    sections.forEach((sectionId) => {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        observer.observe(element);
+      }
+    });
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [observerCallback]);
+
   return (
     <div className="bg-white min-h-screen">
-      {/* Header */}
-      <div className="sticky top-0 bg-white border-b border-gray-200 shadow-sm z-40">
-        <div className="max-w-6xl mx-auto px-6 py-4 flex items-center justify-between">
+      {/* Hero Section */}
+      <section className="relative pt-32 pb-20 px-6 overflow-hidden">
+        <div className="absolute inset-0 bg-linear-to-br from-blue-50 via-white to-purple-50"></div>
+        <div className="absolute inset-0 opacity-30">
+          <div className="absolute top-20 left-10 w-72 h-72 bg-blue-400 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-20 right-10 w-96 h-96 bg-purple-400 rounded-full blur-3xl"></div>
+        </div>
+
+        <div className="relative max-w-6xl mx-auto">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">
+            <div className="inline-block px-4 py-2 bg-blue-100 text-blue-700 rounded-full mb-4">
+              <span className="text-sm">Complete Learning Guide</span>
+            </div>
+            <h1 className="text-5xl md:text-6xl bg-linear-to-r from-blue-600 via-blue-700 to-purple-600 bg-clip-text text-transparent">
               How to Use Query Builder
             </h1>
-            <p className="text-gray-600 mt-1">
-              Comprehensive guide to mastering academic research searches
+            <p className="text-xl text-gray-600 mt-3 max-w-2xl">
+              Comprehensive guide to mastering academic research searches. Learn
+              how to build powerful queries and find exactly what you need.
             </p>
           </div>
-          {showCloseButton && (
-            <div className="flex gap-2 items-center">
-              <Link
-                href="/"
-                className="flex items-center gap-2 px-3 py-2 hover:bg-blue-50 text-blue-600 rounded-lg transition-colors border border-blue-200"
-                title="Go Back Home"
-              >
-                <Home className="w-5 h-5" />
-                <span className="text-sm font-medium">Home</span>
-              </Link>
-              <button
-                onClick={() => router.back()}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
-                title="Close"
-              >
-                <X className="w-6 h-6 text-gray-600" />
-              </button>
-            </div>
-          )}
         </div>
-      </div>
+      </section>
 
       {/* Main Content */}
       <div className="max-w-6xl mx-auto px-6 py-8">
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Table of Contents */}
           <div className="lg:col-span-1">
-            <div className="sticky top-32 bg-gray-50 rounded-lg p-4 border border-gray-200">
+            <div className="sticky top-6 bg-gray-50 rounded-lg p-4 border border-gray-200">
               <h2 className="font-bold text-gray-900 mb-4 text-sm uppercase tracking-wide">
                 Contents
               </h2>
@@ -153,8 +185,8 @@ export function HowToUsePage({ showCloseButton = false }: HowToUsePageProps) {
               </div>
               <p className="text-gray-700">
                 The Query Builder helps you create sophisticated, precise
-                searches for academic papers on Google Scholar. Your query
-                updates in real-time as you configure search parameters.
+                searches for academic papers on Scholarle. Your query updates in
+                real-time as you configure search parameters.
               </p>
             </section>
 
@@ -830,9 +862,6 @@ export function HowToUsePage({ showCloseButton = false }: HowToUsePageProps) {
           </div>
         </div>
       </div>
-
-      {/* Main Footer */}
-      <Footer />
     </div>
   );
 }

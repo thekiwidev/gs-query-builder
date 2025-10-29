@@ -2,7 +2,7 @@
 
 import React from "react";
 import Link from "next/link";
-import { Mail, Github, Linkedin, Twitter } from "lucide-react";
+import { Mail, Github, Linkedin, Twitter, Library } from "lucide-react";
 
 export function Footer() {
   const currentYear = new Date().getFullYear();
@@ -14,7 +14,10 @@ export function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-12">
           {/* Brand Section */}
           <div>
-            <h3 className="text-lg font-bold mb-2">Google Scholar</h3>
+            <div className="flex items-center gap-0.5 mb-2">
+              <Library className="w-6 h-6 text-[#4D90FD]" />
+              <h3 className="text-lg font-bold">Scholarle</h3>
+            </div>
             <p className="text-sm text-gray-600">Query Builder</p>
             <p className="text-xs text-gray-500 mt-3">
               Build advanced academic search queries with precision and ease.
@@ -66,7 +69,7 @@ export function Footer() {
             <ul className="space-y-2">
               <li>
                 <Link
-                  href="#about"
+                  href="/about"
                   className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
                 >
                   About Us
@@ -116,7 +119,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="#feedback"
+                  href="/feedback"
                   className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
                 >
                   Send Feedback
@@ -150,8 +153,7 @@ export function Footer() {
           {/* Copyright */}
           <div className="text-sm text-gray-600">
             <p>
-              &copy; {currentYear} Google Scholar Query Builder. All rights
-              reserved.
+              &copy; {currentYear} Scholarle Query Builder. All rights reserved.
             </p>
           </div>
 

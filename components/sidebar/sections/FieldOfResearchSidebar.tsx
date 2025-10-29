@@ -78,7 +78,7 @@ export function FieldOfResearchSidebar({
         {/* Dropdown trigger button */}
         <button
           onClick={() => setIsOpen(!isOpen)}
-          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-md bg-white hover:bg-gray-50 transition-colors flex items-center justify-between text-left"
+          className="w-full px-3 py-2 text-sm border border-gray-300 rounded-lg bg-white hover:bg-gray-50 transition-colors flex items-center justify-between text-left"
         >
           <span
             className={
@@ -98,7 +98,7 @@ export function FieldOfResearchSidebar({
 
         {/* Dropdown menu */}
         {isOpen && (
-          <div className="absolute top-full left-0 right-0 mt-1 border border-gray-300 rounded-md p-3 space-y-2 bg-white shadow-lg z-50">
+          <div className="absolute top-full left-0 right-0 mt-1 border border-gray-300 rounded-lg p-3 space-y-2 bg-white shadow-lg z-50">
             {fields.map((field) => (
               <div key={field.code} className="flex items-center space-x-2">
                 <Checkbox
@@ -121,13 +121,13 @@ export function FieldOfResearchSidebar({
             <div className="border-t border-gray-200 pt-2 mt-2 flex gap-1">
               <button
                 onClick={handleSelectAll}
-                className="flex-1 px-2 py-1 text-xs border border-gray-300 rounded hover:bg-gray-50 transition-colors"
+                className="flex-1 px-2 py-1 text-xs border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
               >
                 Select All
               </button>
               <button
                 onClick={handleClearAll}
-                className="flex-1 px-2 py-1 text-xs border border-gray-300 rounded hover:bg-gray-50 transition-colors"
+                className="flex-1 px-2 py-1 text-xs border border-gray-300 rounded-lg hover:bg-gray-50 transition-colors"
               >
                 Clear All
               </button>
