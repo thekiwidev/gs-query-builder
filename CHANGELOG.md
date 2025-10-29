@@ -5,6 +5,109 @@ All notable changes to the Scholarle Query Builder project will be documented in
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.5.1] - 2025-10-29 - Comprehensive Feedback Page and UI Component Additions
+
+### Added
+
+- **Complete Feedback Page Implementation** (`app/feedback/page.tsx`)
+
+  - Professional feedback collection interface matching design system
+  - "Share Your Feedback" hero section with descriptive content
+  - Blue "Go to Feedback Form" button linking to external Google Form (uses `feedbackFormUrl` from utils)
+  - Opens external form in new tab with proper security attributes
+
+- **How to Send Feedback Section** - Three-card layout with visual icons
+
+  - **Email Us** card with Mail icon and support@scholarle.com contact
+  - **Report a Bug** card with Bug icon and submission guidelines
+  - **Feature Requests** card with Lightbulb icon and workflow improvement focus
+  - Cards feature hover effects and consistent brand color scheme
+
+- **Feedback Guidelines and Process** - Two-column informational layout
+
+  - **Feedback Guidelines** with green checkmark bullets for best practices
+  - **What Happens With Your Feedback** with numbered blue process steps
+  - Clear expectations setting for feedback handling and response times
+
+- **Interactive FAQ Section** - Collapsible questions with smooth animations
+
+  - Three common questions about feedback responses, implementation timelines, and security reporting
+  - ChevronDown icons with rotation animation on expand/collapse
+  - Detailed answers with clear next steps and contact information
+
+- **Anonymous Feedback Notice** - Blue info box with privacy information
+
+  - Explains Google Form anonymous submission options
+  - Notes optional email provision for follow-up questions
+
+- **Card UI Component System** (`components/ui/card.tsx`)
+
+  - Complete shadcn/ui compatible Card component library
+  - Six card variants: Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter
+  - Forward ref implementation with proper TypeScript interfaces
+  - Consistent styling with `rounded-xl` borders and shadow effects
+  - Flexible className merging with `cn()` utility function
+
+### Changed
+
+- **Enhanced Visual Design** - Professional appearance matching Scholarle brand
+
+  - Consistent use of brand blue (`#4D90FD`) throughout feedback interface
+  - Gray-50 background for visual depth and section separation
+  - Proper spacing with 12-unit padding and 16-unit section margins
+  - Responsive grid layouts (3-column cards, 2-column guidelines)
+
+- **User Experience Improvements**
+
+  - External link integration with `feedbackFormUrl` constant from utils
+  - Proper accessibility with semantic HTML structure and ARIA considerations
+  - Mobile-responsive design with responsive grid breakpoints
+  - Smooth transition animations for interactive elements
+
+### Technical Details
+
+- **Component Architecture**
+
+  - Client-side component with React hooks for FAQ state management
+  - TypeScript strict mode compliance with proper type definitions
+  - Lucide React icons for consistent iconography (Mail, Bug, Lightbulb, ExternalLink, ChevronDown)
+  - Next.js Link component for internal navigation and external link handling
+
+- **State Management**
+
+  - Simple useState hook for FAQ expansion/collapse functionality
+  - Controlled component pattern for interactive FAQ sections
+  - Minimal state with efficient re-rendering
+
+- **Styling System**
+  - Tailwind CSS utility classes for responsive design
+  - Custom color tokens matching existing design system
+  - Hover states and transitions for enhanced interactivity
+  - Consistent typography hierarchy with proper font weights and sizes
+
+### Fixed
+
+- **HTML Entity Compliance** - Resolved React JSX compilation errors
+  - Converted all apostrophes to `&apos;` HTML entities
+  - Fixed "what's working, what's not" and similar constructions
+  - Resolved all unescaped entity warnings for production build
+
+### Browser Compatibility
+
+- ✅ All modern browsers with CSS Grid and Flexbox support
+- ✅ Mobile responsive design tested on various screen sizes
+- ✅ External link handling with proper security attributes (noopener noreferrer)
+- ✅ Smooth animations and transitions across supported browsers
+
+### Notes
+
+- Feedback page accessible at `/feedback` route as referenced in main navigation
+- External feedback form integration maintains user privacy and data security
+- Design system consistency maintained with existing Scholarle brand colors and typography
+- Card component system provides foundation for future UI component additions
+
+---
+
 ## [1.5.0] - 2025-10-29 - Complete UI Overhaul: Modern Design System, Enhanced UX, and Scholarle Branding
 
 ### Added
