@@ -73,5 +73,5 @@ export function convertLegacyOperator(booleanOperator: "AND" | "OR" | "NOT"): {
   }
 }
 
-export const googleFormFeedbackLink: string =
+export const feedbackFormUrl: string =
   "https://docs.google.com/forms/d/e/1FAIpQLScFIe4gBmthQ3KAgboWnyUdUEQ62O2ijEnfxSkCZX5XOz1M1w/viewform?usp=preview";
