@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
 
 interface CollapsibleSectionProps {
@@ -40,10 +40,53 @@ export function HowToUsePage() {
   const [activeSection, setActiveSection] = useState("getting-started");
 
   const scrollToSection = (sectionId: string) => {
-    setActiveSection(sectionId);
     const element = document.getElementById(sectionId);
     element?.scrollIntoView({ behavior: "smooth" });
   };
+
+  // Callback for intersection observer
+  const observerCallback = useCallback((entries: IntersectionObserverEntry[]) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        setActiveSection(entry.target.id);
+      }
+    });
+  }, []);
+
+  // Setup intersection observer for automatic section highlighting
+  useEffect(() => {
+    const sections = [
+      "getting-started",
+      "search-blocks", 
+      "operators",
+      "exact-match",
+      "journals",
+      "filters", 
+      "examples",
+      "tips",
+      "issues"
+    ];
+
+    const observerOptions = {
+      root: null,
+      rootMargin: "-20% 0% -70% 0%", // Trigger when section is in the middle third of viewport
+      threshold: 0
+    };
+
+    const observer = new IntersectionObserver(observerCallback, observerOptions);
+
+    // Observe all sections
+    sections.forEach((sectionId) => {
+      const element = document.getElementById(sectionId);
+      if (element) {
+        observer.observe(element);
+      }
+    });
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [observerCallback]);
 
   return (
     <div className="bg-white min-h-screen">
@@ -136,8 +179,8 @@ export function HowToUsePage() {
               </div>
               <p className="text-gray-700">
                 The Query Builder helps you create sophisticated, precise
-                searches for academic papers on Google Scholar. Your query
-                updates in real-time as you configure search parameters.
+                searches for academic papers on Scholarle. Your query updates in
+                real-time as you configure search parameters.
               </p>
             </section>
 

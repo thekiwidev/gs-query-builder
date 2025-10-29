@@ -1,5 +1,5 @@
 /**
- * Google Scholar Query Builder
+ * Scholarle Query Builder
  *
  * Main component that manages multiple search blocks and handles the query generation.
  */
@@ -7,13 +7,11 @@
 "use client";
 
 import React, { useState } from "react";
-import { useRouter } from "next/navigation";
+import { Library } from "lucide-react";
 import { SearchBlock, buildScholarUrl, GlobalFilters } from "../lib/qtm";
 import { MainLayout } from "./layouts/MainLayout";
 import { MainContentArea } from "./layouts/MainContentArea";
 import { SearchBlocksContainer } from "./search/SearchBlocksContainer";
-import { ActionButtonsSection } from "./search/ActionButtonsSection";
-import { Button } from "./ui/button";
 
 export function QueryBuilder() {
   const [searchBlocks, setSearchBlocks] = useState<SearchBlock[]>([
@@ -42,8 +40,6 @@ export function QueryBuilder() {
   const [selectedJournalRatings, setSelectedJournalRatings] = useState<
     string[]
   >(["A*"]);
-
-  const router = useRouter();
 
   // Generate query in real-time
   const generateCurrentQuery = () => {
@@ -285,67 +281,54 @@ export function QueryBuilder() {
       <MainContentArea>
         {/* Header */}
         <div className="mb-8">
-          <div className="flex items-center justify-between mb-4">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">
-                Google Scholar Query Builder
+          <div className="mb-4">
+            <div className="flex items-center gap-1.5 mb-3">
+              <Library className="h-9 w-9 text-[#4D90FD]" />
+              <h1 className="text-3xl font-bold text-gray-900">
+                Scholarle Query Builder
               </h1>
-              <p className="text-gray-600">
-                Create advanced searches using Scopus-style field restrictions
-              </p>
             </div>
-            <Button
-              onClick={() => router.push("/how-to-use")}
-              variant="outline"
-              className="gap-2"
-              title="Open help and documentation"
-            >
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                stroke="currentColor"
-                viewBox="0 0 24 24"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
-                />
-              </svg>
-              Help
-            </Button>
+            <p className="text-gray-600">
+              Build sophisticated academic search queries with advanced field
+              targeting and precision filtering for comprehensive literature
+              discovery
+            </p>
           </div>
         </div>
 
         {/* Search Blocks Container */}
         <div className="my-8">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">
-            Search Terms
-          </h3>
           <SearchBlocksContainer
             blocks={searchBlocks}
             onBlockChange={updateSearchBlock}
             onBlockRemove={removeSearchBlock}
+            onAddBlock={addSearchBlock}
+            onSearch={handleSearch}
+            hasErrors={!hasValidTerms}
           />
         </div>
 
-        {/* Action Buttons */}
-        <ActionButtonsSection
-          onAddBlock={addSearchBlock}
-          onSearch={handleSearch}
-          hasErrors={!hasValidTerms}
-        />
-
-        {/* Reset Button */}
-        <div className="flex justify-center mb-8">
-          <Button
+        {/* Reset Button - Bottom right, plain style */}
+        <div className="flex justify-end mb-8">
+          <button
             onClick={resetForm}
-            variant="outline"
-            className="flex items-center gap-2"
+            className="flex items-center gap-2 text-gray-600 hover:text-red-600 font-medium transition-colors"
           >
+            <svg
+              className="h-4 w-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+              />
+            </svg>
             Reset Form
-          </Button>
+          </button>
         </div>
       </MainContentArea>
     </MainLayout>

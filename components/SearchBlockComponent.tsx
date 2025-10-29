@@ -164,10 +164,10 @@ export function SearchBlockComponent({
           disabled={isOnlyBlock}
           variant="ghost"
           size="sm"
-          className="flex items-center justify-center w-10 h-10 rounded-lg hover:bg-red-100 text-gray-400 hover:text-red-600 p-0"
+          className="flex items-center justify-center w-10 h-10 rounded-xl hover:bg-red-100 text-gray-400 hover:text-red-600 p-0"
         >
           <span className="text-lg">
-            <Trash2 />
+            <Trash2 className="h-4 w-4" />
           </span>
         </Button>
       </div>
@@ -233,14 +233,14 @@ export function SearchBlockComponent({
 
         <label
           htmlFor={`exact-ops-${index}`}
-          className="flex items-center justify-center gap-x-2 h-8 rounded-xl hover:bg-gray-100 cursor-pointer px-3"
+          className="flex items-center justify-center gap-x-2 h-8 rounded-lg hover:bg-gray-100 cursor-pointer px-3 transition-colors"
         >
           <input
             type="checkbox"
             id={`exact-ops-${index}`}
             checked={block.isExact || false}
             onChange={(e) => onChange({ ...block, isExact: e.target.checked })}
-            className="w-4 h-4 cursor-pointer"
+            className="w-4 h-4 cursor-pointer rounded-md"
             title="Is Exact"
           />
           <label htmlFor={`exact-ops-${index}`} className="cursor-pointer">
