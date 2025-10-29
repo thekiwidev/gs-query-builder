@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Button } from "../ui/button";
-import { Plus, Search, ExternalLink } from "lucide-react";
+import { Search, ExternalLink } from "lucide-react";
 
 interface ActionButtonsSectionProps {
   onSearch: () => void;

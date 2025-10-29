@@ -110,28 +110,6 @@ export default function Page() {
                 academic search engine, providing tools to manage your research
                 efficiently.
               </p>
-              {/* <div className="flex items-center gap-8 pt-4">
-                <div>
-                  <div className="text-4xl bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                    50K+
-                  </div>
-                  <div className="text-gray-600 text-sm">
-                    Researchers Helped
-                  </div>
-                </div>
-                <div>
-                  <div className="text-4xl bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                    1M+
-                  </div>
-                  <div className="text-gray-600 text-sm">Queries Built</div>
-                </div>
-                <div>
-                  <div className="text-4xl bg-linear-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
-                    15K+
-                  </div>
-                  <div className="text-gray-600 text-sm">Papers Discovered</div>
-                </div>
-              </div> */}
             </div>
             <div className="relative">
               <div className="absolute -inset-4 bg-linear-to-r from-blue-500 to-purple-500 rounded-2xl blur-2xl opacity-20"></div>
@@ -291,20 +269,6 @@ export default function Page() {
                 who have already found and accessed quality research through
                 Scholarle.
               </p>
-              {/* <div className="flex flex-wrap gap-4 pt-4">
-                <div className="bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2 border border-white/20">
-                  <span className="text-sm">AI-Powered Translation</span>
-                </div>
-                <div className="bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2 border border-white/20">
-                  <span className="text-sm">24/7 Access</span>
-                </div>
-                <div className="bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2 border border-white/20">
-                  <span className="text-sm">Free Forever</span>
-                </div>
-                <div className="bg-white/10 backdrop-blur-sm rounded-lg px-4 py-2 border border-white/20">
-                  <span className="text-sm">Mobile Friendly</span>
-                </div>
-              </div> */}
             </div>
             <div className="relative">
               <div className="absolute -inset-4 bg-white/20 rounded-2xl blur-2xl"></div>
@@ -350,61 +314,10 @@ export default function Page() {
                 research success. Scholarle is more than a tool—it&apos;s a
                 community of learners supporting each other&apos;s aspirations.
               </p>
-              {/* <div className="grid grid-cols-2 gap-4 pt-4">
-                <div className="bg-linear-to-br from-blue-50 to-blue-100 rounded-xl p-4 border border-blue-200">
-                  <div className="text-2xl mb-1 bg-linear-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent">
-                    99.9%
-                  </div>
-                  <div className="text-gray-600 text-sm">Uptime</div>
-                </div>
-                <div className="bg-linear-to-br from-purple-50 to-purple-100 rounded-xl p-4 border border-purple-200">
-                  <div className="text-2xl mb-1 bg-linear-to-r from-purple-600 to-purple-700 bg-clip-text text-transparent">
-                    256-bit
-                  </div>
-                  <div className="text-gray-600 text-sm">Encryption</div>
-                </div>
-                <div className="bg-linear-to-br from-indigo-50 to-indigo-100 rounded-xl p-4 border border-indigo-200">
-                  <div className="text-2xl mb-1 bg-linear-to-r from-indigo-600 to-indigo-700 bg-clip-text text-transparent">
-                    GDPR
-                  </div>
-                  <div className="text-gray-600 text-sm">Compliant</div>
-                </div>
-                <div className="bg-linear-to-br from-blue-50 to-blue-100 rounded-xl p-4 border border-blue-200">
-                  <div className="text-2xl mb-1 bg-linear-to-r from-blue-600 to-blue-700 bg-clip-text text-transparent">
-                    4.9/5
-                  </div>
-                  <div className="text-gray-600 text-sm">User Rating</div>
-                </div>
-              </div> */}
             </div>
           </div>
         </div>
       </section>
-
-      {/* CTA Section */}
-      {/* <section className="py-20 px-6 bg-linear-to-r from-blue-50 to-purple-50">
-        <div className="max-w-4xl mx-auto text-center space-y-6">
-          <h2 className="text-gray-900">
-            Ready to Start Your Research Journey?
-          </h2>
-          <p className="text-gray-600 text-lg max-w-2xl mx-auto">
-            Join thousands of researchers who are already using Scholarle to
-            find and access academic papers more easily.
-          </p>
-          <div className="flex items-center justify-center gap-4 pt-4">
-            <Button className="px-8">
-              Create Free Account
-              <ChevronRight className="w-4 h-4 ml-2" />
-            </Button>
-            <Button
-              variant="outline"
-              className="border-2 border-gray-300 hover:border-blue-500 hover:text-blue-600"
-            >
-              Watch Demo
-            </Button>
-          </div>
-        </div>
-      </section> */}
     </div>
   );
 }

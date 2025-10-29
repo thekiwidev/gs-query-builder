@@ -37,6 +37,8 @@ export function ImageWithFallback({
             src={ERROR_IMG_SRC}
             alt="Error loading image"
             data-original-url={src}
+            width={88}
+            height={88}
           />
         </div>
       </div>

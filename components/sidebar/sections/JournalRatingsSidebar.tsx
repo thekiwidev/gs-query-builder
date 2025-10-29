@@ -2,7 +2,7 @@
 
 import React from "react";
 import { Checkbox } from "../../ui/checkbox";
-import { Star, GraduationCap, BookOpen, Award } from "lucide-react";
+import { Star, BookOpen, Award } from "lucide-react";
 import { Button } from "../../ui/button";
 
 const RATING_ICONS: Record<string, React.ReactNode> = {
@@ -68,7 +68,6 @@ export function JournalRatingsSidebar({
             <Checkbox
               id={`rating-${rating}`}
               checked={selectedRatings.includes(rating)}
-              readOnly
               className="pointer-events-none"
             />
             <div className="text-sm text-gray-700 flex items-center gap-2 font-medium flex-1">
