@@ -66,7 +66,7 @@ export function Footer() {
             <ul className="space-y-2">
               <li>
                 <Link
-                  href="#about"
+                  href="/about"
                   className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
                 >
                   About Us

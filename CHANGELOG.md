@@ -5,6 +5,96 @@ All notable changes to the Google Scholar Query Translator (QTM) project will be
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.4.0] - 2025-10-29 - UI Refinements, Button Styling Standardization, and Layout Improvements
+
+### Added
+
+- **Hero-Style Section on How-to-Use Page** (`components/help/HowToUsePage.tsx`)
+  - Transformed header into hero section with gradient background
+  - Added badge label "Complete Learning Guide"
+  - Large gradient text title matching design system
+  - Enhanced subtitle with better descriptive copy
+  - Gradient blur effects for visual depth (blue and purple)
+  - Increased padding for more spacious feel (pt-32 pb-20)
+
+### Changed
+
+- **Global Button Styling Standardization** - Unified primary button appearance
+
+  - Updated default button variant in `components/ui/button.tsx` to use solid blue color
+  - Changed from gradient (`bg-linear-to-r from-blue-500 to-blue-700`) to solid color (`bg-[#4D90FD]`)
+  - White text color for all primary buttons (`text-white`)
+  - Darker hover state (`hover:bg-[#3D7CDB]`) for better interaction feedback
+  - Applied changes to:
+    - `components/layout/Header.tsx` - Get Started button
+    - `app/about/page.tsx` - Hero section and CTA buttons (2 instances)
+  - Removed all inline gradient classes from button elements
+
+- **Header Scrolling Behavior** (`components/layout/Header.tsx`)
+
+  - Changed header from fixed positioning to scrolling naturally with page content
+  - Removed `fixed top-0 left-0 right-0 z-50` classes
+  - Header now part of normal document flow
+  - Improves user experience by not obscuring content
+
+- **How-to-Use Page Navigation** (`components/help/HowToUsePage.tsx`)
+
+  - Removed Home button and Close button from hero section
+  - Simplified header to focus on content title and description
+  - Cleaner hero section without action buttons
+
+- **How-to-Use Page Sidebar Sticky Positioning** (`components/help/HowToUsePage.tsx`)
+  - Adjusted sticky top position from `top-32` to `top-6`
+  - Sidebar now sticks much closer to viewport top when scrolling
+  - Reduced unnecessary padding gap between header and sidebar
+  - Improved vertical space utilization
+
+### Fixed
+
+- **Duplicate Footer on Help Page** (`components/help/HowToUsePage.tsx`)
+
+  - Removed duplicate `Footer` component import and rendering
+  - Now uses global footer from `LayoutWrapper` instead of page-specific footer
+  - Prevents double footer appearance on `/how-to-use` route
+
+- **Duplicate Footer on About Page** (`app/about/page.tsx`)
+
+  - Removed duplicate `Footer` component import and rendering
+  - Now uses global footer from `LayoutWrapper` instead of page-specific footer
+  - Prevents double footer appearance on `/about` route
+
+- **JSX Syntax Error on About Page** (`app/about/page.tsx`)
+  - Fixed extra closing `</div>` tag in CTA section
+  - Resolved parsing error that prevented build completion
+  - Removed one extra `</div>` from lines 407-408
+
+### Technical Details
+
+- Button color `#4D90FD` chosen as primary brand blue across all UI elements
+- Hover state `#3D7CDB` provides ~20% darker shade for clear interaction feedback
+- Header scroll behavior improves page real-estate utilization
+- Sidebar sticky positioning now accounts for scrolling header with minimal gap
+- Global footer system prevents duplication issues across page variants
+- All changes maintain backward compatibility with existing component structure
+
+### Build Status
+
+- ✅ TypeScript compilation passes (no errors)
+- ✅ All pages render without errors
+- ✅ Button styling applied consistently across codebase
+- ✅ Header scrolling functional on all pages
+- ✅ Footer appears exactly once on each page
+
+### Notes
+
+- Solid blue button styling provides more professional appearance than gradients
+- Header now scrolls with content, improving UX on long pages
+- Hero section on help page better matches about page design system
+- Sidebar positioning optimized for pages with scrolling headers
+- All UI refinements maintain responsive design across mobile and desktop
+
+---
+
 ## [1.3.1] - 2025-10-20 - Fixed Operator Chaining Validation Logic
 
 ### Fixed
