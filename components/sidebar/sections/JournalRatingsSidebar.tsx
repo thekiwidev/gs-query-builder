@@ -2,14 +2,21 @@
 
 import React from "react";
 import { Checkbox } from "../../ui/checkbox";
-import { Star, GraduationCap, BookOpen } from "lucide-react";
+import { Star, BookOpen, Award } from "lucide-react";
 import { Button } from "../../ui/button";
 
 const RATING_ICONS: Record<string, React.ReactNode> = {
-  "A*": <Star className="h-4 w-4 fill-current" />,
-  A: <Star className="h-4 w-4" />,
-  B: <GraduationCap className="h-4 w-4" />,
-  C: <BookOpen className="h-4 w-4" />,
+  "A*": <Star className="h-4 w-4 fill-amber-400 text-amber-400" />,
+  A: <Star className="h-4 w-4 text-blue-500" />,
+  B: <Award className="h-4 w-4 text-green-500" />,
+  C: <BookOpen className="h-4 w-4 text-gray-500" />,
+};
+
+const RATING_COLORS: Record<string, string> = {
+  "A*": "border-amber-200 bg-amber-50",
+  A: "border-blue-200 bg-blue-50",
+  B: "border-green-200 bg-green-50",
+  C: "border-gray-200 bg-gray-50",
 };
 
 interface JournalRatingsSidebarProps {
@@ -38,47 +45,56 @@ export function JournalRatingsSidebar({
   };
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2">
-        <Star className="h-4 w-4" />
+        <Star className="h-4 w-4 text-amber-500" />
         Journal Ratings
       </h3>
-      <div className="flex items-center justify-between">
+
+      {/* Rating Options Grid */}
+      <div className="grid grid-cols-2 gap-2">
         {["A*", "A", "B", "C"].map((rating) => (
-          <div key={rating} className="flex items-center gap-x-2">
+          <div
+            key={rating}
+            className={`flex items-center gap-2 p-3 rounded-lg border-2 transition-all cursor-pointer hover:scale-105 select-none ${
+              selectedRatings.includes(rating)
+                ? RATING_COLORS[rating] + " border-opacity-100"
+                : "border-gray-200 bg-white hover:bg-gray-50"
+            }`}
+            onClick={() =>
+              handleRatingToggle(rating, !selectedRatings.includes(rating))
+            }
+          >
             <Checkbox
               id={`rating-${rating}`}
               checked={selectedRatings.includes(rating)}
-              onCheckedChange={(checked) =>
-                handleRatingToggle(rating, checked as boolean)
-              }
+              className="pointer-events-none"
             />
-            <label
-              htmlFor={`rating-${rating}`}
-              className="text-xs cursor-pointer text-gray-700 flex items-center gap-1"
-            >
+            <div className="text-sm text-gray-700 flex items-center gap-2 font-medium flex-1">
               {RATING_ICONS[rating]}
               {rating}
-            </label>
+            </div>
           </div>
         ))}
       </div>
-      <div className="flex gap-1">
+
+      {/* Quick Actions */}
+      <div className="flex gap-2">
         <Button
           onClick={handleShowAll}
           variant="outline"
           size="sm"
-          className="flex-1 text-xs"
+          className="flex-1 text-xs hover:bg-blue-50 hover:border-blue-300 hover:text-blue-600"
         >
-          Show All
+          Select All
         </Button>
         <Button
           onClick={handleShowNone}
           variant="outline"
           size="sm"
-          className="flex-1 text-xs"
+          className="flex-1 text-xs hover:bg-red-50 hover:border-red-300 hover:text-red-600"
         >
-          Show None
+          Clear All
         </Button>
       </div>
     </div>

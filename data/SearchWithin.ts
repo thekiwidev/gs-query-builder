@@ -1,7 +1,7 @@
 /**
- * Google Scholar Search Field Definitions
+ * Scholarle Search Field Definitions
  *
- * Defines the available search fields and their corresponding Google Scholar syntax.
+ * Defines the available search fields and their corresponding Scholarle syntax.
  * This is the core data layer for the Query Translation Module (QTM).
  */
 
