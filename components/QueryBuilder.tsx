@@ -289,9 +289,8 @@ export function QueryBuilder() {
               </h1>
             </div>
             <p className="text-gray-600">
-              Build sophisticated academic search queries with advanced field
-              targeting and precision filtering for comprehensive literature
-              discovery
+              Discover relevant studies faster through structured,
+              field-specific queries.
             </p>
           </div>
         </div>

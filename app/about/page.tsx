@@ -83,7 +83,7 @@ export default function Page() {
         </div>
       </section>
 
-      {/* What is Scholarle Section */}
+      {/* How Scholarle Works Section */}
       <section className="py-20 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-2 gap-12 items-center">
@@ -91,24 +91,29 @@ export default function Page() {
               <div className="inline-flex items-center gap-2 text-blue-600">
                 <Search className="w-5 h-5" />
                 <span className="text-sm uppercase tracking-wider">
-                  What is Scholarle?
+                  How Scholarle Works
                 </span>
               </div>
               <h2 className="text-gray-900">
-                Your Intelligent Gateway to Research Success
+                Scholarle makes academic research easier than ever before.
               </h2>
               <p className="text-gray-600 leading-relaxed">
-                We understand that searching for academic papers can be
-                overwhelming. Traditional search interfaces often require you to
-                remember specific syntax, operators, and field combinations.
-                Scholarle changes that by letting you search the way you
-                think—by breaking down what you&apos;re looking for into clear,
-                understandable components.
+                You can search through a comprehensive database of journals
+                curated from the latest ABDC Journal Quality List and
+                departmental top journal lists, helping even new researchers
+                identify credible sources and focus on high-impact publications
+                relevant to their field. We value every user who engages with
+                our platform and encourage you to share your experience via our
+                testimonial page. Your feedback helps us improve and continue
+                building a tool that truly supports the way you work.
               </p>
               <p className="text-gray-600 leading-relaxed">
-                Our platform aggregates access to the world&apos;s largest
-                academic search engine, providing tools to manage your research
-                efficiently.
+                If you use or reference Scholarle in your research, please
+                acknowledge it using the preferred citation format below: APA7:
+                Oladimeji, M. (2025, October). Scholarle: Designed for Smarter
+                Academic Research. http://www.scholarle.com/ MLA9: Oladimeji,
+                Mathilda. Scholarle: Designed for Smarter Academic Research,
+                Mathilda Oladimeji, Oct. 2025, www.scholarle.com/.
               </p>
             </div>
             <div className="relative">
