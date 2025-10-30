@@ -44,22 +44,6 @@ export function Footer() {
                   Help & Documentation
                 </Link>
               </li>
-              <li>
-                <Link
-                  href="#features"
-                  className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
-                >
-                  Features
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="#pricing"
-                  className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
-                >
-                  Pricing
-                </Link>
-              </li>
             </ul>
           </div>
 
@@ -81,22 +65,6 @@ export function Footer() {
                   className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
                 >
                   Citation
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="#terms"
-                  className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
-                >
-                  Terms & Conditions
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="#privacy"
-                  className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
-                >
-                  Privacy Policy
                 </Link>
               </li>
             </ul>
@@ -123,22 +91,6 @@ export function Footer() {
                   className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
                 >
                   Send Feedback
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="#support"
-                  className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
-                >
-                  Support
-                </Link>
-              </li>
-              <li>
-                <Link
-                  href="#roadmap"
-                  className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
-                >
-                  Roadmap
                 </Link>
               </li>
             </ul>
