@@ -285,7 +285,7 @@ export function QueryBuilder() {
             <div className="flex items-center gap-1.5 mb-3">
               <Library className="h-9 w-9 text-[#4D90FD]" />
               <h1 className="text-3xl font-bold text-gray-900">
-                Scholarle Query Builder
+                Scholarle: Designed for Smarter Academic Research
               </h1>
             </div>
             <p className="text-gray-600">

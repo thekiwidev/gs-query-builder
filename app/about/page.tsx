@@ -54,7 +54,9 @@ export default function Page() {
         <div className="relative max-w-7xl mx-auto">
           <div className="text-center max-w-4xl mx-auto space-y-6">
             <div className="inline-block px-4 py-2 bg-blue-100 text-blue-700 rounded-full mb-4">
-              <span className="text-sm">Your Gateway to Academic Research</span>
+              <span className="text-sm">
+                Scholarle: Designed for Smarter Academic Research
+              </span>
             </div>
             <h1 className="text-6xl md:text-7xl bg-linear-to-r from-blue-600 via-blue-700 to-purple-600 bg-clip-text text-transparent">
               About Scholarle
@@ -109,10 +111,15 @@ export default function Page() {
               </p>
               <p className="text-gray-600 leading-relaxed">
                 If you use or reference Scholarle in your research, please
-                acknowledge it using the preferred citation format below: APA7:
-                Oladimeji, M. (2025, October). Scholarle: Designed for Smarter
-                Academic Research. http://www.scholarle.com/ MLA9: Oladimeji,
-                Mathilda. Scholarle: Designed for Smarter Academic Research,
+                acknowledge it using the preferred citation format below:
+              </p>
+              <p>
+                APA7: Oladimeji, M. (2025, October). Scholarle: Designed for
+                Smarter Academic Research. http://www.scholarle.com/
+              </p>
+              <p>
+                MLA9: Oladimeji, Mathilda.{" "}
+                <i>Scholarle: Designed for Smarter Academic Research</i>,
                 Mathilda Oladimeji, Oct. 2025, www.scholarle.com/.
               </p>
             </div>
