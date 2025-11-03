@@ -16,8 +16,65 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Scholarle Query Builder",
-  description: "Build complex academic search queries with ease.",
+  title: "Scholarle - Google Scholar Query Builder",
+  description:
+    "Build complex academic search queries with ease. Translate simple search criteria into advanced Google Scholar queries without learning syntax.",
+  icons: {
+    icon: "/favicon.svg",
+    apple: "/favicon.svg",
+  },
+  keywords: [
+    "scholarle",
+    "Scholarle",
+    "schrolarle",
+    "google scholar",
+    "scholarly search",
+    "academic research",
+    "research query builder",
+    "journal search",
+    "google schoolar",
+    "google scolar",
+    "scholarly",
+    "academic database",
+    "research papers",
+    "scholarly articles",
+    "journal finder",
+    "literature review",
+    "citation search",
+  ],
+  authors: [{ name: "Scholarle Team" }],
+  creator: "Scholarle",
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "https://scholarle.com",
+    siteName: "Scholarle",
+    title: "Scholarle - Google Scholar Query Builder",
+    description:
+      "Build complex academic search queries with ease. No syntax knowledge required.",
+    images: [
+      {
+        url: "https://scholarle.com/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "Scholarle - Google Scholar Query Builder",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Scholarle - Google Scholar Query Builder",
+    description: "Build complex academic search queries with ease.",
+  },
+  alternates: {
+    canonical: "https://scholarle.com",
+  },
+  applicationName: "Scholarle",
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
+    title: "Scholarle",
+  },
 };
 
 export default function RootLayout({
