@@ -5,12 +5,18 @@ import { YearRangeFiltersSidebar } from "@/components/sidebar/sections/YearRange
 import { FieldOfResearchSidebar } from "@/components/sidebar/sections/FieldOfResearchSidebar";
 import { JournalRatingsSidebar } from "@/components/sidebar/sections/JournalRatingsSidebar";
 import { SelectedJournalsSidebar } from "@/components/sidebar/sections/SelectedJournalsSidebar";
+import { DepartmentSidebar } from "./sections/DepartmentSidebar";
+import { Department, FieldOfStudy, JournalRecord } from "@/types/journal";
 
 interface SidebarContainerProps {
-  selectedFieldCodes: string[];
-  onFieldCodesChange: (fieldCodes: string[]) => void;
-  selectedJournalISSNs: string[];
-  onJournalsChange: (issnList: string[]) => void;
+  selectedDepartments: Department[];
+  onDepartmentsChange: (departments: Department[]) => void;
+  availableFields: FieldOfStudy[];
+  selectedFields: string[];
+  onFieldsChange: (fields: string[]) => void;
+  availableJournals: JournalRecord[];
+  selectedJournals: JournalRecord[];
+  onJournalsChange: (journals: JournalRecord[]) => void;
   selectedJournalRatings: string[];
   onJournalRatingsChange: (ratings: string[]) => void;
   yearLow?: number;
@@ -19,9 +25,13 @@ interface SidebarContainerProps {
 }
 
 export function SidebarContainer({
-  selectedFieldCodes,
-  onFieldCodesChange,
-  selectedJournalISSNs,
+  selectedDepartments,
+  onDepartmentsChange,
+  availableFields,
+  selectedFields,
+  onFieldsChange,
+  availableJournals,
+  selectedJournals,
   onJournalsChange,
   selectedJournalRatings,
   onJournalRatingsChange,
@@ -38,10 +48,17 @@ export function SidebarContainer({
         onYearChange={onYearChange}
       />
 
+      {/* Department Selector */}
+      <DepartmentSidebar
+        selectedDepartments={selectedDepartments}
+        onDepartmentsChange={onDepartmentsChange}
+      />
+
       {/* Field of Research */}
       <FieldOfResearchSidebar
-        selectedFieldCodes={selectedFieldCodes}
-        onFieldCodesChange={onFieldCodesChange}
+        availableFields={availableFields}
+        selectedFields={selectedFields}
+        onFieldsChange={onFieldsChange}
       />
 
       {/* Journal Ratings */}
@@ -52,9 +69,9 @@ export function SidebarContainer({
 
       {/* Available Journals */}
       <SelectedJournalsSidebar
-        selectedJournalISSNs={selectedJournalISSNs}
+        availableJournals={availableJournals}
+        selectedJournals={selectedJournals}
         onJournalsChange={onJournalsChange}
-        selectedFieldCodes={selectedFieldCodes}
         selectedRatings={selectedJournalRatings}
       />
     </div>

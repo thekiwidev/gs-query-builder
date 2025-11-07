@@ -5,13 +5,19 @@ import { SidebarContainer } from "@/components/sidebar/SidebarContainer";
 import { Footer } from "@/components/layout/Footer";
 import { ChevronLeft, Menu, X } from "lucide-react";
 
+import { Department, FieldOfStudy, JournalRecord } from "@/types/journal";
+
 interface MainLayoutProps {
   children: ReactNode;
   sidebarProps?: {
-    selectedFieldCodes: string[];
-    onFieldCodesChange: (fieldCodes: string[]) => void;
-    selectedJournalISSNs: string[];
-    onJournalsChange: (issnList: string[]) => void;
+    selectedDepartments: Department[];
+    onDepartmentsChange: (departments: Department[]) => void;
+    availableFields: FieldOfStudy[];
+    selectedFields: string[];
+    onFieldsChange: (fields: string[]) => void;
+    availableJournals: JournalRecord[];
+    selectedJournals: JournalRecord[];
+    onJournalsChange: (journals: JournalRecord[]) => void;
     selectedJournalRatings: string[];
     onJournalRatingsChange: (ratings: string[]) => void;
     yearLow?: number;

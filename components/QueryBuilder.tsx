@@ -6,12 +6,15 @@
 
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Library } from "lucide-react";
 import { SearchBlock, buildScholarUrl, GlobalFilters } from "../lib/qtm";
 import { MainLayout } from "./layouts/MainLayout";
 import { MainContentArea } from "./layouts/MainContentArea";
 import { SearchBlocksContainer } from "./search/SearchBlocksContainer";
+import { Department, JournalRecord, FieldOfStudy } from "@/types/journal";
+import { loadJournalsForDepartments } from "@/lib/journalLoader";
+import { DepartmentSelector } from "./filters/DepartmentSelector";
 
 export function QueryBuilder() {
   const [searchBlocks, setSearchBlocks] = useState<SearchBlock[]>([
@@ -31,12 +34,38 @@ export function QueryBuilder() {
     includeCitations: true,
   });
 
+  const [selectedDepartments, setSelectedDepartments] = useState<Department[]>(
+    []
+  );
+  const [selectedFields, setSelectedFields] = useState<string[]>([]);
+  const [availableJournals, setAvailableJournals] = useState<JournalRecord[]>(
+    []
+  );
+  const [availableFields, setAvailableFields] = useState<FieldOfStudy[]>([]);
+
+  useEffect(() => {
+    const loadJournals = async () => {
+      if (selectedDepartments.length === 0) {
+        setAvailableJournals([]);
+        setAvailableFields([]);
+        return;
+      }
+
+      const { journals, fields } = await loadJournalsForDepartments(
+        selectedDepartments
+      );
+
+      setAvailableJournals(journals);
+      setAvailableFields(fields);
+    };
+
+    loadJournals();
+  }, [selectedDepartments]);
+
   // Track selected field codes (for multi-select)
   const [selectedFieldCodes, setSelectedFieldCodes] = useState<string[]>([]);
   const [selectedFieldCode, setSelectedFieldCode] = useState<string>();
-  const [selectedJournalISSNs, setSelectedJournalISSNs] = useState<string[]>(
-    []
-  );
+  const [selectedJournals, setSelectedJournals] = useState<JournalRecord[]>([]);
   const [selectedJournalRatings, setSelectedJournalRatings] = useState<
     string[]
   >(["A*"]);
@@ -45,7 +74,7 @@ export function QueryBuilder() {
   const generateCurrentQuery = () => {
     const enhancedFilters = {
       ...globalFilters,
-      selectedJournalISSNs,
+      selectedJournalISSNs: selectedJournals.map((j) => j.issn),
       selectedFieldCode,
     };
     return buildScholarUrl(searchBlocks, enhancedFilters);
@@ -250,7 +279,9 @@ export function QueryBuilder() {
       includeCitations: true,
     });
 
-    setSelectedJournalISSNs([]);
+    setSelectedDepartments([]);
+    setSelectedFields([]);
+    setSelectedJournals([]);
     setSelectedFieldCode(undefined);
   };
 
@@ -258,13 +289,42 @@ export function QueryBuilder() {
     (block) => block.fieldId && block.term && block.term.trim().length > 0
   );
 
+  // Determine which journals to show in the selector
+  const journalsForSelector = availableJournals.filter((journal) => {
+    // Find the department this journal belongs to
+    const journalDepartment = selectedDepartments.find(
+      (dep) => dep.id === journal.departmentId
+    );
+
+    if (!journalDepartment) {
+      return false; // Journal doesn't belong to any selected department
+    }
+
+    // If the department has subcategories (Field of Research)
+    if (journalDepartment.hasSubcategories) {
+      // Only show journals if a field is explicitly selected
+      if (selectedFields.length === 0) {
+        return false; // Don't show journals from departments with subcategories until a field is selected
+      }
+      // Show journal if its field is selected
+      return selectedFields.includes(journal.fieldCode);
+    }
+
+    // If department doesn't have subcategories, always show all its journals
+    return true;
+  });
+
   return (
     <MainLayout
       sidebarProps={{
-        selectedFieldCodes,
-        onFieldCodesChange: setSelectedFieldCodes,
-        selectedJournalISSNs,
-        onJournalsChange: setSelectedJournalISSNs,
+        selectedDepartments,
+        onDepartmentsChange: setSelectedDepartments,
+        availableFields,
+        selectedFields,
+        onFieldsChange: setSelectedFields,
+        availableJournals: journalsForSelector,
+        selectedJournals,
+        onJournalsChange: setSelectedJournals,
         selectedJournalRatings,
         onJournalRatingsChange: setSelectedJournalRatings,
         yearLow: globalFilters.yearFrom,

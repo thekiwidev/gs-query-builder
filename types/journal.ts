@@ -20,6 +20,8 @@ export interface JournalRecord {
   issnOnline?: string;
   /** Journal website URL */
   website?: string;
+  /** The ID of the department this journal belongs to */
+  departmentId: string;
 }
 
 export type JournalRating = "A*" | "A" | "B" | "C";
@@ -201,6 +203,24 @@ export interface JournalValidationResult {
     ratingDistribution: Record<JournalRating, number>;
   };
 }
+
+export interface Department {
+  id: string; // e.g., 'business-economics-and-management'
+  name: string; // e.g., 'Business, Economics, and Management'
+  hasSubcategories: boolean;
+  dataFile: string; // Path to the CSV file
+}
+
+export const DEPARTMENTS: Department[] = [
+  { id: 'business-economics-and-management', name: 'Business, Economics, and Management', hasSubcategories: true, dataFile: '/data/business-economics-and-management.csv' },
+  { id: 'chemical-and-material-sciences', name: 'Chemical and Material Sciences', hasSubcategories: false, dataFile: '/data/chemical-and-material-sciences.csv' },
+  { id: 'engineering-and-computer-science', name: 'Engineering and Computer Science', hasSubcategories: false, dataFile: '/data/engineering-and-computer-science.csv' },
+  { id: 'health-and-medical-sciences', name: 'Health and Medical Sciences', hasSubcategories: false, dataFile: '/data/health-and-medical-sciences.csv' },
+  { id: 'humanities-literature-and-art', name: 'Humanities, Literature, and Art', hasSubcategories: false, dataFile: '/data/humanities-literature-and-art.csv' },
+  { id: 'life-sciences-and-earth-sciences', name: 'Life Sciences and Earth Sciences', hasSubcategories: false, dataFile: '/data/life-sciences-and-earth-sciences.csv' },
+  { id: 'physics-and-mathematics', name: 'Physics and Mathematics', hasSubcategories: false, dataFile: '/data/physics-and-mathematics.csv' },
+  { id: 'social-sciences', name: 'Social Sciences', hasSubcategories: false, dataFile: '/data/social-sciences.csv' },
+];
 
 /**
  * Helper function to validate ISSN format

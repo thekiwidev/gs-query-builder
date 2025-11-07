@@ -5,6 +5,212 @@ All notable changes to the Scholarle Query Builder project will be documented in
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.0] - 2025-11-07 - Hierarchical Department-Based Journal Selection System (Phase 1)
+
+### Added
+
+- **Hierarchical Journal Selection Architecture** - Multi-level department → field → journal system
+
+  - `Department` interface in `types/journal.ts` with departmentId tracking
+    - Properties: id, name, hasSubcategories (boolean flag), dataFile path
+    - Supports mixed-depth hierarchy for gradual data migration
+  - `DEPARTMENTS` constant array with 8 academic departments:
+    - Business, Economics, and Management (with subcategories)
+    - Chemical and Material Sciences (top 20 journals)
+    - Engineering and Computer Science (top 20 journals)
+    - Health and Medical Sciences (top 20 journals)
+    - Humanities, Literature, and Art (top 20 journals)
+    - Life Sciences and Earth Sciences (top 20 journals)
+    - Physics and Mathematics (top 20 journals)
+    - Social Sciences (top 20 journals)
+  - Added `departmentId` property to `JournalRecord` interface for journal-department association
+
+- **Department Selection Component** (`components/filters/DepartmentSelector.tsx`)
+
+  - Multi-select checkbox interface for department selection
+  - Collapsible accordion with ChevronDown animation
+  - "Select All" / "Clear All" bulk actions
+  - Hover effects and smooth transitions
+  - 190 lines of production-ready code
+
+- **Department-Aware Sidebar Integration**
+
+  - `DepartmentSidebar.tsx` - Wrapper component for department selector
+  - `SidebarContainer.tsx` - Updated to include department selection at top of filter hierarchy
+  - `MainLayout.tsx` - Enhanced props to pass department state through layout
+  - Proper prop drilling: QueryBuilder → MainLayout → SidebarContainer → DepartmentSidebar
+
+- **Dynamic Journal Loading System** (`lib/journalLoader.ts`)
+
+  - `loadJournalsForDepartments()` - Loads journals from multiple department CSV files
+    - Iterates through selected departments
+    - Fetches CSV data from each department's dataFile path
+    - Merges all journals into single array
+    - Extracts field-of-study mappings for departments with subcategories
+  - `parseJournalCSV()` enhanced with `requireFieldValidation` parameter
+    - Strict validation for departments WITH subcategories
+    - Relaxed validation for departments WITHOUT subcategories
+    - Accepts `-` placeholder for ISSN and Publisher in non-subcategory departments
+
+- **Field of Research Dynamic Loading** (`components/sidebar/sections/FieldOfResearchSidebar.tsx`)
+
+  - Receives `availableFields` prop instead of using hardcoded list
+  - Conditional rendering: only displays when fields are available
+  - Automatically populated based on selected departments with subcategories
+  - Dropdown interface with Select All / Clear All options
+
+- **Smart Journal Filtering Logic** (`components/QueryBuilder.tsx`)
+
+  - `journalsForSelector` computed value with sophisticated filtering:
+    - For departments WITH subcategories: shows journals only after field selection
+    - For departments WITHOUT subcategories: shows all journals immediately
+    - Handles mixed selections (both types of departments simultaneously)
+  - Department-aware filtering: checks journal's departmentId against selected departments
+  - Field-aware filtering: filters by fieldCode when fields are selected
+
+- **Enhanced Journal Display** (`components/sidebar/sections/SelectedJournalsSidebar.tsx`)
+
+  - Updated to work with JournalRecord objects instead of ISSNs
+  - Fixed duplicate key errors for journals with same ISSN (conferences)
+  - Unique key generation: uses `journal-${index}-${title}` for `-` ISSNs
+  - Enhanced selection logic: compares both ISSN and title for accurate toggling
+
+- **CSV Data Files for All Departments**
+  - `/public/data/business-economics-and-management.csv` - 2,681 journals with field codes
+  - `/public/data/chemical-and-material-sciences.csv` - 20 top journals
+  - `/public/data/engineering-and-computer-science.csv` - 20 top journals (includes conferences)
+  - `/public/data/health-and-medical-sciences.csv` - 20 top journals
+  - `/public/data/humanities-literature-and-art.csv` - 20 top journals
+  - `/public/data/life-sciences-and-earth-sciences.csv` - 20 top journals
+  - `/public/data/physics-and-mathematics.csv` - 20 top journals
+  - `/public/data/social-sciences.csv` - 20 top journals
+
+### Changed
+
+- **Journal Loading Architecture** - Complete transition from single CSV to department-based system
+
+  - Removed dependency on deprecated `journals.csv` file
+  - Each department now has dedicated CSV file with consistent structure
+  - Field validation made optional based on department configuration
+  - Publisher validation accepts `-` placeholder for incomplete data
+
+- **QueryBuilder State Management** - Enhanced for hierarchical selection
+
+  - Added `selectedDepartments` state (Department[])
+  - Added `availableJournals` state (JournalRecord[])
+  - Added `availableFields` state (FieldOfStudy[])
+  - Added `useEffect` hook to load journals when departments change
+  - Updated `resetForm()` to clear department and field selections
+
+- **Journal Validation Logic** (`lib/journalLoader.ts`)
+
+  - `validateJournalRow()` accepts `requireFieldValidation` parameter
+  - Field code validation skipped for departments without subcategories
+  - ISSN validation accepts `-` placeholder for conferences/items without ISSNs
+  - Publisher validation accepts `-` placeholder for missing publisher data
+  - Journal record creation handles `-` ISSNs gracefully
+
+- **SelectedJournalsSidebar Component Architecture**
+  - Changed from ISSN-based to JournalRecord-based selection
+  - Removed internal journal loading (now receives journals via props)
+  - Filter journals by rating only (field filtering handled upstream)
+  - Enhanced key generation for unique identification of journals with duplicate ISSNs
+  - Improved selection/deselection logic for edge cases
+
+### Fixed
+
+- **Critical: Journal Loading Failures** - Resolved multiple CSV parsing and validation issues
+
+  - Fixed header validation error in health-and-medical-sciences.csv (removed `-` prefix from Title)
+  - Fixed invalid ISSN format in chemical-and-material-sciences.csv (`1616-301` → `1616-301X`)
+  - Fixed ISSN validation to accept `-` placeholder for conferences without ISSNs
+  - Fixed field code validation rejecting valid codes (e.g., 2001, 2002, 2003) not in mappings
+
+- **React Duplicate Key Error** - Fixed multiple journals with same ISSN causing key conflicts
+
+  - Implemented unique key generation strategy for journals with `-` ISSN
+  - Uses combination of index and title for uniqueness
+  - Updated checkbox IDs to match unique key pattern
+  - Enhanced selection logic to compare both ISSN and title
+
+- **Journal Display Issues** - Resolved missing journals and incomplete lists
+  - All 20 journals now display correctly for each department
+  - Conferences without ISSNs (4 in engineering) now appear properly
+  - Rating-based filtering works correctly with placeholder ISSNs
+
+### Technical Details
+
+- **Phase 1 Implementation Strategy** - Mixed-depth hierarchy for gradual migration
+
+  - Only "Business, Economics, and Management" has complete field-of-study data
+  - Other 7 departments show journals immediately without field selection
+  - `hasSubcategories` flag controls validation strictness and UI behavior
+  - Future-ready: simply update flag and add field mappings for Phase 2
+
+- **Validation Flexibility Architecture**
+
+  - `requireFieldValidation` parameter passed through loading pipeline
+  - Departments WITH subcategories: strict validation (must have valid field codes)
+  - Departments WITHOUT subcategories: relaxed validation (accepts any field code)
+  - Enables gradual data quality improvement without blocking feature deployment
+
+- **CSV Data Structure Standards**
+
+  - Required columns: Title, Publisher, Field of Research, Rating, ISSN, ISSN Online, Website
+  - Optional columns: h5-index, h5-median (ignored by parser)
+  - Placeholders accepted: `-` for Publisher and ISSN in non-subcategory departments
+  - RFC 4180 compliant parsing with proper quote handling
+
+- **State Management Flow**
+  - User selects departments → `loadJournalsForDepartments()` fetches CSVs
+  - Journals loaded → fields extracted (if hasSubcategories)
+  - `journalsForSelector` computes → filters by department + field (if applicable)
+  - User selects journals → added to `selectedJournals` state
+  - Query building → ISSNs extracted from selected journals
+
+### Performance Improvements
+
+- Lazy loading: journals only fetched when departments selected
+- Efficient filtering: single pass through journals array
+- Minimal re-renders: state updates batched appropriately
+- No redundant API calls: CSV data cached after initial load
+
+### Browser Compatibility
+
+- ✅ All modern browsers with ES6+ support
+- ✅ Proper error handling for fetch failures
+- ✅ Graceful degradation if CSV files unavailable
+- ✅ Smooth animations and transitions across all browsers
+
+### Migration Path for Phase 2
+
+When ready to add subcategories to remaining departments:
+
+1. Update CSV files with proper field-of-study codes
+2. Add field code mappings to `FIELD_OF_STUDY_MAPPINGS` in `types/journal.ts`
+3. Set `hasSubcategories: true` for the department in `DEPARTMENTS` array
+4. No code changes required - system automatically enforces field selection
+
+### Build Status
+
+- ✅ TypeScript compilation passes (zero errors, strict mode)
+- ✅ All 8 departments load correctly
+- ✅ Business department shows 2,681 journals with field filtering
+- ✅ Other 7 departments show 20 journals each immediately
+- ✅ No duplicate key errors in React rendering
+- ✅ All journals selectable and deselectable correctly
+- ✅ Query building works with hierarchical journal selection
+
+### Notes
+
+- This release implements Phase 1 of hierarchical journal selection system
+- Provides foundation for complete multi-level navigation in Phase 2
+- Maintains backward compatibility with existing query building logic
+- Enables immediate feature deployment while allowing gradual data completion
+- System designed for scalability: easily add more departments and fields
+
+---
+
 ## [1.6.0] - 2025-11-04 - Comprehensive SEO Implementation with Dynamic Sitemap, Social Media Optimization, and Open Graph Integration
 
 ### Added

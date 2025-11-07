@@ -1,20 +1,21 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { getAllFieldsOfStudy } from "../../../types/journal";
+import { FieldOfStudy } from "../../../types/journal";
 import { GraduationCap, ChevronDown } from "lucide-react";
 import { Checkbox } from "../../ui/checkbox";
 
 interface FieldOfResearchSidebarProps {
-  selectedFieldCodes: string[];
-  onFieldCodesChange: (fieldCodes: string[]) => void;
+  availableFields: FieldOfStudy[];
+  selectedFields: string[];
+  onFieldsChange: (fields: string[]) => void;
 }
 
 export function FieldOfResearchSidebar({
-  selectedFieldCodes,
-  onFieldCodesChange,
+  availableFields,
+  selectedFields,
+  onFieldsChange,
 }: FieldOfResearchSidebarProps) {
-  const fields = getAllFieldsOfStudy();
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -38,34 +39,38 @@ export function FieldOfResearchSidebar({
     };
   }, [isOpen]);
 
+  if (availableFields.length === 0) {
+    return null;
+  }
+
   const handleFieldToggle = (fieldCode: string, checked: boolean) => {
     if (checked) {
-      onFieldCodesChange([...selectedFieldCodes, fieldCode]);
+      onFieldsChange([...selectedFields, fieldCode]);
     } else {
-      onFieldCodesChange(
-        selectedFieldCodes.filter((code) => code !== fieldCode)
+      onFieldsChange(
+        selectedFields.filter((code) => code !== fieldCode)
       );
     }
   };
 
   const handleSelectAll = () => {
-    onFieldCodesChange(fields.map((f) => f.code));
+    onFieldsChange(availableFields.map((f) => f.code));
   };
 
   const handleClearAll = () => {
-    onFieldCodesChange([]);
+    onFieldsChange([]);
   };
 
-  const selectedFieldNames = fields
-    .filter((f) => selectedFieldCodes.includes(f.code))
+  const selectedFieldNames = availableFields
+    .filter((f) => selectedFields.includes(f.code))
     .map((f) => f.name);
 
   const displayText =
-    selectedFieldCodes.length === 0
+    selectedFields.length === 0
       ? "Select fields..."
-      : selectedFieldCodes.length === 1
+      : selectedFields.length === 1
       ? selectedFieldNames[0]
-      : `${selectedFieldCodes.length} fields selected`;
+      : `${selectedFields.length} fields selected`;
 
   return (
     <div className="space-y-3">
@@ -82,7 +87,7 @@ export function FieldOfResearchSidebar({
         >
           <span
             className={
-              selectedFieldCodes.length === 0
+              selectedFields.length === 0
                 ? "text-gray-500"
                 : "text-gray-900"
             }
@@ -98,12 +103,12 @@ export function FieldOfResearchSidebar({
 
         {/* Dropdown menu */}
         {isOpen && (
-          <div className="absolute top-full left-0 right-0 mt-1 border border-gray-300 rounded-lg p-3 space-y-2 bg-white shadow-lg z-50">
-            {fields.map((field) => (
+          <div className="absolute top-full left-0 right-0 mt-1 border border-gray-300 rounded-lg p-3 space-y-2 bg-white shadow-lg z-50 max-h-60 overflow-y-auto">
+            {availableFields.map((field) => (
               <div key={field.code} className="flex items-center space-x-2">
                 <Checkbox
                   id={`field-${field.code}`}
-                  checked={selectedFieldCodes.includes(field.code)}
+                  checked={selectedFields.includes(field.code)}
                   onCheckedChange={(checked) =>
                     handleFieldToggle(field.code, checked as boolean)
                   }

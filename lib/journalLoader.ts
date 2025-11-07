@@ -14,6 +14,8 @@ import {
   validateRating,
   getFieldOfStudyByCode,
   RATING_PRIORITY,
+  Department,
+  FieldOfStudy,
 } from "../types/journal";
 
 /**
@@ -42,7 +44,7 @@ export async function loadJournalsFromCSV(
     }
 
     const csvText = await response.text();
-    return parseJournalCSV(csvText);
+    return parseJournalCSV(csvText, "business-economics-and-management");
   } catch (error) {
     console.error("Error loading journals CSV:", error);
     throw error;
@@ -52,7 +54,11 @@ export async function loadJournalsFromCSV(
 /**
  * Parse CSV text into journal records with validation
  */
-export function parseJournalCSV(csvText: string): JournalValidationResult {
+export function parseJournalCSV(
+  csvText: string,
+  departmentId: string,
+  requireFieldValidation: boolean = true
+): JournalValidationResult {
   const result: JournalValidationResult = {
     validJournals: [],
     invalidJournals: [],
@@ -115,7 +121,11 @@ export function parseJournalCSV(csvText: string): JournalValidationResult {
       });
 
       const rawRow = rowData as unknown as RawCSVRow;
-      const validationResult = validateJournalRow(rawRow);
+      const validationResult = validateJournalRow(
+        rawRow,
+        departmentId,
+        requireFieldValidation
+      );
 
       if (validationResult.isValid && validationResult.journal) {
         result.validJournals.push(validationResult.journal);
@@ -217,7 +227,11 @@ function parseCSVText(csvText: string): string[][] {
 /**
  * Validate a single journal row and convert to JournalRecord
  */
-function validateJournalRow(row: RawCSVRow): {
+function validateJournalRow(
+  row: RawCSVRow,
+  departmentId: string,
+  requireFieldValidation: boolean = true
+): {
   isValid: boolean;
   journal?: JournalRecord;
   errors: string[];
@@ -237,10 +251,13 @@ function validateJournalRow(row: RawCSVRow): {
     errors.push("Field of Research is required");
   }
 
-  // Validate ISSN
+  // Validate ISSN (allow placeholder "-" for non-subcategory departments)
   const issnValidation = validateISSN(row.ISSN);
   if (!issnValidation.isValid) {
-    errors.push(`ISSN validation failed: ${issnValidation.error}`);
+    // For departments without subcategories, allow "-" as placeholder
+    if (requireFieldValidation || row.ISSN?.trim() !== "-") {
+      errors.push(`ISSN validation failed: ${issnValidation.error}`);
+    }
   }
 
   // Validate rating
@@ -249,10 +266,10 @@ function validateJournalRow(row: RawCSVRow): {
     errors.push(`Rating validation failed: ${ratingValidation.error}`);
   }
 
-  // Validate field code exists in our mappings
+  // Validate field code exists in our mappings (only if required)
   const fieldCode = row["Field of Research"].trim();
   const fieldOfStudy = getFieldOfStudyByCode(fieldCode);
-  if (!fieldOfStudy) {
+  if (requireFieldValidation && !fieldOfStudy) {
     errors.push(
       `Unknown field of research code: ${fieldCode}. Please add mapping for this field.`
     );
@@ -264,17 +281,67 @@ function validateJournalRow(row: RawCSVRow): {
   }
 
   // Create the journal record
+  // For departments without subcategories, use "-" as ISSN if validation failed but it's the placeholder
+  const finalIssn = issnValidation.isValid
+    ? issnValidation.formatted!
+    : row.ISSN?.trim() === "-"
+    ? "-"
+    : row.ISSN?.trim() || "";
+
   const journal: JournalRecord = {
     title: row.Title.trim(),
     publisher: row.Publisher.trim(),
     fieldCode: fieldCode,
     rating: ratingValidation.rating!,
-    issn: issnValidation.formatted!,
+    issn: finalIssn,
     issnOnline: row["ISSN Online"]?.trim() || undefined,
     website: row.Website?.trim() || undefined,
+    departmentId: departmentId,
   };
 
   return { isValid: true, journal, errors: [] };
+}
+
+export async function loadJournalsForDepartments(
+  departments: Department[]
+): Promise<{ journals: JournalRecord[]; fields: FieldOfStudy[] }> {
+  const allJournals: JournalRecord[] = [];
+  const allFields = new Map<string, FieldOfStudy>();
+
+  for (const department of departments) {
+    try {
+      const response = await fetch(department.dataFile);
+      if (!response.ok) {
+        console.error(`Failed to load ${department.dataFile}`);
+        continue;
+      }
+      const csvText = await response.text();
+      // Only require field validation for departments with subcategories
+      const result = parseJournalCSV(
+        csvText,
+        department.id,
+        department.hasSubcategories
+      );
+
+      allJournals.push(...result.validJournals);
+
+      if (department.hasSubcategories) {
+        result.validJournals.forEach((journal) => {
+          const field = getFieldOfStudyByCode(journal.fieldCode);
+          if (field && !allFields.has(field.code)) {
+            allFields.set(field.code, field);
+          }
+        });
+      }
+    } catch (error) {
+      console.error(`Error processing ${department.dataFile}:`, error);
+    }
+  }
+
+  return {
+    journals: allJournals,
+    fields: Array.from(allFields.values()),
+  };
 }
 
 /**
