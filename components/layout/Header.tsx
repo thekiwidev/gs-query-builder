@@ -3,8 +3,10 @@
 import Link from "next/link";
 import { Library } from "lucide-react";
 import { Button } from "../ui/button";
+import { useRouter } from "next/navigation";
 
 export function Header() {
+  const navigate = useRouter();
   return (
     <header className="bg-white/80 backdrop-blur-md border-b border-gray-100">
       <nav className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
@@ -40,7 +42,13 @@ export function Header() {
           </Link>
         </div>
 
-        <Button>Get Started</Button>
+        <Button
+          onClick={() => {
+            navigate.push("/");
+          }}
+        >
+          Get Started
+        </Button>
       </nav>
     </header>
   );

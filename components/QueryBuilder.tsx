@@ -14,7 +14,6 @@ import { MainContentArea } from "./layouts/MainContentArea";
 import { SearchBlocksContainer } from "./search/SearchBlocksContainer";
 import { Department, JournalRecord, FieldOfStudy } from "@/types/journal";
 import { loadJournalsForDepartments } from "@/lib/journalLoader";
-import { DepartmentSelector } from "./filters/DepartmentSelector";
 
 export function QueryBuilder() {
   const [searchBlocks, setSearchBlocks] = useState<SearchBlock[]>([
@@ -63,7 +62,6 @@ export function QueryBuilder() {
   }, [selectedDepartments]);
 
   // Track selected field codes (for multi-select)
-  const [selectedFieldCodes, setSelectedFieldCodes] = useState<string[]>([]);
   const [selectedFieldCode, setSelectedFieldCode] = useState<string>();
   const [selectedJournals, setSelectedJournals] = useState<JournalRecord[]>([]);
   const [selectedJournalRatings, setSelectedJournalRatings] = useState<
@@ -349,8 +347,8 @@ export function QueryBuilder() {
               </h1>
             </div>
             <p className="text-gray-600">
-              Discover relevant studies faster through structured,
-              field-specific queries.
+              Discover relevant studies faster through structured field-specific
+              queries.
             </p>
           </div>
         </div>

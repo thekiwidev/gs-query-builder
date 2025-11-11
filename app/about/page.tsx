@@ -14,8 +14,10 @@ import {
 } from "lucide-react";
 import { ImageWithFallback } from "../../components/shared/ImageWithFallback";
 import { Button } from "../../components/ui/button";
+import { useRouter } from "next/navigation";
 
 export default function Page() {
+  const navigate = useRouter();
   const features = [
     {
       icon: Search,
@@ -70,15 +72,9 @@ export default function Page() {
               process.
             </p>
             <div className="flex items-center justify-center gap-4 pt-4">
-              <Button className="px-8">
+              <Button onClick={() => navigate.push("/")} className="px-8">
                 Start Searching
                 <ChevronRight className="w-4 h-4 ml-2" />
-              </Button>
-              <Button
-                variant="outline"
-                className="border-2 border-gray-300 hover:border-blue-500 hover:text-blue-600"
-              >
-                Learn More
               </Button>
             </div>
           </div>
@@ -86,7 +82,7 @@ export default function Page() {
       </section>
 
       {/* How Scholarle Works Section */}
-      <section className="py-20 px-6">
+      <section id="citation" className="py-20 px-6">
         <div className="max-w-7xl mx-auto">
           <div className="grid md:grid-cols-2 gap-12 items-center">
             <div className="space-y-6">

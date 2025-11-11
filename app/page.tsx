@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Scholarle: Designed for Smarter Academic Research",
   description:
-    "Discover relevant studies faster through structured, field-specific queries. Build Google Scholar searches without syntax knowledge.",
+    "Discover relevant studies faster through structured field-specific queries. Build Google Scholar searches without syntax knowledge.",
   keywords: [
     "scholarle",
     "google scholar search",

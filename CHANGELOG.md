@@ -5,6 +5,71 @@ All notable changes to the Scholarle Query Builder project will be documented in
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.7.1] - 2025-11-11 - UI Polish and Navigation Enhancements
+
+### Added
+
+- **Navigation Functionality** - Enhanced user navigation across the application
+
+  - Added `useRouter` import and navigation logic to About page (`app/about/page.tsx`)
+    - "Start Searching" button now navigates to home page instead of being static
+    - Removed redundant "Learn More" button for cleaner interface
+  - Added `useRouter` import and navigation to Header component (`components/layout/Header.tsx`)
+    - "Get Started" button now properly navigates to home page
+  - Added `id="citation"` anchor to About page citation section for direct linking
+
+### Changed
+
+- **Footer Social Links** - Streamlined social media presence
+
+  - Removed GitHub and Twitter social links from Footer component (`components/layout/Footer.tsx`)
+  - Retained only LinkedIn link for professional networking focus
+  - Updated LinkedIn URL to proper format: `linkedin.com/in/mathildaoladimeji`
+
+- **Homepage Metadata** - Minor description refinement
+
+  - Removed unnecessary comma in homepage description (`app/page.tsx`)
+  - Improved readability: "structured, field-specific queries" → "structured field-specific queries"
+
+### Fixed
+
+- **Unused Code Cleanup** - Removed development artifacts from QueryBuilder component
+
+  - Removed unused `DepartmentSelector` import (`components/QueryBuilder.tsx`)
+  - Removed unused `selectedFieldCodes` state variable and setter
+  - Eliminated ESLint warnings for unused variables
+
+### Technical Details
+
+- **Code Quality Improvements**
+
+  - All navigation now uses Next.js `useRouter` hook for client-side routing
+  - Removed static buttons that provided no functionality
+  - Cleaned up import statements to eliminate unused dependencies
+
+- **SEO and Accessibility**
+
+  - Added anchor link support for citation section navigation
+  - Maintained proper semantic HTML structure
+  - Preserved all existing metadata and SEO optimizations
+
+### Build Status
+
+- ✅ TypeScript compilation passes (zero errors, strict mode)
+- ✅ All navigation links functional with proper routing
+- ✅ No ESLint warnings or unused variable errors
+- ✅ Social links updated to reflect current professional presence
+- ✅ All pages load correctly with enhanced navigation
+
+### Notes
+
+- This release focuses on user experience improvements and code quality
+- Navigation enhancements make the application more intuitive to use
+- Social media presence streamlined to focus on professional networking
+- All changes maintain backward compatibility and existing functionality
+
+---
+
 ## [1.7.0] - 2025-11-07 - Hierarchical Department-Based Journal Selection System (Phase 1)
 
 ### Added
