@@ -61,7 +61,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="#citation"
+                  href="/about#citation"
                   className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
                 >
                   Citation
@@ -112,9 +112,11 @@ export function Footer() {
           {/* Social Links */}
           <div className="flex gap-6">
             <a
-              href="linkedin.com/in/mathildaoladimeji"
+              href="https://www.linkedin.com/company/scholarle/"
               className="text-gray-600 hover:text-gray-900 transition-colors"
               aria-label="LinkedIn"
+              target="_blank"
+              rel="noopener noreferrer"
             >
               <Linkedin className="w-5 h-5" />
             </a>

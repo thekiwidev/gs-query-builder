@@ -369,7 +369,12 @@ export function QueryBuilder() {
         <div className="flex justify-end mb-8">
           <button
             onClick={resetForm}
-            className="flex items-center gap-2 text-gray-600 hover:text-red-600 font-medium transition-colors"
+            disabled={!hasValidTerms}
+            className={`flex items-center gap-2 px-3 py-2 border rounded-lg font-medium transition-all ${
+              hasValidTerms
+                ? "text-gray-600 border-gray-300 hover:border-gray-400 hover:bg-red-100 hover:text-red-500 cursor-pointer"
+                : "text-gray-400 border-gray-200 bg-gray-50 cursor-not-allowed"
+            }`}
           >
             <svg
               className="h-4 w-4"

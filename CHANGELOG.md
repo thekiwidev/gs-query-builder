@@ -5,6 +5,116 @@ All notable changes to the Scholarle Query Builder project will be documented in
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.8.0] - 2025-11-13 - Contact Updates, Navigation Fixes, and Enhanced Reset Button State Management
+
+### Added
+
+- **Reset Button State Management** - Intelligent disabled/enabled button behavior
+
+  - `disabled={!hasValidTerms}` attribute prevents accidental form resets when no search terms exist
+  - Conditional styling system with two distinct states:
+    - **Enabled state** (when search terms exist):
+      - Red hover effects with `hover:bg-red-100 hover:text-red-500`
+      - Interactive border styling with `border-gray-300`
+      - `cursor-pointer` for clear interaction affordance
+    - **Disabled state** (empty form):
+      - Muted text color `text-gray-400` indicating non-interactive state
+      - Light gray background `bg-gray-50` for visual distinction
+      - `cursor-not-allowed` preventing click interaction
+      - Lighter border `border-gray-200` matching disabled appearance
+
+### Changed
+
+- **Footer Contact Links** - Updated company contact information
+
+  - Email address standardized to `support@scholarly.com` across all pages
+  - Affects: Feedback page FAQ and Footer component
+  - Consistent professional support contact throughout application
+
+- **Footer Citation Link** - Improved navigation accuracy
+
+  - Citation link changed from `#citation` to `/about#citation`
+  - Ensures clicking "Citation" in footer properly navigates to the About page citation section
+  - Deep linking enables direct access to citation information
+
+- **Footer Social Media Links** - Updated company LinkedIn presence
+
+  - LinkedIn URL updated from personal profile to company page: `https://www.linkedin.com/company/scholarle/`
+  - Added proper `https://` protocol for absolute URL
+  - Added `target="_blank"` and `rel="noopener noreferrer"` for security when opening in new tab
+  - Maintains single social media link for professional networking focus
+
+- **Reset Button Styling** - Enhanced visual hierarchy and interaction feedback
+
+  - Added subtle border styling `border-gray-300` for button definition
+  - Improved hover effects with:
+    - Border color change `hover:border-gray-400`
+    - Red background `hover:bg-red-100` and red text `hover:text-red-500`
+    - Smooth transitions with `transition-all`
+  - Added padding `px-3 py-2` for better visual presence
+  - Changed border-radius from `rounded-md` to `rounded-lg` for modern appearance
+
+### Fixed
+
+- **Reset Button Accessibility** - Proper disabled state styling and interaction
+
+  - Fixed issue where disabled reset button lacked visual feedback
+  - Prevented clicks on disabled button with `disabled` attribute
+  - Added `cursor-not-allowed` to clearly indicate non-interactive state
+  - Resolved hover effects appearing on disabled state (now only on enabled state)
+
+- **Email Address Consistency** - Corrected security contact email
+
+  - Changed `security@scholarle.com` to `support@scholarly.com` in feedback page FAQ
+  - Ensures all support inquiries route to correct contact email
+  - Removes ambiguity about separate security contact point
+
+### Technical Details
+
+- **Reset Button Implementation**:
+
+  - Uses conditional Tailwind CSS classes based on `hasValidTerms` boolean
+  - Template literal with ternary operator for clean state management
+  - Proper disabled HTML attribute prevents form reset when conditions not met
+  - Visual states use semantic color coding (red for enabled/active, gray for disabled)
+
+- **Contact Information Updates**:
+
+  - Centralized email address: `support@scholarly.com` across all user-facing content
+  - LinkedIn company page URL follows standard format: `linkedin.com/company/[company-name]/`
+  - Deep linking syntax `/about#citation` enables bookmark-able section navigation
+
+- **Button Styling Architecture**:
+  - Enabled state: Interactive colors (gray text, red hover)
+  - Disabled state: Muted colors (gray text, gray background, lighter border)
+  - Consistent transition timing for smooth state changes
+  - Proper z-index and positioning maintains layering
+
+### Browser Compatibility
+
+- ✅ All modern browsers with CSS transitions and conditional styling support
+- ✅ Proper disabled attribute handling across all browsers
+- ✅ cursor-not-allowed works consistently on all platforms
+- ✅ Deep linking with hash fragments (#section) supported universally
+
+### Build Status
+
+- ✅ TypeScript compilation passes (zero errors, strict mode)
+- ✅ All pages render with updated contact information
+- ✅ Reset button disabled state functions correctly
+- ✅ No ESLint warnings or unused variables
+- ✅ All navigation links work properly
+
+### Notes
+
+- Reset button now provides clear visual feedback for disabled state
+- Contact information standardized across all pages for consistency
+- LinkedIn link updated to reflect company presence
+- Citation navigation improved with direct deep linking to About page section
+- All changes maintain backward compatibility with existing functionality
+
+---
+
 ## [1.7.1] - 2025-11-11 - UI Polish and Navigation Enhancements
 
 ### Added
