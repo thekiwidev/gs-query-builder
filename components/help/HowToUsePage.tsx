@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect, useCallback } from "react";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import { VideoSection } from "./VideoSection";
+import { videoCategories } from "@/lib/videoConfig";
 
 interface CollapsibleSectionProps {
   title: string;
@@ -68,6 +70,7 @@ export function HowToUsePage() {
       "examples",
       "tips",
       "issues",
+      "video-tutorials",
     ];
 
     const observerOptions = {
@@ -153,6 +156,33 @@ export function HowToUsePage() {
                     {item.label}
                   </button>
                 ))}
+                {/* Video Tutorials Section */}
+                <div className="mt-4 pt-4 border-t border-gray-300">
+                  <button
+                    onClick={() => scrollToSection("video-tutorials")}
+                    className={`block w-full text-left px-3 py-2 rounded-lg transition-colors text-sm font-medium ${
+                      activeSection === "video-tutorials"
+                        ? "bg-blue-100 text-blue-700"
+                        : "text-gray-700 hover:bg-gray-200"
+                    }`}
+                  >
+                    🎥 Video Tutorials
+                  </button>
+                  {/* Nested video categories */}
+                  {videoCategories
+                    .filter((category) => category.videos.length > 0)
+                    .map((category) => (
+                      <button
+                        key={category.id}
+                        onClick={() =>
+                          scrollToSection(`video-category-${category.id}`)
+                        }
+                        className="block w-full text-left px-6 py-1.5 rounded-lg transition-colors text-xs text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+                      >
+                        {category.name}
+                      </button>
+                    ))}
+                </div>
               </nav>
             </div>
           </div>
@@ -849,6 +879,9 @@ export function HowToUsePage() {
                 </div>
               </CollapsibleSection>
             </section>
+
+            {/* Video Tutorials Section */}
+            <VideoSection />
 
             {/* Footer */}
             <div className="mt-12 pt-8 border-t border-gray-200">
