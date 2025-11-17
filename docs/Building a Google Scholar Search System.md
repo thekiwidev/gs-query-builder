@@ -22,7 +22,7 @@ Every generated search URL must be initiated with the base endpoint, https://sch
 
 ### **A. Core Configuration Parameters**
 
-The QTM must always include parameters that govern localization and the type of scholarly literature being searched.
+The QTM must always include parameters that govern localization and the type of scholarle literature being searched.
 
 Table 1: Google Scholar Advanced Parameter Reference
 

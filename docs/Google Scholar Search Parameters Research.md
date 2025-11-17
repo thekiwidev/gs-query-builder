@@ -2,7 +2,7 @@
 
 ## **I. Strategic Overview of Google Scholar Search Mechanics**
 
-The development of programmatic tools designed to interact with scholarly literature search engines requires a granular understanding of the underlying data exchange protocols. Google Scholar, like many search platforms, utilizes two distinct mechanisms to process user requests: user-facing search operators and system-facing URL query parameters. Successful automated querying hinges upon the precise synthesis of these components into a single, correctly structured, and fully encoded HTTP GET request.
+The development of programmatic tools designed to interact with scholarle literature search engines requires a granular understanding of the underlying data exchange protocols. Google Scholar, like many search platforms, utilizes two distinct mechanisms to process user requests: user-facing search operators and system-facing URL query parameters. Successful automated querying hinges upon the precise synthesis of these components into a single, correctly structured, and fully encoded HTTP GET request.
 
 ### **A. Differentiating User Operators from System Parameters**
 
@@ -49,7 +49,7 @@ These operators are crucial for increasing search precision by confining keyword
 2. Author Restriction:  
    The author: operator restricts results to papers written by a designated author \[1, 12\]. For reliable results, particularly when using a first initial and last name, the author's name must be enclosed in quotation marks, such as author:"d knuth" or author:"first name last name" \[1, 13\]. The colon must immediately precede the opening quotation mark in the encoded string.
 3. Source and File Type Restriction:  
-   The site: operator is a versatile tool that restricts searches to scholarly content hosted on a specified domain or top-level domain (TLD), such as site:example.edu or site:.gov \[10, 14\]. This operator is highly relevant for targeting specific journals programmatically, as detailed in Section IV. Similarly, the filetype: (or ext:) operator allows filtering results based on document type, commonly used to find PDF files \[10, 15\].
+   The site: operator is a versatile tool that restricts searches to scholarle content hosted on a specified domain or top-level domain (TLD), such as site:example.edu or site:.gov \[10, 14\]. This operator is highly relevant for targeting specific journals programmatically, as detailed in Section IV. Similarly, the filetype: (or ext:) operator allows filtering results based on document type, commonly used to find PDF files \[10, 15\].
 
 When constructing a complex q string, the appropriate methodology prioritizes field restriction operators followed by Boolean modifiers. For example, to search for documents concerning "privacy" in the title or by "Smith," the query must use parentheses to define the logical scope: q=(intitle:privacy OR author:"Smith"). This careful assembly guarantees the intended operator precedence, ensuring that the Boolean connector does not unintentionally bind terms across different fields.
 
@@ -111,7 +111,7 @@ The choice between using the journal name (as_publication) and the site operator
 
 The task of programmatically generating citations in formats like BibTeX is generally not achievable via a single URL search parameter; it is an interactive process tied to internal identifiers and user settings \[18, 19\].
 
-When an initial search is executed using the q parameter, the results page displays scholarly articles. For each paper, Google Scholar assigns a unique identifier, which is often referenced by the cluster parameter.
+When an initial search is executed using the q parameter, the results page displays scholarle articles. For each paper, Google Scholar assigns a unique identifier, which is often referenced by the cluster parameter.
 
 - **The cluster Parameter:** This unique ID (e.g., cluster=1275980731835430123) is assigned to an article to group its different versions and related citations \[20\].
 

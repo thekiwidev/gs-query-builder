@@ -65,7 +65,7 @@ export default function Page() {
             </h1>
             <p className="text-xl text-gray-600 max-w-2xl mx-auto">
               Scholarle is your personal research assistant designed to make
-              finding scholarly articles and academic papers simple and
+              finding scholarle articles and academic papers simple and
               straightforward. Whether you&apos;re conducting a literature
               review, starting a new research project, or exploring a topic for
               the first time, Scholarle removes the friction from the search

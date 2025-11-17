@@ -230,7 +230,7 @@ export default function FeedbackPage() {
               {
                 question: "What if I find a critical security issue?",
                 answer:
-                  "Please report security issues immediately to support@scholarly.com. Do not submit security vulnerabilities through the public feedback form.",
+                  "Please report security issues immediately to support@scholarle.com. Do not submit security vulnerabilities through the public feedback form.",
               },
             ].map((faq, index) => (
               <div

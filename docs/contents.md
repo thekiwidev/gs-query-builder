@@ -1,6 +1,6 @@
 # Scholarle - Page Contents
 
-This document contains the content for all public-facing pages of Scholarle. Scholarle is an intuitive query builder designed to help researchers, students, and academics find scholarly articles and papers more easily.
+This document contains the content for all public-facing pages of Scholarle. Scholarle is an intuitive query builder designed to help researchers, students, and academics find scholarle articles and papers more easily.
 
 ---
 
@@ -12,7 +12,7 @@ This document contains the content for all public-facing pages of Scholarle. Sch
 
 **What is Scholarle?**
 
-Scholarle is your personal research assistant designed to make finding scholarly articles and academic papers simple and straightforward. Whether you're conducting a literature review, starting a new research project, or exploring a topic for the first time, Scholarle removes the friction from the search process.
+Scholarle is your personal research assistant designed to make finding scholarle articles and academic papers simple and straightforward. Whether you're conducting a literature review, starting a new research project, or exploring a topic for the first time, Scholarle removes the friction from the search process.
 
 We understand that searching for academic papers can be overwhelming. Traditional search interfaces often require you to remember specific syntax, operators, and field combinations. Scholarle changes that by letting you search the way you think—by breaking down what you're looking for into clear, understandable components.
 

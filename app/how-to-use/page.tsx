@@ -20,7 +20,7 @@ export const metadata: Metadata = {
   openGraph: {
     title: "How to Use Scholarle - Complete Guide",
     description:
-      "Master advanced scholarly searches with our comprehensive guide.",
+      "Master advanced scholarle searches with our comprehensive guide.",
     url: "https://scholarle.com/how-to-use",
     type: "website",
     images: [

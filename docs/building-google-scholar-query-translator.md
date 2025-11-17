@@ -20,7 +20,7 @@ The Google Scholar Query Translator (GS-Search-Kit) is a specialized tool that c
 
 ### Key Features
 
-- **Field-Specific Search**: Target specific parts of scholarly publications (title, author, journal, etc.)
+- **Field-Specific Search**: Target specific parts of scholarle publications (title, author, journal, etc.)
 - **Boolean Logic**: Combine search terms with AND, OR, and NOT operators
 - **Journal Filtering**: Filter by specific journals using ISSN identifiers
 - **Parenthetical Grouping**: Create complex queries with proper precedence

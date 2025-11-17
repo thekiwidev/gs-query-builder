@@ -10,11 +10,13 @@ export const metadata: Metadata = {
     "google scholar search",
     "academic research",
     "journal search",
+    "scholarle articles",
     "scholarly articles",
     "research query builder",
     "schrolarle",
     "google scholar",
     "scholarly search",
+    "scholarle search",
   ],
   openGraph: {
     title: "Scholarle - Google Scholar Query Builder",

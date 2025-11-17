@@ -8,6 +8,7 @@ export const metadata: Metadata = {
     "about scholarle",
     "scholarle platform",
     "academic research platform",
+    "scholarle search tool",
     "scholarly search tool",
     "research democratization",
     "journal discovery",

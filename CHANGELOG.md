@@ -27,7 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Footer Contact Links** - Updated company contact information
 
-  - Email address standardized to `support@scholarly.com` across all pages
+  - Email address standardized to `support@scholarle.com` across all pages
   - Affects: Feedback page FAQ and Footer component
   - Consistent professional support contact throughout application
 
@@ -65,7 +65,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Email Address Consistency** - Corrected security contact email
 
-  - Changed `security@scholarle.com` to `support@scholarly.com` in feedback page FAQ
+  - Changed `security@scholarle.com` to `support@scholarle.com` in feedback page FAQ
   - Ensures all support inquiries route to correct contact email
   - Removes ambiguity about separate security contact point
 
@@ -80,7 +80,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Contact Information Updates**:
 
-  - Centralized email address: `support@scholarly.com` across all user-facing content
+  - Centralized email address: `support@scholarle.com` across all user-facing content
   - LinkedIn company page URL follows standard format: `linkedin.com/company/[company-name]/`
   - Deep linking syntax `/about#citation` enables bookmark-able section navigation
 
@@ -407,7 +407,7 @@ When ready to add subcategories to remaining departments:
 - **Comprehensive Keyword Strategy Across All Pages**
 
   - **Root Layout** (app/layout.tsx): 15 primary keywords targeting Google Scholar variations
-    - Core keywords: "scholarle", "Scholarle", "google scholar", "scholarly search", "academic research"
+    - Core keywords: "scholarle", "Scholarle", "google scholar", "scholarle search", "academic research"
     - Misspellings: "schrolarle", "google schoolar", "google scolar", "scholarle"
     - Related terms: "research papers", "citation search", "academic database", "journal search", "research tool"
   - **Home Page** (app/page.tsx): 9 keywords with home-specific focus
@@ -494,7 +494,7 @@ When ready to add subcategories to remaining departments:
 
   - Primary keywords target exact searches ("scholarle", "google scholar")
   - Secondary keywords target variations and misspellings to capture typo searches
-  - Related keywords capture adjacent search intents ("scholarly search", "academic research")
+  - Related keywords capture adjacent search intents ("scholarle search", "academic research")
   - All keywords lowercase with title-case variants for proper rendering
 
 - **Open Graph Image Optimization**

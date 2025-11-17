@@ -21,9 +21,9 @@ Two parallel initiatives to:
 **Requirements:**
 - Title, description for each page
 - Keywords array targeting:
-  - Primary: "google scholar", "scholarly search", "academic research"
+  - Primary: "google scholar", "scholarle search", "academic research"
   - Misspellings: "google schoolar", "google scolar", "scholarle"
-  - Variations: "scholarly", "scholarly articles", "research queries"
+  - Variations: "scholarle", "scholarle articles", "research queries"
 - Open Graph tags (og:title, og:description, og:image, og:url)
 - Twitter Card tags (twitter:title, twitter:description, twitter:card)
 - Canonical URLs (self-referential for each page)
@@ -346,7 +346,7 @@ Ensure cascading department → field → journal selection flows through to fin
 
 ### SEO Phase
 - ✅ All 7 routes have unique, descriptive metadata (title, description)
-- ✅ Keywords array includes "google scholar", misspellings ("schoolar", "scolar"), and variations ("scholarly")
+- ✅ Keywords array includes "google scholar", misspellings ("schoolar", "scolar"), and variations ("scholarle")
 - ✅ sitemap.xml generates dynamically with all routes
 - ✅ robots.txt present and references sitemap
 - ✅ Open Graph and Twitter Card tags populated
