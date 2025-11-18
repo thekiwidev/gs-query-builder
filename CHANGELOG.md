@@ -5,6 +5,56 @@ All notable changes to the Scholarle Query Builder project will be documented in
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.9.0] - 2025-11-18 - Video Tutorials for Operators and Journals
+
+### Added
+
+- **Video Tutorials for Operators** - Comprehensive guide on using AND, OR, and Does Not Include operators
+
+  - Video file: `operators.mp4` in `/public/videos/` directory
+  - Title: "How to Use Operators"
+  - Description: "A comprehensive guide on using AND, OR, and Does Not Include operators to combine search blocks"
+  - Integrated into Video Tutorials section of How-to-Use page
+  - Follows same pattern as existing search blocks video
+
+- **Video Tutorials for Journals** - Guide on journal filtering and selection
+
+  - Video file: `journals.mp4` in `/public/videos/` directory
+  - Title: "How to Use Journal Filters"
+  - Description: "A comprehensive guide on filtering and selecting journals by field and rating in the Query Builder"
+  - Integrated into Video Tutorials section of How-to-Use page
+  - Organized under dedicated "Journals" video category
+
+### Changed
+
+- **Video Configuration** (`lib/videoConfig.ts`)
+
+  - Added operators video entry to "Operators" category
+    - `id`: "operators-intro"
+    - `filename`: "operators.mp4"
+    - `order`: 1
+  - Added journals video entry to "Journals" category
+    - `id`: "journals-intro"
+    - `filename`: "journals.mp4"
+    - `order`: 1
+
+### Technical Details
+
+- Video categories automatically populate in sidebar table of contents
+- Videos display in expandable cards with play controls
+- Full-screen expansion and inline playback supported via existing VideoPlayer component
+- No code changes required to VideoSection or VideoPlayer components - configuration-driven approach
+- Videos appear in how-to page alongside existing search blocks video
+
+### Notes
+
+- Both videos now accessible on `/how-to-use` page under "Video Tutorials" section
+- Video categories (Search Blocks, Operators, Journals) dynamically rendered based on available videos
+- Maintains consistency with existing video player UI/UX patterns
+- Ready for future video additions by simply updating videoConfig.ts
+
+---
+
 ## [1.8.0] - 2025-11-13 - Contact Updates, Navigation Fixes, and Enhanced Reset Button State Management
 
 ### Added

@@ -35,8 +35,14 @@ export const videoCategories: VideoCategory[] = [
     name: "Journals",
     description: "Tutorials on journal filtering and selection",
     videos: [
-      // Placeholder for future videos
-      // Add videos here as they become available
+      {
+        id: "journals-intro",
+        title: "How to Use Journal Filters",
+        description: "A comprehensive guide on filtering and selecting journals by field and rating in the Query Builder",
+        filename: "journals.mp4",
+        category: "journals",
+        order: 1,
+      },
     ],
   },
   {
@@ -44,8 +50,14 @@ export const videoCategories: VideoCategory[] = [
     name: "Operators",
     description: "Learn how to use AND, OR, and EXCLUDE operators",
     videos: [
-      // Placeholder for future videos
-      // Add videos here as they become available
+      {
+        id: "operators-intro",
+        title: "How to Use Operators",
+        description: "A comprehensive guide on using AND, OR, and Does Not Include operators to combine search blocks",
+        filename: "operators.mp4",
+        category: "operators",
+        order: 1,
+      },
     ],
   },
 ];

@@ -168,9 +168,7 @@ export function VideoPlayer({ src, title, className = "" }: VideoPlayerProps) {
       <div
         className={`bg-red-50 border border-red-200 rounded-lg p-6 text-center ${className}`}
       >
-        <p className="text-red-700 font-medium mb-2">
-          Unable to load video
-        </p>
+        <p className="text-red-700 font-medium mb-2">Unable to load video</p>
         <p className="text-sm text-red-600">
           The video file could not be loaded. Please check that the file exists
           and try again.
@@ -189,7 +187,10 @@ export function VideoPlayer({ src, title, className = "" }: VideoPlayerProps) {
           </div>
         </div>
       )}
-      <div className="relative w-full rounded-lg shadow-lg overflow-hidden bg-black" style={{ aspectRatio: "16/9" }}>
+      <div
+        className="relative w-full rounded-lg shadow-lg overflow-hidden bg-black"
+        style={{ aspectRatio: "16/9" }}
+      >
         <video
           ref={videoRef}
           src={src}
@@ -200,9 +201,9 @@ export function VideoPlayer({ src, title, className = "" }: VideoPlayerProps) {
         >
           Your browser does not support the video tag.
         </video>
-        
+
         {/* Custom Controls Overlay */}
-        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/70 to-transparent p-4 opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/70 to-transparent p-4 opacity-0 group-hover:opacity-100 transition-opacity">
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-2">
               {/* Play/Pause Button */}
@@ -260,7 +261,10 @@ export function VideoPlayer({ src, title, className = "" }: VideoPlayerProps) {
             aria-label="Play video"
           >
             <div className="w-16 h-16 rounded-full bg-white/90 hover:bg-white flex items-center justify-center shadow-lg transition-colors">
-              <Play className="w-8 h-8 text-gray-900 ml-1" fill="currentColor" />
+              <Play
+                className="w-8 h-8 text-gray-900 ml-1"
+                fill="currentColor"
+              />
             </div>
           </button>
         )}
@@ -298,7 +302,7 @@ export function VideoPlayer({ src, title, className = "" }: VideoPlayerProps) {
               </video>
 
               {/* Expanded Controls Overlay */}
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6">
+              <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/80 to-transparent p-6">
                 <div className="flex items-center justify-center gap-4">
                   {/* Play/Pause Button */}
                   <button
@@ -342,7 +346,10 @@ export function VideoPlayer({ src, title, className = "" }: VideoPlayerProps) {
                   aria-label="Play video"
                 >
                   <div className="w-20 h-20 rounded-full bg-white/90 hover:bg-white flex items-center justify-center shadow-lg transition-colors">
-                    <Play className="w-10 h-10 text-gray-900 ml-1" fill="currentColor" />
+                    <Play
+                      className="w-10 h-10 text-gray-900 ml-1"
+                      fill="currentColor"
+                    />
                   </div>
                 </button>
               )}
@@ -353,4 +360,3 @@ export function VideoPlayer({ src, title, className = "" }: VideoPlayerProps) {
     </div>
   );
 }
-

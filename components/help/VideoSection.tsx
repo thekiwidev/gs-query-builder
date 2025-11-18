@@ -2,7 +2,11 @@
 
 import React, { useState } from "react";
 import { ChevronDown, ChevronUp, Play } from "lucide-react";
-import { videoCategories, type VideoCategory, type Video } from "@/lib/videoConfig";
+import {
+  videoCategories,
+  type VideoCategory,
+  type Video,
+} from "@/lib/videoConfig";
 import { VideoPlayer } from "./VideoPlayer";
 
 interface VideoCardProps {
@@ -10,7 +14,7 @@ interface VideoCardProps {
   onPlay?: () => void;
 }
 
-function VideoCard({ video, onPlay }: VideoCardProps) {
+function VideoCard({ video }: VideoCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
 
   const videoPath = `/videos/${video.filename}`;
@@ -22,7 +26,7 @@ function VideoCard({ video, onPlay }: VideoCardProps) {
         className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors text-left"
       >
         <div className="flex items-center gap-3 flex-1">
-          <div className="flex-shrink-0 w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
+          <div className="shrink-0 w-10 h-10 bg-blue-100 rounded-lg flex items-center justify-center">
             <Play className="w-5 h-5 text-blue-600" />
           </div>
           <div className="flex-1 min-w-0">
@@ -37,9 +41,9 @@ function VideoCard({ video, onPlay }: VideoCardProps) {
           </div>
         </div>
         {isExpanded ? (
-          <ChevronUp className="w-5 h-5 text-gray-600 flex-shrink-0 ml-2" />
+          <ChevronUp className="w-5 h-5 text-gray-600 shrink-0 ml-2" />
         ) : (
-          <ChevronDown className="w-5 h-5 text-gray-600 flex-shrink-0 ml-2" />
+          <ChevronDown className="w-5 h-5 text-gray-600 shrink-0 ml-2" />
         )}
       </button>
       {isExpanded && (
@@ -131,4 +135,3 @@ export function VideoSection() {
     </section>
   );
 }
-
