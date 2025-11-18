@@ -23,7 +23,8 @@ export const videoCategories: VideoCategory[] = [
       {
         id: "searchblocks-intro",
         title: "How to Use Search Blocks",
-        description: "A comprehensive guide on creating and configuring search blocks in the Query Builder",
+        description:
+          "A comprehensive guide on creating and configuring search blocks in the Query Builder",
         filename: "searchblocks.mp4",
         category: "search-blocks",
         order: 1,
@@ -38,7 +39,8 @@ export const videoCategories: VideoCategory[] = [
       {
         id: "journals-intro",
         title: "How to Use Journal Filters",
-        description: "A comprehensive guide on filtering and selecting journals by field and rating in the Query Builder",
+        description:
+          "A comprehensive guide on filtering and selecting journals by field and rating in the Query Builder",
         filename: "journals.mp4",
         category: "journals",
         order: 1,
@@ -53,7 +55,8 @@ export const videoCategories: VideoCategory[] = [
       {
         id: "operators-intro",
         title: "How to Use Operators",
-        description: "A comprehensive guide on using AND, OR, and Does Not Include operators to combine search blocks",
+        description:
+          "A comprehensive guide on using AND, OR, and Does Not Include operators to combine search blocks",
         filename: "operators.mp4",
         category: "operators",
         order: 1,
@@ -77,4 +80,3 @@ export function getVideosByCategory(categoryId: string): Video[] {
 export function getVideoById(videoId: string): Video | undefined {
   return getAllVideos().find((video) => video.id === videoId);
 }
-

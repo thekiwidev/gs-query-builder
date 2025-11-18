@@ -16,7 +16,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Scholarle - Google Scholar Query Builder",
+  title: "Scholarle - Designed for Smarter Academic Research",
   description:
     "Build complex academic search queries with ease. Translate simple search criteria into advanced Google Scholar queries without learning syntax.",
   icons: {
@@ -49,7 +49,7 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "https://scholarle.com",
     siteName: "Scholarle",
-    title: "Scholarle - Google Scholar Query Builder",
+    title: "Scholarle - Designed for Smarter Academic Research",
     description:
       "Build complex academic search queries with ease. No syntax knowledge required.",
     images: [
@@ -57,13 +57,13 @@ export const metadata: Metadata = {
         url: "https://scholarle.com/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Scholarle - Google Scholar Query Builder",
+        alt: "Scholarle - Designed for Smarter Academic Research",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Scholarle - Google Scholar Query Builder",
+    title: "Scholarle - Designed for Smarter Academic Research",
     description: "Build complex academic search queries with ease.",
   },
   alternates: {

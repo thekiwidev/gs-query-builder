@@ -19,7 +19,7 @@ export const metadata: Metadata = {
     "scholarle search",
   ],
   openGraph: {
-    title: "Scholarle - Google Scholar Query Builder",
+    title: "Scholarle - Designed for Smarter Academic Research",
     description:
       "Search Google Scholar with advanced filters without complex syntax.",
     url: "https://scholarle.com",
@@ -29,7 +29,7 @@ export const metadata: Metadata = {
         url: "https://scholarle.com/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Scholarle - Google Scholar Query Builder",
+        alt: "Scholarle - Designed for Smarter Academic Research",
       },
     ],
   },
