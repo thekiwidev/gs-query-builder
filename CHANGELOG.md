@@ -5,6 +5,16 @@ All notable changes to the Scholarle Query Builder project will be documented in
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.9.1] - 2025-12-10 - Security Patch for React2Shell Vulnerability
+
+### Security
+
+- **Critical Security Update** - Patched Remote Code Execution (RCE) vulnerability
+  - Upgraded `react` and `react-dom` to version `19.1.2` to fix CVE-2025-55182 and CVE-2025-66478.
+  - Mitigates "React2Shell" vulnerability allowing unsafe deserialization.
+
+---
+
 ## [1.9.0] - 2025-11-18 - Video Tutorials for Operators and Journals
 
 ### Added
