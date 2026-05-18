@@ -53,10 +53,10 @@ Main responsibilities:
 
 From `config/GSConfig.ts`:
 
-- `BASE_URL = https://scholar.google.com/scholar?`
-- `DEFAULT_HL = en`
-- `DEFAULT_AS_SDT = 0%2C5` (Google Scholar academic corpus setting)
-- `MAX_URL_LENGTH = 2048`
+- `BASE_URL` = `https://scholar.google.com/scholar?`
+- `DEFAULT_HL` = `en`
+- `DEFAULT_AS_SDT` = `0%2C5` (Google Scholar academic corpus setting)
+- `MAX_URL_LENGTH` = `2048`
 
 ## Routes
 
