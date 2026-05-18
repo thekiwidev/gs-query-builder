@@ -55,7 +55,7 @@ From `config/GSConfig.ts`:
 
 - `BASE_URL = https://scholar.google.com/scholar?`
 - `DEFAULT_HL = en`
-- `DEFAULT_AS_SDT = 0%2C5` (URL-encoded; decoded value: `0,5`)
+- `DEFAULT_AS_SDT = 0%2C5` (URL-encoded; decoded value: `0,5`, intentionally without spaces to match Scholar parameter format)
 - `MAX_URL_LENGTH = 2048`
 
 ## Routes
