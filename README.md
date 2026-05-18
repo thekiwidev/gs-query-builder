@@ -1,4 +1,4 @@
-# Scholarle Query Builder
+# Google Scholar Query Builder (Scholarle)
 
 A Next.js application for building structured academic search queries and opening them in Google Scholar.
 
@@ -25,7 +25,7 @@ The app provides a visual query builder, block-level operators, and side filters
 
 ## Active search fields (current implementation)
 
-Defined in `data/SearchWithin.ts`:
+Defined in `./data/SearchWithin.ts`:
 
 - `all_fields` → no explicit GS operator
 - `article_title` → `intitle:`
@@ -38,7 +38,7 @@ Defined in `data/SearchWithin.ts`:
 
 ## Query translation module (QTM)
 
-Implemented in `lib/qtm.ts`.
+Implemented in `./lib/qtm.ts`.
 
 Main responsibilities:
 
@@ -51,7 +51,7 @@ Main responsibilities:
 
 ### URL base and mandatory config
 
-From `config/GSConfig.ts`:
+From `./config/GSConfig.ts`:
 
 - `BASE_URL` = `https://scholar.google.com/scholar?`
 - `DEFAULT_HL` = `en`
@@ -76,9 +76,9 @@ From `config/GSConfig.ts`:
 
 ## Journal data and filtering
 
-- Journal source file: `public/data/journals.csv`
-- Loader/parser: `lib/journalLoader.ts`
-- Types and validation rules: `types/journal.ts`
+- Journal source file: `./public/data/journals.csv`
+- Loader/parser: `./lib/journalLoader.ts`
+- Types and validation rules: `./types/journal.ts`
 
 The journal selector filters journals by selected field codes and ratings, then allows ISSN selection. Selected ISSNs are appended to the final query.
 
@@ -156,7 +156,7 @@ From `package.json`:
 
 ## Testing status in this repository
 
-- Query-related test files exist under `test/query/`.
+- Query-related test files exist under `./test/query/`.
 - There is currently **no `test` script** defined in `package.json`.
 
 ## Important implementation notes
@@ -168,8 +168,8 @@ From `package.json`:
 
 ## Documentation
 
-Additional documentation is available in `docs/`.
+Additional documentation is available in `./docs/.
 
 ## Changelog
 
-Project change history is maintained in `CHANGELOG.md`.
+Project change history is maintained in `./CHANGELOG.md`.
