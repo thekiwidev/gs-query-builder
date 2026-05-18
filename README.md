@@ -25,7 +25,7 @@ The app provides a visual query builder, block-level operators, and side filters
 
 ## Active search fields (current implementation)
 
-Defined in `/home/runner/work/gs-query-builder/gs-query-builder/data/SearchWithin.ts`:
+Defined in `data/SearchWithin.ts`:
 
 - `all_fields` → no explicit GS operator
 - `article_title` → `intitle:`
@@ -38,7 +38,7 @@ Defined in `/home/runner/work/gs-query-builder/gs-query-builder/data/SearchWithi
 
 ## Query translation module (QTM)
 
-Implemented in `/home/runner/work/gs-query-builder/gs-query-builder/lib/qtm.ts`.
+Implemented in `lib/qtm.ts`.
 
 Main responsibilities:
 
@@ -51,7 +51,7 @@ Main responsibilities:
 
 ### URL base and mandatory config
 
-From `/home/runner/work/gs-query-builder/gs-query-builder/config/GSConfig.ts`:
+From `config/GSConfig.ts`:
 
 - `BASE_URL = https://scholar.google.com/scholar?`
 - `DEFAULT_HL = en`
@@ -76,9 +76,9 @@ From `/home/runner/work/gs-query-builder/gs-query-builder/config/GSConfig.ts`:
 
 ## Journal data and filtering
 
-- Journal source file: `/home/runner/work/gs-query-builder/gs-query-builder/public/data/journals.csv`
-- Loader/parser: `/home/runner/work/gs-query-builder/gs-query-builder/lib/journalLoader.ts`
-- Types and validation rules: `/home/runner/work/gs-query-builder/gs-query-builder/types/journal.ts`
+- Journal source file: `public/data/journals.csv`
+- Loader/parser: `lib/journalLoader.ts`
+- Types and validation rules: `types/journal.ts`
 
 The journal selector filters journals by selected field codes and ratings, then allows ISSN selection. Selected ISSNs are appended to the final query.
 
@@ -156,7 +156,7 @@ From `package.json`:
 
 ## Testing status in this repository
 
-- Query-related test files exist under `/home/runner/work/gs-query-builder/gs-query-builder/test/query/`.
+- Query-related test files exist under `test/query/`.
 - There is currently **no `test` script** defined in `package.json`.
 
 ## Important implementation notes
@@ -168,8 +168,8 @@ From `package.json`:
 
 ## Documentation
 
-Additional documentation is available in `/home/runner/work/gs-query-builder/gs-query-builder/docs/`.
+Additional documentation is available in `docs/`.
 
 ## Changelog
 
-Project change history is maintained in `/home/runner/work/gs-query-builder/gs-query-builder/CHANGELOG.md`.
+Project change history is maintained in `CHANGELOG.md`.
