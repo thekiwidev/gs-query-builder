@@ -1,127 +1,175 @@
-# Google Scholar Query Translator (GS-Search-Kit)
+# Google Scholar Query Builder (Scholarle)
 
-A Next.js application that translates structured search inputs (similar to Scopus/advanced search interfaces) into valid Google Scholar URLs. This tool allows users to create complex, multi-field searches and automatically redirects to Google Scholar with the properly formatted query.
+A Next.js application for building structured academic search queries and opening them in Google Scholar.
 
-## Features
+The app provides a visual query builder, block-level operators, and side filters (year range, field of research, journal ratings, and journal ISSN selection) that feed into a Query Translation Module (QTM) to generate Google Scholar URLs.
 
-- **Multi-Field Search Blocks**: Support for 10+ search fields including Article Title, Author, Source Title, Abstract, Keywords, ISSN, DOI, etc.
-- **Advanced Query Logic**: Implicit AND logic between blocks, with support for exclusion (NOT) operations
-- **Field-Specific Handling**: Automatic quoting and operator application based on Google Scholar syntax
-- **Real-Time Preview**: See how your search blocks will be translated before submitting
-- **Responsive UI**: Clean, modern interface built with Tailwind CSS
-- **Production Ready**: Input validation, URL encoding, and error handling
+## What the app currently does
 
-## Architecture
+- Lets users create multiple query blocks with:
+  - **Field** selection
+  - **Search term**
+  - **Operator** selection (`NONE`, `AND_NEXT`, `AND_PREV`, `OR_NEXT`, `OR_PREV`, `EXCLUDE`)
+  - **Exact phrase** toggle (`isExact`)
+- Builds a Google Scholar query string with:
+  - Field operators (for supported fields)
+  - Exclusion via `-`
+  - Parenthetical grouping for linked operator chains
+  - URL encoding through `encodeURIComponent`
+- Supports sidebar filters:
+  - **Year range** (`as_ylo`, `as_yhi`)
+  - **Journal filtering by ISSN(s)** from CSV-backed journal data
+  - **Journal rating filtering** (`A*`, `A`, `B`, `C`) for journal selection UI
+  - **Field of research** filtering for journal availability UI
+- Opens the generated URL in a **new browser tab**.
 
-The application follows the Query Translation Module (QTM) architecture:
+## Active search fields (current implementation)
 
-- **Data Layer** (`/data/SearchWithin.ts`): Field definitions and Google Scholar operator mappings
-- **Configuration** (`/config/GSConfig.ts`): Base URLs and mandatory parameters
-- **QTM Core** (`/lib/qtm.ts`): Query synthesis and URL generation logic
-- **UI Components** (`/components/`): React components for search interface
+Defined in `./data/SearchWithin.ts`:
 
-## Getting Started
+- `all_fields` → no explicit GS operator
+- `article_title` → `intitle:`
+- `author` → `author:`
+- `abstract` → `intext:`
+- `site_search` → `site:`
+- `filetype_search` → `filetype:`
 
-### Prerequisites
+> Note: additional fields exist as commented code but are not active in the current UI list.
 
-- [Bun](https://bun.sh/) runtime
-- Node.js 18+ (for compatibility)
+## Query translation module (QTM)
 
-### Installation
+Implemented in `./lib/qtm.ts`.
 
-```bash
-# Clone the repository
-git clone <repository-url>
-cd gs-search-kit
+Main responsibilities:
 
-# Install dependencies
-bun install
+- Validate/clean input blocks
+- Synthesize each block based on field/operator/exact settings
+- Group connected blocks into parentheses using forward/backward operator chain logic
+- Append journal ISSN expressions to the main query
+- Build final Google Scholar URL with mandatory/default parameters and optional filters
+- Warn when URL length exceeds `2048`
 
-# Start development server
-bun run dev
+### URL base and mandatory config
+
+From `./config/GSConfig.ts`:
+
+- `BASE_URL` = `https://scholar.google.com/scholar?`
+- `DEFAULT_HL` = `en`
+- `DEFAULT_AS_SDT` = `0%2C5` (Google Scholar academic corpus setting)
+- `MAX_URL_LENGTH` = `2048`
+
+## Routes
+
+- `/` → Query Builder
+- `/about` → About page
+- `/how-to-use` → Help/guide page
+- `/feedback` → Feedback page (includes external Google Form link)
+
+## UI and layout behavior
+
+- Main layout uses a **left sidebar** for filters and a **content area** for query blocks.
+- Sidebar is:
+  - Resizable (desktop)
+  - Collapsible
+  - Mobile-aware
+  - Width persisted in `localStorage`
+
+## Journal data and filtering
+
+- Journal source file: `./public/data/journals.csv`
+- Loader/parser: `./lib/journalLoader.ts`
+- Types and validation rules: `./types/journal.ts`
+
+The journal selector filters journals by selected field codes and ratings, then allows ISSN selection. Selected ISSNs are appended to the final query.
+
+## Tech stack
+
+- **Framework:** Next.js 15 (App Router)
+- **Language:** TypeScript
+- **UI:** React 19 + Tailwind CSS
+- **UI primitives:** Radix UI components
+- **Icons:** lucide-react
+- **Analytics:** @vercel/analytics
+
+## Project structure (key paths)
+
+```text
+gs-query-builder/
+├── app/                      # Next.js routes
+├── components/               # UI and feature components
+├── config/GSConfig.ts        # Google Scholar config constants
+├── data/SearchWithin.ts      # Active search fields
+├── lib/qtm.ts                # Query Translation Module
+├── lib/journalLoader.ts      # Journal CSV load/parse/validation
+├── types/                    # Shared TypeScript types
+├── public/data/journals.csv  # Journal dataset
+├── test/query/               # Query-related test files
+├── docs/                     # Extended project docs
+└── README.md
 ```
-
-Open [http://localhost:3000](http://localhost:3000) to access the application.
-
-### Usage
-
-1. **Choose a Search Field**: Select from dropdown (e.g., "Article Title", "Author", "All Fields")
-2. **Enter Search Term**: Type your search query
-3. **Set Exclusion** (Optional): Check "Exclude" for NOT logic
-4. **Add More Blocks**: Click "Add Search Block" for complex queries
-5. **Search**: Click "Search Google Scholar" to open results in new tab
-
-### Example Queries
-
-- **Title + Author**: `intitle:"machine learning" author:"John Smith"`
-- **ISSN Lookup**: `"1234-5678"` (exact phrase matching)
-- **Exclusion**: `"artificial intelligence" -source:"IEEE"`
-
-## Field Mappings
-
-| Field         | Google Scholar Operator | Notes                       |
-| ------------- | ----------------------- | --------------------------- |
-| All Fields    | (none)                  | General full-text search    |
-| Article Title | `intitle:`              | Title-specific search       |
-| Author        | `author:`               | Author name search          |
-| Source Title  | `source:`               | Journal/conference search   |
-| Abstract      | (none)                  | Exact phrase in full-text\* |
-| Keywords      | (none)                  | Exact phrase in full-text\* |
-| ISSN/DOI      | (none)                  | Exact phrase matching\*     |
-
-\*Fields marked with asterisk use approximation methods since Google Scholar doesn't have dedicated indexed fields.
 
 ## Development
 
-### Project Structure
+### Prerequisites
 
-```
-gs-search-kit/
-├── app/                 # Next.js app router
-├── components/          # React UI components
-├── config/             # Configuration files
-├── data/               # Field definitions
-├── docs/               # Documentation
-└── lib/                # Core QTM logic
-```
+- Node.js 18+
+- npm (or Bun if preferred in your environment)
 
-### Scripts
+### Install
 
 ```bash
-bun run dev         # Start development server
-bun run build       # Build for production
-bun run start       # Start production server
-bun run lint        # Run ESLint
+npm install
 ```
 
-### Contributing
+If peer dependency resolution fails in your environment, retry with:
 
-1. Follow the TypeScript interfaces defined in the data layer
-2. Update `CHANGELOG.md` for any changes to QTM logic or field mappings
-3. Maintain defensive programming practices with input validation
-4. Test URL generation with various field combinations
+```bash
+npm install --legacy-peer-deps
+```
 
-## Technical Notes
+### Run
 
-- **URL Encoding**: Uses `encodeURIComponent()` for proper special character handling
-- **Query Logic**: Space-separated blocks create implicit AND operations
-- **Validation**: Maximum URL length validation (2048 characters)
-- **Type Safety**: Full TypeScript coverage with strict type checking
+```bash
+npm run dev
+```
+
+### Build
+
+```bash
+npm run build
+```
+
+### Lint
+
+```bash
+npm run lint
+```
+
+## Scripts
+
+From `package.json`:
+
+- `dev` → `next dev --turbopack`
+- `build` → `next build --turbopack`
+- `start` → `next start`
+- `lint` → `eslint`
+
+## Testing status in this repository
+
+- Query-related test files exist under `./test/query/`.
+- There is currently **no `test` script** defined in `package.json`.
+
+## Important implementation notes
+
+- Search submission currently uses `window.open(result.url, "_blank")` (new tab behavior).
+- Field-of-research selections are used to filter available journals in the sidebar.
+- Journal ISSN selections are appended into the query and impact the generated URL.
+- The app keeps backward compatibility paths for legacy boolean operator fields in QTM.
 
 ## Documentation
 
-For a comprehensive guide on how to build a Google Scholar Query Translator from scratch, see:
+Additional documentation is available in `./docs/.
 
-- [Building a Google Scholar Query Translator](docs/building-google-scholar-query-translator.md)
+## Changelog
 
-For a list of potential future enhancements:
-
-- [Future Enhancements](docs/future-enhancements.md)
-
-For an implementation summary:
-
-- [Implementation Summary](docs/implementation-summary.md)
-
-## License
-
-MIT License - see LICENSE file for details.
+Project change history is maintained in `./CHANGELOG.md`.
